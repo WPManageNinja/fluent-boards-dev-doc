@@ -10,68 +10,33 @@ new functionality.
 Action hooks are used to run custom code when certain events occur.
  
 ## Available of Action Hooks in FluentCRM
- 
-### Contact / Subscriber Specific
+
+### Board Specific
 <hr />
 
-!!!include(./src/hooks/actions/_contact_hooks.md)!!!
- 
-### Contact Activity Specifics
-<hr />
-
-!!!include(./src/hooks/actions/_contact_activity_hooks.md)!!!
-
-
-### List Specifics
-<hr />
-
-!!!include(./src/hooks/actions/_list_hooks.md)!!!
-
-### Tag Specifics
-<hr />
-
-!!!include(./src/hooks/actions/_tag_hooks.md)!!!
-
-### Email Template Specific
-<hr />
-
-!!!include(./src/hooks/actions/_template_hooks.md)!!!
-
-
-### Email Campaign Specific
-<hr />
-
-!!!include(./src/hooks/actions/_campaign_hooks.md)!!!
-
-
-### Automation Funnel Specific
-<hr />
-
-::: details fluent_crm/automation_funnel_start
-This action runs when a funnel starts for a subscriber
+::: details fluent_boards/board_created
+This action runs when a board has been created
 
 **Parameters**
-- `$funnel` Funnel Model
-- `$subscriber` Subscriber Model
+- `$board` Board Model
 
 **Usage:**
 ```php 
-add_action('fluent_crm/automation_funnel_start', function($funnel, $subscriber) {
+add_action('fluent_boards/board_created', function($board) {
    // Do whatever you want
 }, 10, 2);
 ```
 :::
 
-::: details fluent_crm/automation_funnel_completed
-This action runs when a funnel has been completed for a subscriber
+::: details fluent_boards/board_find
+This action runs when a board is invoked
 
 **Parameters**
-- `$funnel` Funnel Model
-- `$subscriber` Subscriber Model
+- `$board` Board Model
 
 **Usage:**
 ```php 
-add_action('fluent_crm/automation_funnel_completed', function($funnel, $subscriber) {
+add_action('fluent_boards/board_find', function($board) {
    // Do whatever you want
 }, 10, 2);
 ```
@@ -176,3 +141,6 @@ add_action('fluent_crm/contact_updated_by_fluentform', function($subscriber, $en
 }, 10, 4);
 ```
 :::
+
+
+fluent_boards/board_created
