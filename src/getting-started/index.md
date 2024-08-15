@@ -1,16 +1,18 @@
-# What is FluentCRM?
+# What is FluentBoards?
 
-<Badge type="tip" vertical="top" text="FluentCRM Core" /> <Badge type="warning" vertical="top" text="Basic" />
+<Badge type="tip" vertical="top" text="FluentBoards Core" /> <Badge type="warning" vertical="top" text="Basic" />
 
-FluentCRM is a Self Hosted Email Marketing Automation Plugin for WordPress. Manage your leads and customers, email campaigns, automated email sequencing, learner and affiliate management, and monitor user activities and many more in one place; without ever having to leave your WordPress dashboard!
+FluentBoards is a Project Management Plugin designed to facilitate collaborative work among team members. It offers the ability to showcase your team’s workflow directly on your WordPress site, eliminating the need for additional tools.
 
-## FluentCRM Versions
+With FluentBoards, you can display your boards within the WordPress backend or on the front-end portal of your website. Packed with essential features, FluentBoards ensures seamless project planning and execution.
 
-FluentCRM comes in different versions:
+## FluentBoards Versions
 
-**FluentCRM Core** is a free WordPress plugin. It includes it's main functionalities, enabling users to manage contacts, send emails, create basic automations.
+FluentBoards comes in different versions:
 
-**FluentCRM Pro** is a paid version that adds a number of advanced features and options not found in the free version. It substantially increases and improves your marketing workflow and build advanced email sequences and automation funnels.
+**FluentBoards Core** is a free WordPress plugin.  A Board serves as a centralized hub for organizing workflow-related information. Whether you’re initiating a new project, planning, or managing ongoing tasks, the board provides a comprehensive overview of your team’s progress..
+
+**FluentBoards Pro** is a paid version that adds a number of advanced features and options not found in the free version. It includes additional features such as: adding attachments to tasks, subtasks, custom fields, and more.
 
 ## Directory Structure
 
@@ -33,6 +35,6 @@ FluentCRM comes in different versions:
 ├── language        # [internal] Language Files
 ├── vendor          # [internal] Core Framework Files
 │
-└── fluent-crm.php  # Plugin entry File
+└── fluent-boards.php  # Plugin entry File
 ```
 
