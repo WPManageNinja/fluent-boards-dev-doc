@@ -1,404 +1,326 @@
-# FluentCRM Database Schema
+# FluentBoards Database Schema
 
-<Badge type="tip" vertical="top" text="FluentCRM Core" /> <Badge type="warning" vertical="top" text="Advanced" />
+<Badge type="tip" vertical="top" text="FluentBoards Core" /> <Badge type="warning" vertical="top" text="Advanced" />
 
-FluentCRM use custom database tables to store all the CRM data. Here are the list of database tables and it's schema to
+FluentBoards use custom database tables to store all the Boards data. Here are the list of database tables and it's schema to
 understand overall database design and related data attributes of each model.
 ## Schema Design
 <img :src="$withBase('/assets/img/schema-design.png')" alt="Schema Design" />
 
 ## Database Tables
 
-## _fc_subscribers Table
 
-This table store the basic information of a contact
+## _fbs_boards Table
 
-<table cellspacing="0" class="nowrap">
-<thead><tr><th>Column</th><td>Type</td><td>Comment</td></tr></thead>
-<tbody><tr><th>id</th><td><span title="">bigint unsigned</span> <i>Auto Increment</i></td><td>
-</td></tr><tr class="odd"><th>user_id</th><td><span title="">bigint unsigned</span> <i>NULL</i></td><td>
-</td></tr><tr><th>hash</th><td><span title="utf8mb4_unicode_520_ci">varchar(90)</span> <i>NULL</i></td><td>
-</td></tr><tr class="odd"><th>contact_owner</th><td><span title="">bigint unsigned</span> <i>NULL</i></td><td>
-</td></tr><tr><th>company_id</th><td><span title="">bigint unsigned</span> <i>NULL</i></td><td>
-</td></tr><tr class="odd"><th>prefix</th><td><span title="utf8mb4_unicode_520_ci">varchar(192)</span> <i>NULL</i></td><td>
-</td></tr><tr><th>first_name</th><td><span title="utf8mb4_unicode_520_ci">varchar(192)</span> <i>NULL</i></td><td>
-</td></tr><tr class="odd"><th>last_name</th><td><span title="utf8mb4_unicode_520_ci">varchar(192)</span> <i>NULL</i></td><td>
-</td></tr><tr><th>email</th><td><span title="utf8mb4_unicode_520_ci">varchar(190)</span></td><td>
-</td></tr><tr class="odd"><th>timezone</th><td><span title="utf8mb4_unicode_520_ci">varchar(192)</span> <i>NULL</i></td><td>
-</td></tr><tr><th>address_line_1</th><td><span title="utf8mb4_unicode_520_ci">varchar(192)</span> <i>NULL</i></td><td>
-</td></tr><tr class="odd"><th>address_line_2</th><td><span title="utf8mb4_unicode_520_ci">varchar(192)</span> <i>NULL</i></td><td>
-</td></tr><tr><th>postal_code</th><td><span title="utf8mb4_unicode_520_ci">varchar(192)</span> <i>NULL</i></td><td>
-</td></tr><tr class="odd"><th>city</th><td><span title="utf8mb4_unicode_520_ci">varchar(192)</span> <i>NULL</i></td><td>
-</td></tr><tr><th>state</th><td><span title="utf8mb4_unicode_520_ci">varchar(192)</span> <i>NULL</i></td><td>
-</td></tr><tr class="odd"><th>country</th><td><span title="utf8mb4_unicode_520_ci">varchar(192)</span> <i>NULL</i></td><td>
-</td></tr><tr><th>ip</th><td><span title="utf8mb4_unicode_520_ci">varchar(20)</span> <i>NULL</i></td><td>
-</td></tr><tr class="odd"><th>latitude</th><td><span title="">decimal(10,8)</span> <i>NULL</i></td><td>
-</td></tr><tr><th>longitude</th><td><span title="">decimal(10,8)</span> <i>NULL</i></td><td>
-</td></tr><tr class="odd"><th>total_points</th><td><span title="">int unsigned</span> <span title="Default value">[<b>0</b>]</span></td><td>
-</td></tr><tr><th>life_time_value</th><td><span title="">int unsigned</span> <span title="Default value">[<b>0</b>]</span></td><td>
-</td></tr><tr class="odd"><th>phone</th><td><span title="utf8mb4_unicode_520_ci">varchar(50)</span> <i>NULL</i></td><td>
-</td></tr><tr><th>status</th><td><span title="utf8mb4_unicode_520_ci">varchar(50)</span> <span title="Default value">[<b>subscribed</b>]</span></td><td>
-</td></tr><tr class="odd"><th>contact_type</th><td><span title="utf8mb4_unicode_520_ci">varchar(50)</span> <i>NULL</i> <span title="Default value">[<b>lead</b>]</span></td><td>
-</td></tr><tr><th>source</th><td><span title="utf8mb4_unicode_520_ci">varchar(50)</span> <i>NULL</i></td><td>
-</td></tr><tr class="odd"><th>avatar</th><td><span title="utf8mb4_unicode_520_ci">varchar(192)</span> <i>NULL</i></td><td>
-</td></tr><tr><th>date_of_birth</th><td><span title="">date</span> <i>NULL</i></td><td>
-</td></tr><tr class="odd"><th>created_at</th><td><span title="">timestamp</span> <i>NULL</i></td><td>
-</td></tr><tr><th>last_activity</th><td><span title="">timestamp</span> <i>NULL</i></td><td>
-</td></tr><tr class="odd"><th>updated_at</th><td><span title="">timestamp</span> <i>NULL</i></td><td>
-</td></tr></tbody></table>
-
-
-## fc_tags
-Storing the tags information
+This table stores the basic information of a board.
 
 <table cellspacing="0" class="nowrap">
-<thead><tr><th>Column</th><td>Type</td><td>Comment</td></tr></thead>
-<tbody><tr><th>id</th><td><span title="">int unsigned</span> <i>Auto Increment</i></td><td>
-</td></tr><tr class="odd"><th>title</th><td><span title="utf8mb4_unicode_520_ci">varchar(192)</span></td><td>
-</td></tr><tr><th>slug</th><td><span title="utf8mb4_unicode_520_ci">varchar(192)</span></td><td>
-</td></tr><tr class="odd"><th>description</th><td><span title="utf8mb4_unicode_520_ci">tinytext</span> <i>NULL</i></td><td>
-</td></tr><tr><th>created_at</th><td><span title="">timestamp</span> <i>NULL</i></td><td>
-</td></tr><tr class="odd"><th>updated_at</th><td><span title="">timestamp</span> <i>NULL</i></td><td>
-</td></tr></tbody></table>
-
-## fc_lists
-Storing the lists information
-<table cellspacing="0" class="nowrap">
-<thead><tr><th>Column</th><td>Type</td><td>Comment</td></tr></thead>
-<tbody><tr><th>id</th><td><span title="">int unsigned</span> <i>Auto Increment</i></td><td>
-</td></tr><tr class="odd"><th>title</th><td><span title="utf8mb4_unicode_520_ci">varchar(192)</span></td><td>
-</td></tr><tr><th>slug</th><td><span title="utf8mb4_unicode_520_ci">varchar(192)</span></td><td>
-</td></tr><tr class="odd"><th>description</th><td><span title="utf8mb4_unicode_520_ci">tinytext</span> <i>NULL</i></td><td>
-</td></tr><tr><th>is_public</th><td><span title="">tinyint(1)</span> <i>NULL</i> <span title="Default value">[<b>0</b>]</span></td><td>
-</td></tr><tr class="odd"><th>created_at</th><td><span title="">timestamp</span> <i>NULL</i></td><td>
-</td></tr><tr><th>updated_at</th><td><span title="">timestamp</span> <i>NULL</i></td><td>
-</td></tr></tbody></table>
-
-## _fc_subscriber_pivot
-Pivot Table for subscriber's tag and list relationship
-<table cellspacing="0" class="nowrap">
-<thead><tr><th>Column</th><td>Type</td><td>Comment</td></tr></thead>
-<tbody><tr><th>id</th><td><span title="">bigint unsigned</span> <i>Auto Increment</i></td><td>
-</td></tr><tr class="odd"><th>subscriber_id</th><td><span title="">bigint unsigned</span></td><td>
-</td></tr><tr><th>object_id</th><td><span title="">bigint unsigned</span></td><td>
-</td></tr><tr class="odd"><th>object_type</th><td><span title="utf8mb4_unicode_520_ci">varchar(50)</span></td><td>
-</td></tr><tr><th>status</th><td><span title="utf8mb4_unicode_520_ci">varchar(50)</span> <i>NULL</i></td><td>
-</td></tr><tr class="odd"><th>is_public</th><td><span title="">tinyint(1)</span> <span title="Default value">[<b>1</b>]</span></td><td>
-</td></tr><tr><th>created_at</th><td><span title="">timestamp</span> <i>NULL</i></td><td>
-</td></tr><tr class="odd"><th>updated_at</th><td><span title="">timestamp</span> <i>NULL</i></td><td>
-</td></tr></tbody></table>
-
-## _fc_subscriber_meta
-Meta table for subscribers
-<table cellspacing="0" class="nowrap">
-<thead><tr><th>Column</th><td>Type</td><td>Comment</td></tr></thead>
-<tbody><tr><th>id</th><td><span title="">bigint unsigned</span> <i>Auto Increment</i></td><td>
-</td></tr><tr class="odd"><th>subscriber_id</th><td><span title="">bigint unsigned</span></td><td>
-</td></tr><tr><th>created_by</th><td><span title="">bigint unsigned</span></td><td>
-</td></tr><tr class="odd"><th>object_type</th><td><span title="utf8mb4_unicode_520_ci">varchar(50)</span> <i>NULL</i> <span title="Default value">[<b>option</b>]</span></td><td>
-</td></tr><tr><th>key</th><td><span title="utf8mb4_unicode_520_ci">varchar(192)</span></td><td>
-</td></tr><tr class="odd"><th>value</th><td><span title="utf8mb4_unicode_520_ci">longtext</span> <i>NULL</i></td><td>
-</td></tr><tr><th>created_at</th><td><span title="">timestamp</span> <i>NULL</i></td><td>
-</td></tr><tr class="odd"><th>updated_at</th><td><span title="">timestamp</span> <i>NULL</i></td><td>
-</td></tr></tbody></table>
-
-## _fc_subscriber_notes
-Subscriber's Note table
-<table cellspacing="0" class="nowrap">
-<thead><tr><th>Column</th><td>Type</td><td>Comment</td></tr></thead>
-<tbody><tr><th>id</th><td><span title="">bigint unsigned</span> <i>Auto Increment</i></td><td>
-</td></tr><tr class="odd"><th>subscriber_id</th><td><span title="">bigint unsigned</span></td><td>
-</td></tr><tr><th>parent_id</th><td><span title="">bigint unsigned</span> <i>NULL</i></td><td>
-</td></tr><tr class="odd"><th>created_by</th><td><span title="">bigint unsigned</span> <i>NULL</i></td><td>
-</td></tr><tr><th>status</th><td><span title="utf8mb4_unicode_520_ci">varchar(50)</span> <i>NULL</i> <span title="Default value">[<b>open</b>]</span></td><td>
-</td></tr><tr class="odd"><th>type</th><td><span title="utf8mb4_unicode_520_ci">varchar(50)</span> <i>NULL</i> <span title="Default value">[<b>note</b>]</span></td><td>
-</td></tr><tr><th>is_private</th><td><span title="">tinyint</span> <i>NULL</i> <span title="Default value">[<b>1</b>]</span></td><td>
-</td></tr><tr class="odd"><th>title</th><td><span title="utf8mb4_unicode_520_ci">varchar(192)</span> <i>NULL</i></td><td>
-</td></tr><tr><th>description</th><td><span title="utf8mb4_unicode_520_ci">longtext</span> <i>NULL</i></td><td>
-</td></tr><tr class="odd"><th>created_at</th><td><span title="">timestamp</span> <i>NULL</i></td><td>
-</td></tr><tr><th>updated_at</th><td><span title="">timestamp</span> <i>NULL</i></td><td>
-</td></tr></tbody></table>
+<thead><tr><th>Column</th><th>Type</th><th>Comment</th></tr></thead>
+<tbody>
+<tr><th>id</th><td>INT UNSIGNED <i>Auto Increment</i></td><td>Primary key of the board</td></tr>
+<tr><th>parent_id</th><td>INT UNSIGNED <i>NULL</i></td><td>For SuperBoard like Project or Company, for sub-board etc.</td></tr>
+<tr><th>title</th><td>TEXT <i>NULL</i></td><td>Title of the board, it can be longer than 255 characters.</td></tr>
+<tr><th>description</th><td>LONGTEXT <i>NULL</i></td><td>Description of the board</td></tr>
+<tr><th>type</th><td>VARCHAR(50) <i>NULL</i></td><td>Type of the board, e.g., to-do, sales-pipeline, roadmap, task, etc.</td></tr>
+<tr><th>currency</th><td>VARCHAR(50) <i>NULL</i></td><td>Currency related to the board</td></tr>
+<tr><th>background</th><td>TEXT <i>NULL</i></td><td>Serialized array for background settings</td></tr>
+<tr><th>settings</th><td>TEXT <i>NULL</i></td><td>Serialized array for other board settings</td></tr>
+<tr><th>created_by</th><td>INT UNSIGNED</td><td>ID of the user who created the board</td></tr>
+<tr><th>archived_at</th><td>TIMESTAMP <i>NULL</i></td><td>Timestamp when the board was archived</td></tr>
+<tr><th>created_at</th><td>TIMESTAMP <i>NULL</i></td><td>Timestamp when the board was created</td></tr>
+<tr><th>updated_at</th><td>TIMESTAMP <i>NULL</i></td><td>Timestamp when the board was last updated</td></tr>
+</tbody>
+</table>
 
 
-## _fc_subscriber_notes
-Subscriber's Note table
-<table cellspacing="0" class="nowrap">
-<thead><tr><th>Column</th><td>Type</td><td>Comment</td></tr></thead>
-<tbody><tr><th>id</th><td><span title="">bigint unsigned</span> <i>Auto Increment</i></td><td>
-</td></tr><tr class="odd"><th>subscriber_id</th><td><span title="">bigint unsigned</span></td><td>
-</td></tr><tr><th>parent_id</th><td><span title="">bigint unsigned</span> <i>NULL</i></td><td>
-</td></tr><tr class="odd"><th>created_by</th><td><span title="">bigint unsigned</span> <i>NULL</i></td><td>
-</td></tr><tr><th>status</th><td><span title="utf8mb4_unicode_520_ci">varchar(50)</span> <i>NULL</i> <span title="Default value">[<b>open</b>]</span></td><td>
-</td></tr><tr class="odd"><th>type</th><td><span title="utf8mb4_unicode_520_ci">varchar(50)</span> <i>NULL</i> <span title="Default value">[<b>note</b>]</span></td><td>
-</td></tr><tr><th>is_private</th><td><span title="">tinyint</span> <i>NULL</i> <span title="Default value">[<b>1</b>]</span></td><td>
-</td></tr><tr class="odd"><th>title</th><td><span title="utf8mb4_unicode_520_ci">varchar(192)</span> <i>NULL</i></td><td>
-</td></tr><tr><th>description</th><td><span title="utf8mb4_unicode_520_ci">longtext</span> <i>NULL</i></td><td>
-</td></tr><tr class="odd"><th>created_at</th><td><span title="">timestamp</span> <i>NULL</i></td><td>
-</td></tr><tr><th>updated_at</th><td><span title="">timestamp</span> <i>NULL</i></td><td>
-</td></tr></tbody></table>
+## _fbs_board_terms Table
 
-## _fc_campaigns
-Campaigns Table. This table store email campaigns, sequence emails, email action from automation
-<table cellspacing="0" class="nowrap">
-<thead><tr><th>Column</th><td>Type</td><td>Comment</td></tr></thead>
-<tbody><tr><th>id</th><td><span title="">bigint unsigned</span> <i>Auto Increment</i></td><td>
-</td></tr><tr class="odd"><th>parent_id</th><td><span title="">bigint unsigned</span> <i>NULL</i></td><td>
-</td></tr><tr><th>type</th><td><span title="utf8mb4_unicode_520_ci">varchar(50)</span> <span title="Default value">[<b>campaign</b>]</span></td><td>
-</td></tr><tr class="odd"><th>title</th><td><span title="utf8mb4_unicode_520_ci">varchar(192)</span></td><td>
-</td></tr><tr><th>available_urls</th><td><span title="utf8mb4_unicode_520_ci">text</span> <i>NULL</i></td><td>
-</td></tr><tr class="odd"><th>slug</th><td><span title="utf8mb4_unicode_520_ci">varchar(192)</span></td><td>
-</td></tr><tr><th>status</th><td><span title="utf8mb4_unicode_520_ci">varchar(50)</span></td><td>
-</td></tr><tr class="odd"><th>template_id</th><td><span title="">bigint unsigned</span> <i>NULL</i></td><td>
-</td></tr><tr><th>email_subject</th><td><span title="utf8mb4_unicode_520_ci">varchar(192)</span> <i>NULL</i></td><td>
-</td></tr><tr class="odd"><th>email_pre_header</th><td><span title="utf8mb4_unicode_520_ci">varchar(192)</span> <i>NULL</i></td><td>
-</td></tr><tr><th>email_body</th><td><span title="utf8mb4_unicode_520_ci">longtext</span></td><td>
-</td></tr><tr class="odd"><th>recipients_count</th><td><span title="">int</span> <span title="Default value">[<b>0</b>]</span></td><td>
-</td></tr><tr><th>delay</th><td><span title="">int</span> <i>NULL</i> <span title="Default value">[<b>0</b>]</span></td><td>
-</td></tr><tr class="odd"><th>utm_status</th><td><span title="">tinyint(1)</span> <i>NULL</i> <span title="Default value">[<b>0</b>]</span></td><td>
-</td></tr><tr><th>utm_source</th><td><span title="utf8mb4_unicode_520_ci">varchar(192)</span> <i>NULL</i></td><td>
-</td></tr><tr class="odd"><th>utm_medium</th><td><span title="utf8mb4_unicode_520_ci">varchar(192)</span> <i>NULL</i></td><td>
-</td></tr><tr><th>utm_campaign</th><td><span title="utf8mb4_unicode_520_ci">varchar(192)</span> <i>NULL</i></td><td>
-</td></tr><tr class="odd"><th>utm_term</th><td><span title="utf8mb4_unicode_520_ci">varchar(192)</span> <i>NULL</i></td><td>
-</td></tr><tr><th>utm_content</th><td><span title="utf8mb4_unicode_520_ci">varchar(192)</span> <i>NULL</i></td><td>
-</td></tr><tr class="odd"><th>design_template</th><td><span title="utf8mb4_unicode_520_ci">varchar(192)</span> <i>NULL</i></td><td>
-</td></tr><tr><th>scheduled_at</th><td><span title="">timestamp</span> <i>NULL</i></td><td>
-</td></tr><tr class="odd"><th>settings</th><td><span title="utf8mb4_unicode_520_ci">longtext</span> <i>NULL</i></td><td>
-</td></tr><tr><th>created_by</th><td><span title="">bigint unsigned</span> <i>NULL</i></td><td>
-</td></tr><tr class="odd"><th>created_at</th><td><span title="">timestamp</span> <i>NULL</i></td><td>
-</td></tr><tr><th>updated_at</th><td><span title="">timestamp</span> <i>NULL</i></td><td>
-</td></tr></tbody></table>
-
-## _fc_campaign_emails
-Store individual emails of a campaign
+This table is used for storing the board labels and stages.
 
 <table cellspacing="0" class="nowrap">
-<thead><tr><th>Column</th><td>Type</td><td>Comment</td></tr></thead>
-<tbody><tr><th>id</th><td><span title="">bigint unsigned</span> <i>Auto Increment</i></td><td>
-</td></tr><tr class="odd"><th>campaign_id</th><td><span title="">bigint unsigned</span> <i>NULL</i></td><td>
-</td></tr><tr><th>email_type</th><td><span title="utf8mb4_unicode_520_ci">varchar(50)</span> <i>NULL</i> <span title="Default value">[<b>campaign</b>]</span></td><td>
-</td></tr><tr class="odd"><th>subscriber_id</th><td><span title="">bigint unsigned</span> <i>NULL</i></td><td>
-</td></tr><tr><th>email_subject_id</th><td><span title="">bigint unsigned</span> <i>NULL</i></td><td>
-</td></tr><tr class="odd"><th>email_address</th><td><span title="utf8mb4_unicode_520_ci">varchar(192)</span></td><td>
-</td></tr><tr><th>email_subject</th><td><span title="utf8mb4_unicode_520_ci">varchar(192)</span> <i>NULL</i></td><td>
-</td></tr><tr class="odd"><th>email_body</th><td><span title="utf8mb4_unicode_520_ci">longtext</span> <i>NULL</i></td><td>
-</td></tr><tr><th>email_headers</th><td><span title="utf8mb4_unicode_520_ci">text</span> <i>NULL</i></td><td>
-</td></tr><tr class="odd"><th>is_open</th><td><span title="">tinyint(1)</span> <span title="Default value">[<b>0</b>]</span></td><td>
-</td></tr><tr><th>is_parsed</th><td><span title="">tinyint(1)</span> <span title="Default value">[<b>0</b>]</span></td><td>
-</td></tr><tr class="odd"><th>click_counter</th><td><span title="">int</span> <i>NULL</i></td><td>
-</td></tr><tr><th>status</th><td><span title="utf8mb4_unicode_520_ci">varchar(50)</span> <span title="Default value">[<b>draft</b>]</span></td><td>
-</td></tr><tr class="odd"><th>note</th><td><span title="utf8mb4_unicode_520_ci">text</span> <i>NULL</i></td><td>
-</td></tr><tr><th>scheduled_at</th><td><span title="">timestamp</span> <i>NULL</i></td><td>
-</td></tr><tr class="odd"><th>email_hash</th><td><span title="utf8mb4_unicode_520_ci">varchar(192)</span> <i>NULL</i></td><td>
-</td></tr><tr><th>created_at</th><td><span title="">timestamp</span> <i>NULL</i></td><td>
-</td></tr><tr class="odd"><th>updated_at</th><td><span title="">timestamp</span> <i>NULL</i></td><td>
-</td></tr></tbody></table>
+<thead><tr><th>Column</th><th>Type</th><th>Comment</th></tr></thead>
+<tbody>
+<tr><th>id</th><td>INT UNSIGNED <i>Auto Increment</i></td><td>Primary key of the term</td></tr>
+<tr><th>board_id</th><td>INT UNSIGNED</td><td>ID of the board associated with the term</td></tr>
+<tr><th>title</th><td>VARCHAR(100) <i>NULL</i></td><td>Title of the stage or label. In case of a label, the title can be null with only a color.</td></tr>
+<tr><th>slug</th><td>VARCHAR(100) <i>NULL</i></td><td>Slug of the stage or label</td></tr>
+<tr><th>type</th><td>VARCHAR(50) NOT NULL DEFAULT 'stage'</td><td>Type of the term: 'stage' or 'label'</td></tr>
+<tr><th>position</th><td>DECIMAL(10,2) NOT NULL DEFAULT '1'</td><td>Position of the stage or label. 1 = first, 2 = second, etc.</td></tr>
+<tr><th>color</th><td>VARCHAR(50) <i>NULL</i></td><td>Text color of the stage or label</td></tr>
+<tr><th>bg_color</th><td>VARCHAR(50) <i>NULL</i></td><td>Background color of the stage or label</td></tr>
+<tr><th>settings</th><td>TEXT <i>NULL</i></td><td>Serialized settings for the term</td></tr>
+<tr><th>archived_at</th><td>TIMESTAMP <i>NULL</i></td><td>Timestamp when the term was archived</td></tr>
+<tr><th>created_at</th><td>TIMESTAMP <i>NULL</i></td><td>Timestamp when the term was created</td></tr>
+<tr><th>updated_at</th><td>TIMESTAMP <i>NULL</i></td><td>Timestamp when the term was last updated</td></tr>
+</tbody>
+</table>
 
-## _fc_campaign_url_metrics
-Email Open/Click Tracking Table
+## _fbs_tasks Table
+
+This table is used for managing tasks within the board.
 
 <table cellspacing="0" class="nowrap">
-<thead><tr><th>Column</th><td>Type</td><td>Comment</td></tr></thead>
-<tbody><tr><th>id</th><td><span title="">bigint unsigned</span> <i>Auto Increment</i></td><td>
-</td></tr><tr class="odd"><th>url_id</th><td><span title="">bigint unsigned</span> <i>NULL</i></td><td>
-</td></tr><tr><th>campaign_id</th><td><span title="">bigint unsigned</span> <i>NULL</i></td><td>
-</td></tr><tr class="odd"><th>subscriber_id</th><td><span title="">bigint unsigned</span> <i>NULL</i></td><td>
-</td></tr><tr><th>type</th><td><span title="utf8mb4_unicode_520_ci">varchar(50)</span> <i>NULL</i> <span title="Default value">[<b>click</b>]</span></td><td>
-</td></tr><tr class="odd"><th>ip_address</th><td><span title="utf8mb4_unicode_520_ci">varchar(30)</span> <i>NULL</i></td><td>
-</td></tr><tr><th>country</th><td><span title="utf8mb4_unicode_520_ci">varchar(40)</span> <i>NULL</i></td><td>
-</td></tr><tr class="odd"><th>city</th><td><span title="utf8mb4_unicode_520_ci">varchar(40)</span> <i>NULL</i></td><td>
-</td></tr><tr><th>counter</th><td><span title="">int unsigned</span> <span title="Default value">[<b>1</b>]</span></td><td>
-</td></tr><tr class="odd"><th>created_at</th><td><span title="">timestamp</span> <i>NULL</i></td><td>
-</td></tr><tr><th>updated_at</th><td><span title="">timestamp</span> <i>NULL</i></td><td>
-</td></tr></tbody></table>
+<thead><tr><th>Column</th><th>Type</th><th>Comment</th></tr></thead>
+<tbody>
+<tr><th>id</th><td>INT UNSIGNED <i>Auto Increment</i></td><td>Primary key of the task</td></tr>
+<tr><th>parent_id</th><td>INT UNSIGNED <i>NULL</i></td><td>Parent task ID if this is a subtask</td></tr>
+<tr><th>board_id</th><td>INT UNSIGNED <i>NULL</i></td><td>ID of the board the task is in</td></tr>
+<tr><th>crm_contact_id</th><td>BIGINT UNSIGNED <i>NULL</i></td><td>User ID, Contact ID, Deal ID, Subscriber ID, etc.</td></tr>
+<tr><th>title</th><td>TEXT <i>NULL</i></td><td>Title or name of the task; it can be longer than 255 characters.</td></tr>
+<tr><th>slug</th><td>VARCHAR(255) <i>NULL</i></td><td>Slug of the task</td></tr>
+<tr><th>type</th><td>VARCHAR(50) <i>NULL</i></td><td>Type of the task, e.g., task, deal, idea, to-do, etc.</td></tr>
+<tr><th>status</th><td>VARCHAR(50) <i>NULL</i> DEFAULT 'open'</td><td>Status of the task: open, completed; for boards: won or lost for pipelines</td></tr>
+<tr><th>stage_id</th><td>INT UNSIGNED <i>NULL</i></td><td>ID of the stage the task is in</td></tr>
+<tr><th>source</th><td>VARCHAR(50) <i>NULL</i> DEFAULT 'web'</td><td>Source of the task, e.g., web, funnel, contact-section, etc.</td></tr>
+<tr><th>source_id</th><td>VARCHAR(255) <i>NULL</i></td><td>Source ID related to the task</td></tr>
+<tr><th>priority</th><td>VARCHAR(50) <i>NULL</i> DEFAULT 'low'</td><td>Priority of the task: low, medium, high</td></tr>
+<tr><th>description</th><td>LONGTEXT <i>NULL</i></td><td>Description of the task</td></tr>
+<tr><th>lead_value</th><td>DECIMAL(10,2) DEFAULT 0.00</td><td>Lead value associated with the task</td></tr>
+<tr><th>created_by</th><td>BIGINT UNSIGNED <i>NULL</i></td><td>ID of the user who created the task</td></tr>
+<tr><th>position</th><td>DECIMAL(10,2) NOT NULL DEFAULT '1'</td><td>Position of the task within the board. 1 = first, 2 = second, etc.</td></tr>
+<tr><th>comments_count</th><td>INT UNSIGNED <i>NULL</i> DEFAULT 0</td><td>Number of comments associated with the task</td></tr>
+<tr><th>issue_number</th><td>INT UNSIGNED <i>NULL</i></td><td>Board-specific issue number to track the task</td></tr>
+<tr><th>reminder_type</th><td>VARCHAR(100) <i>NULL</i> DEFAULT 'none'</td><td>Type of reminder set for the task</td></tr>
+<tr><th>settings</th><td>TEXT <i>NULL</i></td><td>Serialized settings for the task</td></tr>
+<tr><th>remind_at</th><td>TIMESTAMP <i>NULL</i></td><td>Timestamp when a reminder is set for the task</td></tr>
+<tr><th>started_at</th><td>TIMESTAMP <i>NULL</i></td><td>Timestamp when the task was started</td></tr>
+<tr><th>due_at</th><td>TIMESTAMP <i>NULL</i></td><td>Timestamp when the task is due</td></tr>
+<tr><th>last_completed_at</th><td>TIMESTAMP <i>NULL</i></td><td>Timestamp when the task was last completed</td></tr>
+<tr><th>archived_at</th><td>TIMESTAMP <i>NULL</i></td><td>Timestamp when the task was archived</td></tr>
+<tr><th>created_at</th><td>TIMESTAMP <i>NULL</i></td><td>Timestamp when the task was created</td></tr>
+<tr><th>updated_at</th><td>TIMESTAMP <i>NULL</i></td><td>Timestamp when the task was last updated</td></tr>
+</tbody>
+</table>
 
 
-## _fc_sequence_tracker
-Tracking Database for Email Sequences
+## _fbs_task_metas Table
 
-<table cellspacing="0" class="nowrap">
-<thead><tr><th>Column</th><td>Type</td><td>Comment</td></tr></thead>
-<tbody><tr><th>id</th><td><span title="">bigint unsigned</span> <i>Auto Increment</i></td><td>
-</td></tr><tr class="odd"><th>campaign_id</th><td><span title="">bigint unsigned</span> <i>NULL</i></td><td>
-</td></tr><tr><th>last_sequence_id</th><td><span title="">bigint unsigned</span> <i>NULL</i></td><td>
-</td></tr><tr class="odd"><th>subscriber_id</th><td><span title="">bigint unsigned</span> <i>NULL</i></td><td>
-</td></tr><tr><th>next_sequence_id</th><td><span title="">bigint unsigned</span> <i>NULL</i></td><td>
-</td></tr><tr class="odd"><th>status</th><td><span title="utf8mb4_unicode_520_ci">varchar(50)</span> <i>NULL</i> <span title="Default value">[<b>active</b>]</span></td><td>
-</td></tr><tr><th>type</th><td><span title="utf8mb4_unicode_520_ci">varchar(50)</span> <i>NULL</i> <span title="Default value">[<b>sequence_tracker</b>]</span></td><td>
-</td></tr><tr class="odd"><th>last_executed_time</th><td><span title="">timestamp</span> <i>NULL</i></td><td>
-</td></tr><tr><th>next_execution_time</th><td><span title="">timestamp</span> <i>NULL</i></td><td>
-</td></tr><tr class="odd"><th>notes</th><td><span title="utf8mb4_unicode_520_ci">text</span> <i>NULL</i></td><td>
-</td></tr><tr><th>created_at</th><td><span title="">timestamp</span> <i>NULL</i></td><td>
-</td></tr><tr class="odd"><th>updated_at</th><td><span title="">timestamp</span> <i>NULL</i></td><td>
-</td></tr></tbody></table>
-
-## _fc_funnels
-Automation / Funnel Storage Table
-
-<table cellspacing="0" class="nowrap">
-<thead><tr><th>Column</th><td>Type</td><td>Comment</td></tr></thead>
-<tbody><tr><th>id</th><td><span title="">bigint unsigned</span> <i>Auto Increment</i></td><td>
-</td></tr><tr class="odd"><th>type</th><td><span title="utf8mb4_unicode_520_ci">varchar(50)</span> <span title="Default value">[<b>funnel</b>]</span></td><td>
-</td></tr><tr><th>title</th><td><span title="utf8mb4_unicode_520_ci">varchar(192)</span></td><td>
-</td></tr><tr class="odd"><th>trigger_name</th><td><span title="utf8mb4_unicode_520_ci">varchar(150)</span> <i>NULL</i></td><td>
-</td></tr><tr><th>status</th><td><span title="utf8mb4_unicode_520_ci">varchar(50)</span> <i>NULL</i> <span title="Default value">[<b>draft</b>]</span></td><td>
-</td></tr><tr class="odd"><th>conditions</th><td><span title="utf8mb4_unicode_520_ci">text</span> <i>NULL</i></td><td>
-</td></tr><tr><th>settings</th><td><span title="utf8mb4_unicode_520_ci">text</span> <i>NULL</i></td><td>
-</td></tr><tr class="odd"><th>created_by</th><td><span title="">bigint unsigned</span> <i>NULL</i></td><td>
-</td></tr><tr><th>created_at</th><td><span title="">timestamp</span> <i>NULL</i></td><td>
-</td></tr><tr class="odd"><th>updated_at</th><td><span title="">timestamp</span> <i>NULL</i></td><td>
-</td></tr></tbody></table>
-
-
-## _fc_funnel_sequences
-Automation / Funnel Sequences Storage Table
-<table cellspacing="0" class="nowrap">
-<thead><tr><th>Column</th><td>Type</td><td>Comment</td></tr></thead>
-<tbody><tr><th>id</th><td><span title="">bigint unsigned</span> <i>Auto Increment</i></td><td>
-</td></tr><tr class="odd"><th>funnel_id</th><td><span title="">bigint unsigned</span> <i>NULL</i></td><td>
-</td></tr><tr><th>parent_id</th><td><span title="">bigint unsigned</span> <i>NULL</i> <span title="Default value">[<b>0</b>]</span></td><td>
-</td></tr><tr class="odd"><th>action_name</th><td><span title="utf8mb4_unicode_520_ci">varchar(192)</span> <i>NULL</i></td><td>
-</td></tr><tr><th>condition_type</th><td><span title="utf8mb4_unicode_520_ci">varchar(192)</span> <i>NULL</i></td><td>
-</td></tr><tr class="odd"><th>type</th><td><span title="utf8mb4_unicode_520_ci">varchar(50)</span> <i>NULL</i> <span title="Default value">[<b>sequence</b>]</span></td><td>
-</td></tr><tr><th>title</th><td><span title="utf8mb4_unicode_520_ci">varchar(192)</span> <i>NULL</i></td><td>
-</td></tr><tr class="odd"><th>description</th><td><span title="utf8mb4_unicode_520_ci">varchar(192)</span> <i>NULL</i></td><td>
-</td></tr><tr><th>status</th><td><span title="utf8mb4_unicode_520_ci">varchar(50)</span> <i>NULL</i> <span title="Default value">[<b>draft</b>]</span></td><td>
-</td></tr><tr class="odd"><th>conditions</th><td><span title="utf8mb4_unicode_520_ci">text</span> <i>NULL</i></td><td>
-</td></tr><tr><th>settings</th><td><span title="utf8mb4_unicode_520_ci">text</span> <i>NULL</i></td><td>
-</td></tr><tr class="odd"><th>note</th><td><span title="utf8mb4_unicode_520_ci">text</span> <i>NULL</i></td><td>
-</td></tr><tr><th>delay</th><td><span title="">int unsigned</span> <i>NULL</i></td><td>
-</td></tr><tr class="odd"><th>c_delay</th><td><span title="">int unsigned</span> <i>NULL</i></td><td>
-</td></tr><tr><th>sequence</th><td><span title="">int unsigned</span> <i>NULL</i></td><td>
-</td></tr><tr class="odd"><th>created_by</th><td><span title="">bigint unsigned</span> <i>NULL</i></td><td>
-</td></tr><tr><th>created_at</th><td><span title="">timestamp</span> <i>NULL</i></td><td>
-</td></tr><tr class="odd"><th>updated_at</th><td><span title="">timestamp</span> <i>NULL</i></td><td>
-</td></tr></tbody></table>
-
-## _fc_funnel_subscribers
-Funnel Sequence - Funnel - Subscriber Relationship DB Table
+This table is used for storing metadata related to tasks.
 
 <table cellspacing="0" class="nowrap">
-<thead><tr><th>Column</th><td>Type</td><td>Comment</td></tr></thead>
-<tbody><tr><th>id</th><td><span title="">bigint unsigned</span> <i>Auto Increment</i></td><td>
-</td></tr><tr class="odd"><th>funnel_id</th><td><span title="">bigint unsigned</span> <i>NULL</i></td><td>
-</td></tr><tr><th>starting_sequence_id</th><td><span title="">bigint unsigned</span> <i>NULL</i></td><td>
-</td></tr><tr class="odd"><th>next_sequence</th><td><span title="">bigint unsigned</span> <i>NULL</i></td><td>
-</td></tr><tr><th>subscriber_id</th><td><span title="">bigint unsigned</span> <i>NULL</i></td><td>
-</td></tr><tr class="odd"><th>last_sequence_id</th><td><span title="">bigint unsigned</span> <i>NULL</i></td><td>
-</td></tr><tr><th>next_sequence_id</th><td><span title="">bigint unsigned</span> <i>NULL</i></td><td>
-</td></tr><tr class="odd"><th>last_sequence_status</th><td><span title="utf8mb4_unicode_520_ci">varchar(50)</span> <i>NULL</i> <span title="Default value">[<b>pending</b>]</span></td><td>
-</td></tr><tr><th>status</th><td><span title="utf8mb4_unicode_520_ci">varchar(50)</span> <i>NULL</i> <span title="Default value">[<b>active</b>]</span></td><td>
-</td></tr><tr class="odd"><th>type</th><td><span title="utf8mb4_unicode_520_ci">varchar(50)</span> <i>NULL</i> <span title="Default value">[<b>funnel</b>]</span></td><td>
-</td></tr><tr><th>last_executed_time</th><td><span title="">timestamp</span> <i>NULL</i></td><td>
-</td></tr><tr class="odd"><th>next_execution_time</th><td><span title="">timestamp</span> <i>NULL</i></td><td>
-</td></tr><tr><th>notes</th><td><span title="utf8mb4_unicode_520_ci">text</span> <i>NULL</i></td><td>
-</td></tr><tr class="odd"><th>source_trigger_name</th><td><span title="utf8mb4_unicode_520_ci">varchar(192)</span> <i>NULL</i></td><td>
-</td></tr><tr><th>source_ref_id</th><td><span title="">bigint unsigned</span> <i>NULL</i></td><td>
-</td></tr><tr class="odd"><th>created_at</th><td><span title="">timestamp</span> <i>NULL</i></td><td>
-</td></tr><tr><th>updated_at</th><td><span title="">timestamp</span> <i>NULL</i></td><td>
-</td></tr></tbody></table>
+<thead><tr><th>Column</th><th>Type</th><th>Comment</th></tr></thead>
+<tbody>
+<tr><th>id</th><td>INT UNSIGNED <i>Auto Increment</i></td><td>Primary key of the task meta</td></tr>
+<tr><th>task_id</th><td>INT UNSIGNED</td><td>ID of the associated task</td></tr>
+<tr><th>key</th><td>VARCHAR(100)</td><td>Key for the meta information</td></tr>
+<tr><th>value</th><td>LONGTEXT <i>NULL</i></td><td>Value of the meta information</td></tr>
+<tr><th>created_at</th><td>TIMESTAMP <i>NULL</i></td><td>Timestamp when the meta was created</td></tr>
+<tr><th>updated_at</th><td>TIMESTAMP <i>NULL</i></td><td>Timestamp when the meta was last updated</td></tr>
+</tbody>
+</table> 
 
-## _fc_funnel_metrics
-Funnel Sequence - Tracking Table for a subscriber
+## _fbs_attachments Table
+
+This table stores information about attachments related to tasks.
 
 <table cellspacing="0" class="nowrap">
-<thead><tr><th>Column</th><td>Type</td><td>Comment</td></tr></thead>
-<tbody><tr><th>id</th><td><span title="">bigint unsigned</span> <i>Auto Increment</i></td><td>
-</td></tr><tr class="odd"><th>funnel_id</th><td><span title="">bigint unsigned</span> <i>NULL</i></td><td>
-</td></tr><tr><th>sequence_id</th><td><span title="">bigint unsigned</span> <i>NULL</i></td><td>
-</td></tr><tr class="odd"><th>subscriber_id</th><td><span title="">bigint unsigned</span> <i>NULL</i></td><td>
-</td></tr><tr><th>benchmark_value</th><td><span title="">bigint unsigned</span> <i>NULL</i> <span title="Default value">[<b>0</b>]</span></td><td>
-</td></tr><tr class="odd"><th>benchmark_currency</th><td><span title="utf8mb4_unicode_520_ci">varchar(10)</span> <i>NULL</i> <span title="Default value">[<b>USD</b>]</span></td><td>
-</td></tr><tr><th>status</th><td><span title="utf8mb4_unicode_520_ci">varchar(50)</span> <i>NULL</i> <span title="Default value">[<b>completed</b>]</span></td><td>
-</td></tr><tr class="odd"><th>notes</th><td><span title="utf8mb4_unicode_520_ci">text</span> <i>NULL</i></td><td>
-</td></tr><tr><th>created_at</th><td><span title="">timestamp</span> <i>NULL</i></td><td>
-</td></tr><tr class="odd"><th>updated_at</th><td><span title="">timestamp</span> <i>NULL</i></td><td>
-</td></tr></tbody></table>
+<thead><tr><th>Column</th><th>Type</th><th>Comment</th></tr></thead>
+<tbody>
+<tr><th>id</th><td>INT UNSIGNED <i>Auto Increment</i></td><td>Primary key of the attachment</td></tr>
+<tr><th>object_id</th><td>INT UNSIGNED</td><td>ID of the associated object (Task ID, Comment ID, or Board ID)</td></tr>
+<tr><th>object_type</th><td>VARCHAR(100) <i>DEFAULT 'TASK'</i></td><td>Type of the object (TASK, COMMENT, BOARD)</td></tr>
+<tr><th>attachment_type</th><td>VARCHAR(100) <i>NULL</i></td><td>Type of the attachment</td></tr>
+<tr><th>file_path</th><td>TEXT <i>NULL</i></td><td>File path of the attachment</td></tr>
+<tr><th>full_url</th><td>TEXT <i>NULL</i></td><td>Full URL of the attachment</td></tr>
+<tr><th>settings</th><td>TEXT <i>NULL</i></td><td>Serialized settings</td></tr>
+<tr><th>title</th><td>VARCHAR(192) <i>NULL</i></td><td>Title of the attachment</td></tr>
+<tr><th>file_hash</th><td>VARCHAR(192) <i>NULL</i></td><td>File hash for verifying integrity</td></tr>
+<tr><th>driver</th><td>VARCHAR(100) <i>DEFAULT 'local'</i></td><td>Storage driver (local, cloud, etc.)</td></tr>
+<tr><th>status</th><td>VARCHAR(100) <i>DEFAULT 'ACTIVE'</i></td><td>Status of the attachment (ACTIVE, INACTIVE, DELETED)</td></tr>
+<tr><th>file_size</th><td>VARCHAR(100) <i>NULL</i></td><td>Size of the file</td></tr>
+<tr><th>created_at</th><td>TIMESTAMP <i>NULL</i></td><td>Timestamp when the attachment was created</td></tr>
+<tr><th>updated_at</th><td>TIMESTAMP <i>NULL</i></td><td>Timestamp when the attachment was last updated</td></tr>
+</tbody>
+</table>
 
+## _fbs_comments Table
 
-## fc_contact_relations
-This table will be available for extended ecommerce module if you sync the data from Ecommerce / LMS
-
-<table cellspacing="0" class="nowrap">
-<thead><tr><th>Column</th><td>Type</td><td>Comment</td></tr></thead>
-<tbody><tr><th>id</th><td><span title="">bigint unsigned</span> <i>Auto Increment</i></td><td>
-</td></tr><tr class="odd"><th>subscriber_id</th><td><span title="">bigint unsigned</span></td><td>
-</td></tr><tr><th>provider</th><td><span title="utf8mb4_unicode_520_ci">varchar(100)</span></td><td>
-</td></tr><tr class="odd"><th>provider_id</th><td><span title="">bigint unsigned</span> <i>NULL</i></td><td>
-</td></tr><tr><th>first_order_date</th><td><span title="">timestamp</span> <i>NULL</i></td><td>
-</td></tr><tr class="odd"><th>last_order_date</th><td><span title="">timestamp</span> <i>NULL</i></td><td>
-</td></tr><tr><th>total_order_count</th><td><span title="">int</span> <i>NULL</i> <span title="Default value">[<b>0</b>]</span></td><td>
-</td></tr><tr class="odd"><th>total_order_value</th><td><span title="">decimal(10,2)</span> <i>NULL</i> <span title="Default value">[<b>0.00</b>]</span></td><td>
-</td></tr><tr><th>status</th><td><span title="utf8mb4_unicode_520_ci">varchar(100)</span> <i>NULL</i></td><td>
-</td></tr><tr class="odd"><th>commerce_taxonomies</th><td><span title="utf8mb4_unicode_520_ci">longtext</span> <i>NULL</i></td><td>
-</td></tr><tr><th>commerce_coupons</th><td><span title="utf8mb4_unicode_520_ci">longtext</span> <i>NULL</i></td><td>
-</td></tr><tr class="odd"><th>meta_col_1</th><td><span title="utf8mb4_unicode_520_ci">mediumtext</span> <i>NULL</i></td><td>
-</td></tr><tr><th>meta_col_2</th><td><span title="utf8mb4_unicode_520_ci">mediumtext</span> <i>NULL</i></td><td>
-</td></tr><tr class="odd"><th>created_at</th><td><span title="">timestamp</span> <i>NULL</i></td><td>
-</td></tr><tr><th>updated_at</th><td><span title="">timestamp</span> <i>NULL</i></td><td>
-</td></tr></tbody></table>
-
-
-## fc_contact_relation_items
-This table will be available for extended ecommerce module if you sync the data from Ecommerce / LMS for storing individual record for ecommerce / LMS contacts
+This table stores comments, notes, and replies related to tasks on boards.
 
 <table cellspacing="0" class="nowrap">
-<thead><tr><th>Column</th><td>Type</td><td>Comment</td></tr></thead>
-<tbody><tr><th>id</th><td><span title="">bigint unsigned</span> <i>Auto Increment</i></td><td>
-</td></tr><tr class="odd"><th>subscriber_id</th><td><span title="">bigint unsigned</span></td><td>
-</td></tr><tr><th>relation_id</th><td><span title="">bigint unsigned</span></td><td>
-</td></tr><tr class="odd"><th>provider</th><td><span title="utf8mb4_unicode_520_ci">varchar(100)</span></td><td>
-</td></tr><tr><th>origin_id</th><td><span title="">bigint unsigned</span> <i>NULL</i></td><td>
-</td></tr><tr class="odd"><th>item_id</th><td><span title="">bigint unsigned</span></td><td>
-</td></tr><tr><th>item_sub_id</th><td><span title="">bigint unsigned</span> <i>NULL</i></td><td>
-</td></tr><tr class="odd"><th>item_value</th><td><span title="">decimal(10,2)</span> <i>NULL</i></td><td>
-</td></tr><tr><th>status</th><td><span title="utf8mb4_unicode_520_ci">varchar(100)</span> <i>NULL</i></td><td>
-</td></tr><tr class="odd"><th>item_type</th><td><span title="utf8mb4_unicode_520_ci">varchar(100)</span> <i>NULL</i></td><td>
-</td></tr><tr><th>meta_col</th><td><span title="utf8mb4_unicode_520_ci">mediumtext</span> <i>NULL</i></td><td>
-</td></tr><tr class="odd"><th>created_at</th><td><span title="">timestamp</span> <i>NULL</i></td><td>
-</td></tr><tr><th>updated_at</th><td><span title="">timestamp</span> <i>NULL</i></td><td>
-</td></tr></tbody></table>
+<thead><tr><th>Column</th><th>Type</th><th>Comment</th></tr></thead>
+<tbody>
+<tr><th>id</th><td>INT UNSIGNED <i>Auto Increment</i></td><td>Primary key of the comment</td></tr>
+<tr><th>board_id</th><td>INT UNSIGNED</td><td>ID of the associated board</td></tr>
+<tr><th>task_id</th><td>INT UNSIGNED</td><td>ID of the associated task</td></tr>
+<tr><th>parent_id</th><td>BIGINT UNSIGNED <i>NULL</i></td><td>ID of the parent comment if it's a reply</td></tr>
+<tr><th>type</th><td>VARCHAR(50) <i>DEFAULT 'comment'</i></td><td>Type of the entry (comment, note, reply)</td></tr>
+<tr><th>privacy</th><td>VARCHAR(50) <i>DEFAULT 'public'</i></td><td>Privacy level of the comment (public, private)</td></tr>
+<tr><th>status</th><td>VARCHAR(50) <i>DEFAULT 'published'</i></td><td>Status of the comment (published, draft, spam)</td></tr>
+<tr><th>author_name</th><td>VARCHAR(192) <i>DEFAULT ''</i></td><td>Name of the comment author</td></tr>
+<tr><th>author_email</th><td>VARCHAR(192) <i>DEFAULT ''</i></td><td>Email of the comment author</td></tr>
+<tr><th>author_ip</th><td>VARCHAR(50) <i>DEFAULT ''</i></td><td>IP address of the comment author</td></tr>
+<tr><th>description</th><td>TEXT <i>NULL</i></td><td>Content of the comment</td></tr>
+<tr><th>created_by</th><td>BIGINT UNSIGNED <i>NULL</i></td><td>ID of the user who created the comment</td></tr>
+<tr><th>created_at</th><td>TIMESTAMP <i>NULL</i></td><td>Timestamp when the comment was created</td></tr>
+<tr><th>updated_at</th><td>TIMESTAMP <i>NULL</i></td><td>Timestamp when the comment was last updated</td></tr>
+</tbody>
+</table>
 
-## fc_smart_links
-For storing SmartLinks and it's configuration
+## _fbs_activities Table
 
-<table cellspacing="0" class="nowrap">
-<thead><tr><th>Column</th><td>Type</td><td>Comment</td></tr></thead>
-<tbody><tr><th>id</th><td><span title="">bigint unsigned</span> <i>Auto Increment</i></td><td>
-</td></tr><tr class="odd"><th>title</th><td><span title="utf8mb4_unicode_520_ci">varchar(192)</span> <i>NULL</i></td><td>
-</td></tr><tr><th>short</th><td><span title="utf8mb4_unicode_520_ci">varchar(192)</span> <i>NULL</i></td><td>
-</td></tr><tr class="odd"><th>target_url</th><td><span title="utf8mb4_unicode_520_ci">text</span> <i>NULL</i></td><td>
-</td></tr><tr><th>actions</th><td><span title="utf8mb4_unicode_520_ci">text</span> <i>NULL</i></td><td>
-</td></tr><tr class="odd"><th>notes</th><td><span title="utf8mb4_unicode_520_ci">text</span> <i>NULL</i></td><td>
-</td></tr><tr><th>contact_clicks</th><td><span title="">int</span> <i>NULL</i> <span title="Default value">[<b>0</b>]</span></td><td>
-</td></tr><tr class="odd"><th>all_clicks</th><td><span title="">int</span> <i>NULL</i> <span title="Default value">[<b>0</b>]</span></td><td>
-</td></tr><tr><th>created_by</th><td><span title="">bigint unsigned</span> <i>NULL</i></td><td>
-</td></tr><tr class="odd"><th>created_at</th><td><span title="">timestamp</span> <i>NULL</i></td><td>
-</td></tr><tr><th>updated_at</th><td><span title="">timestamp</span> <i>NULL</i></td><td>
-</td></tr></tbody></table>
-
-
-## fc_url_stores
-For storing Email Long Links and short links for tracking
+This table stores activity logs for tasks, including changes and actions taken on various objects.
 
 <table cellspacing="0" class="nowrap">
-<thead><tr><th>Column</th><td>Type</td><td>Comment</td></tr></thead>
-<tbody><tr><th>id</th><td><span title="">bigint unsigned</span> <i>Auto Increment</i></td><td>
-</td></tr><tr class="odd"><th>url</th><td><span title="utf8mb4_unicode_520_ci">tinytext</span></td><td>
-</td></tr><tr><th>short</th><td><span title="utf8mb4_unicode_520_ci">varchar(50)</span></td><td>
-</td></tr><tr class="odd"><th>created_at</th><td><span title="">timestamp</span> <i>NULL</i></td><td>
-</td></tr><tr><th>updated_at</th><td><span title="">timestamp</span> <i>NULL</i></td><td>
-</td></tr></tbody></table>
+<thead><tr><th>Column</th><th>Type</th><th>Comment</th></tr></thead>
+<tbody>
+<tr><th>id</th><td>INT UNSIGNED <i>Auto Increment</i></td><td>Primary key of the activity log</td></tr>
+<tr><th>object_id</th><td>INT UNSIGNED</td><td>ID of the associated object (e.g., Task ID)</td></tr>
+<tr><th>object_type</th><td>VARCHAR(100)</td><td>Type of the object (e.g., Task, Comment, Board)</td></tr>
+<tr><th>action</th><td>VARCHAR(50)</td><td>Action performed (e.g., create, update, delete)</td></tr>
+<tr><th>column</th><td>VARCHAR(50) <i>NULL</i></td><td>The specific column that was changed (if applicable)</td></tr>
+<tr><th>old_value</th><td>VARCHAR(50) <i>NULL</i></td><td>The old value before the change</td></tr>
+<tr><th>new_value</th><td>VARCHAR(50) <i>NULL</i></td><td>The new value after the change</td></tr>
+<tr><th>description</th><td>LONGTEXT <i>NULL</i></td><td>Description of the activity or change</td></tr>
+<tr><th>created_by</th><td>BIGINT UNSIGNED <i>NULL</i></td><td>ID of the user who performed the action</td></tr>
+<tr><th>settings</th><td>TEXT <i>NULL</i></td><td>Serialized array for additional settings or metadata</td></tr>
+<tr><th>created_at</th><td>TIMESTAMP <i>NULL</i></td><td>Timestamp when the activity was created</td></tr>
+<tr><th>updated_at</th><td>TIMESTAMP <i>NULL</i></td><td>Timestamp when the activity was last updated</td></tr>
+</tbody>
+</table>
 
-## fc_meta
-For storing CRM settings
+## _fbs_notifications Table
+
+This table is designed to store notifications related to task management, including various actions performed on tasks.
 
 <table cellspacing="0" class="nowrap">
-<thead><tr><th>Column</th><td>Type</td><td>Comment</td></tr></thead>
-<tbody><tr><th>id</th><td><span title="">bigint unsigned</span> <i>Auto Increment</i></td><td>
-</td></tr><tr class="odd"><th>object_type</th><td><span title="utf8mb4_unicode_520_ci">varchar(50)</span></td><td>
-</td></tr><tr><th>object_id</th><td><span title="">bigint</span> <i>NULL</i></td><td>
-</td></tr><tr class="odd"><th>key</th><td><span title="utf8mb4_unicode_520_ci">varchar(192)</span></td><td>
-</td></tr><tr><th>value</th><td><span title="utf8mb4_unicode_520_ci">longtext</span> <i>NULL</i></td><td>
-</td></tr><tr class="odd"><th>created_at</th><td><span title="">timestamp</span> <i>NULL</i></td><td>
-</td></tr><tr><th>updated_at</th><td><span title="">timestamp</span> <i>NULL</i></td><td>
-</td></tr></tbody></table>
+<thead><tr><th>Column</th><th>Type</th><th>Comment</th></tr></thead>
+<tbody>
+<tr><th>id</th><td>INT UNSIGNED <i>Auto Increment</i></td><td>Primary key of the notification</td></tr>
+<tr><th>object_id</th><td>INT UNSIGNED</td><td>ID of the associated object (e.g., Task ID, Board ID)</td></tr>
+<tr><th>object_type</th><td>VARCHAR(100)</td><td>Type of the object (e.g., Task, Comment, Board)</td></tr>
+<tr><th>task_id</th><td>INT UNSIGNED <i>NULL</i></td><td>ID of the task associated with the notification (if applicable)</td></tr>
+<tr><th>action</th><td>VARCHAR(255) <i>NULL</i></td><td>Action performed (e.g., task_created, priority_changed)</td></tr>
+<tr><th>activity_by</th><td>BIGINT UNSIGNED</td><td>ID of the user who performed the action</td></tr>
+<tr><th>description</th><td>LONGTEXT <i>NULL</i></td><td>Description of the notification or action</td></tr>
+<tr><th>settings</th><td>TEXT <i>NULL</i></td><td>Serialized array for additional settings or metadata</td></tr>
+<tr><th>created_at</th><td>TIMESTAMP <i>NULL</i></td><td>Timestamp when the notification was created</td></tr>
+<tr><th>updated_at</th><td>TIMESTAMP <i>NULL</i></td><td>Timestamp when the notification was last updated</td></tr>
+</tbody>
+</table>
+
+### Keys and Indexes:
+- **`object_id`**: Index for the associated object ID.
+- **`object_type`**: Index for the type of the associated object.
+- **`activity_by`**: Index for the user who performed the action.
+
+## _fbs_notification_users Table
+
+This table is designed to track which users have received and read specific notifications.
+
+<table cellspacing="0" class="nowrap">
+<thead><tr><th>Column</th><th>Type</th><th>Comment</th></tr></thead>
+<tbody>
+<tr><th>id</th><td>INT UNSIGNED <i>Auto Increment</i></td><td>Primary key of the record</td></tr>
+<tr><th>notification_id</th><td>INT UNSIGNED <i>NULL</i></td><td>ID of the related notification</td></tr>
+<tr><th>user_id</th><td>BIGINT UNSIGNED</td><td>ID of the user who received the notification</td></tr>
+<tr><th>marked_read_at</th><td>TIMESTAMP <i>NULL</i></td><td>Timestamp when the notification was marked as read</td></tr>
+<tr><th>created_at</th><td>TIMESTAMP <i>NULL</i></td><td>Timestamp when the record was created</td></tr>
+<tr><th>updated_at</th><td>TIMESTAMP <i>NULL</i></td><td>Timestamp when the record was last updated</td></tr>
+</tbody>
+</table>
+
+### Keys and Indexes:
+- **`notification_id`**: Index for the related notification ID.
+- **`user_id`**: Index for the user ID who received the notification.
+
+## _fbs_teams Table
+
+This table stores information about teams within the system.
+
+<table cellspacing="0" class="nowrap">
+<thead><tr><th>Column</th><th>Type</th><th>Comment</th></tr></thead>
+<tbody>
+<tr><th>id</th><td>INT UNSIGNED <i>Auto Increment</i></td><td>Primary key of the record</td></tr>
+<tr><th>parent_id</th><td>INT UNSIGNED <i>NULL</i></td><td>ID of the parent team if this is a sub-team</td></tr>
+<tr><th>title</th><td>VARCHAR(100)</td><td>Name of the team</td></tr>
+<tr><th>description</th><td>TEXT <i>NULL</i></td><td>Description of the team</td></tr>
+<tr><th>type</th><td>VARCHAR(50)</td><td>Type of the team (e.g., project, department)</td></tr>
+<tr><th>visibility</th><td>VARCHAR(50) <i>DEFAULT 'VISIBLE'</i></td><td>Visibility of the team (VISIBLE/SECRET)</td></tr>
+<tr><th>notifications_enabled</th><td>TINYINT(1) <i>DEFAULT 1</i></td><td>Whether notifications are enabled for the team</td></tr>
+<tr><th>settings</th><td>TEXT <i>NULL</i></td><td>Serialized settings for the team</td></tr>
+<tr><th>created_by</th><td>BIGINT UNSIGNED</td><td>ID of the user who created the team</td></tr>
+<tr><th>created_at</th><td>TIMESTAMP <i>NULL</i></td><td>Timestamp when the team was created</td></tr>
+<tr><th>updated_at</th><td>TIMESTAMP <i>NULL</i></td><td>Timestamp when the team was last updated</td></tr>
+</tbody>
+</table>
+
+### Keys and Indexes:
+- **`type`**: Index for the type of team.
+- **`visibility`**: Index for the visibility status of the team.
+- **`created_by`**: Index for the ID of the user who created the team.
+- **`parent_id`**: Index for the parent team ID.
+- **`notifications_enabled`**: Index for the notification settings.
+- **`title`**: Index for the team title.
+
+## _fbs_metas Table
+
+This table stores metadata associated with various objects in the system.
+
+<table cellspacing="0" class="nowrap">
+<thead><tr><th>Column</th><th>Type</th><th>Comment</th></tr></thead>
+<tbody>
+<tr><th>id</th><td>INT UNSIGNED <i>Auto Increment</i></td><td>Primary key of the record</td></tr>
+<tr><th>object_id</th><td>INT UNSIGNED <i>NULL</i></td><td>ID of the associated object (e.g., task, comment)</td></tr>
+<tr><th>object_type</th><td>VARCHAR(100)</td><td>Type of the object (e.g., task, comment)</td></tr>
+<tr><th>key</th><td>VARCHAR(100) <i>NULL</i></td><td>Metadata key</td></tr>
+<tr><th>value</th><td>LONGTEXT <i>NULL</i></td><td>Metadata value</td></tr>
+<tr><th>created_at</th><td>TIMESTAMP <i>NULL</i></td><td>Timestamp when the metadata was created</td></tr>
+<tr><th>updated_at</th><td>TIMESTAMP <i>NULL</i></td><td>Timestamp when the metadata was last updated</td></tr>
+</tbody>
+</table>
+
+### Keys and Indexes:
+- **`object_id`**: Index for the ID of the associated object.
+
+## _fbs_relations Table
+
+This table manages relationships between different objects.
+
+<table cellspacing="0" class="nowrap">
+<thead><tr><th>Column</th><th>Type</th><th>Comment</th></tr></thead>
+<tbody>
+<tr><th>id</th><td>INT UNSIGNED <i>Auto Increment</i></td><td>Primary key of the record</td></tr>
+<tr><th>object_id</th><td>INT UNSIGNED</td><td>ID of the primary object</td></tr>
+<tr><th>object_type</th><td>VARCHAR(100)</td><td>Type of the primary object (e.g., task, comment)</td></tr>
+<tr><th>foreign_id</th><td>INT UNSIGNED</td><td>ID of the related object</td></tr>
+<tr><th>settings</th><td>TEXT <i>NULL</i></td><td>Serialized settings for the relationship</td></tr>
+<tr><th>preferences</th><td>TEXT <i>NULL</i></td><td>Serialized preferences for the relationship</td></tr>
+<tr><th>created_at</th><td>TIMESTAMP <i>NULL</i></td><td>Timestamp when the relationship was created</td></tr>
+<tr><th>updated_at</th><td>TIMESTAMP <i>NULL</i></td><td>Timestamp when the relationship was last updated</td></tr>
+</tbody>
+</table>
+
+### Keys and Indexes:
+- **`object_type`**: Index for the type of the primary object.
+- **`object_id`**: Index for the ID of the primary object.
+- **`foreign_id`**: Index for the ID of the related object.
+
+## _fbs_time_tracks Table
+
+This table tracks time-related information for tasks.
+
+<table cellspacing="0" class="nowrap">
+<thead><tr><th>Column</th><th>Type</th><th>Comment</th></tr></thead>
+<tbody>
+<tr><th>id</th><td>INT UNSIGNED <i>Auto Increment</i></td><td>Primary key of the record</td></tr>
+<tr><th>user_id</th><td>BIGINT UNSIGNED</td><td>ID of the user who tracked the time</td></tr>
+<tr><th>board_id</th><td>INT UNSIGNED</td><td>ID of the board</td></tr>
+<tr><th>task_id</th><td>INT UNSIGNED</td><td>ID of the task</td></tr>
+<tr><th>started_at</th><td>TIMESTAMP <i>NULL</i></td><td>Timestamp when the time tracking started</td></tr>
+<tr><th>completed_at</th><td>TIMESTAMP <i>NULL</i></td><td>Timestamp when the time tracking was completed</td></tr>
+<tr><th>message</th><td>TEXT <i>NULL</i></td><td>Optional message or note related to the time tracking</td></tr>
+<tr><th>status</th><td>VARCHAR(50) <i>NULL DEFAULT 'commited'</i></td><td>Status of the time track (e.g., committed)</td></tr>
+<tr><th>working_minutes</th><td>INT UNSIGNED <i>NOT NULL DEFAULT 0</i></td><td>Total minutes worked</td></tr>
+<tr><th>billable_minutes</th><td>INT UNSIGNED <i>NOT NULL DEFAULT 0</i></td><td>Minutes that are billable</td></tr>
+<tr><th>is_manual</th><td>TINYINT(1) <i>NOT NULL DEFAULT 0</i></td><td>Indicates if the time track was entered manually</td></tr>
+<tr><th>created_at</th><td>TIMESTAMP <i>NULL</i></td><td>Timestamp when the record was created</td></tr>
+<tr><th>updated_at</th><td>TIMESTAMP <i>NULL</i></td><td>Timestamp when the record was last updated</td></tr>
+</tbody>
+</table>
+
+### Keys and Indexes:
+- **`user_id`**: Index for the ID of the user.
+- **`status`**: Index for the status of the time track.
+- **`task_id`**: Index for the ID of the task.
+- **`board_id`**: Index for the ID of the board.
