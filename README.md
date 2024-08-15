@@ -1,10 +1,10 @@
 <div align="center">
-    <img style="margin-top: 50px;" width="300" src="https://fluentcrm.com/wp-content/uploads/2020/10/fluentCRM-logo-color.svg" alt="FluentCRM Logo">
+    <img style="margin-top: 50px;" width="300" src="https://fluentboards.com/wp-content/uploads/2024/02/Logo-2-1.png" alt="FluentBoards Logo">
 </div>
 
 # FluentBoards Developers Docs
 
-Resources and tutorials for FluentCRM developers.
+Resources and tutorials for FluentBoards developers.
 
 ## Documentation
 
