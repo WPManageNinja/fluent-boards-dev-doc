@@ -1,20 +1,20 @@
 # Database Model Basic
 
 ## Introduction
-FluentCRM ORM provides a beautiful, simple ActiveRecord implementation for working with database tables. Each database table has a corresponding "Model" which is used to interact with that table. Models allow you to query for data in db tables, as well as insert new records into the table.
+FluentBoards ORM provides a beautiful, simple ActiveRecord implementation for working with database tables. Each database table has a corresponding "Model" which is used to interact with that table. Models allow you to query for data in db tables, as well as insert new records into the table.
 
 ::: warning NOTE
-FluentCRM offers helper functions and methods to interact with FluentCRM's database so you may use those things instead of Models directly. We are documenting these for our internal usage and very-high level usage by 3rd-party developers.
+FluentBoards offers helper functions and methods to interact with FluentBoards's database so you may use those things instead of Models directly. We are documenting these for our internal usage and very-high level usage by 3rd-party developers.
 :::
 
 
-## Built-in FluentCRM DB Models
+## Built-in FluentBoards DB Models
 All the built-in database models are available at
 
-- `fluent-crm/app/Models/` (Free version)
-- `fluentcampaign-pro/app/Models/` (Pro version)
+- `fluent-boards/app/Models/` (Free version)
+- `fluent-boards-pro/app/Models/` (Pro version)
 
-In this Article we will use `FluentCrm\App\Models\Subscriber` model as an example.
+In this Article we will use `FluentBoards\App\Models\Board` model as an example.
 
 ## Retrieving Models
 Think of each Eloquent model as a powerful query builder allowing you to fluently query the database table associated with the model. For example:
@@ -22,10 +22,10 @@ Think of each Eloquent model as a powerful query builder allowing you to fluentl
 ```php
 <?php
  
-$subscribers = FluentCrm\App\Models\Subscriber::all();
+$boards = FluentBoards\App\Models\Board::all();
  
-foreach ($subscribers as $subscriber) {
-    echo $subscriber->email;
+foreach ($boards as $board) {
+    echo $board->title;
 }
 
 ```
@@ -35,8 +35,8 @@ foreach ($subscribers as $subscriber) {
 The ORM all method will return all of the results in the model's table. Since each model serves as a query builder, you may also add constraints to queries, and then use the get method to retrieve the results:
 
 ```php 
-$subscribers = FluentCrm\App\Models\Subscriber::where('status', 'subscribed')
-               ->orderBy('email', 'DESC')
+$boards = FluentBoards\App\Models\Boards::where('type', 'to-do')
+               ->orderBy('created_at', 'DESC')
                ->limit(10)
                ->skip(5)
                ->get();
@@ -48,25 +48,25 @@ Of course, in addition to retrieving all of the records for a given table, you m
 
 ```php
 // Retrieve a model by its primary key...
-$subscribers = FluentCrm\App\Models\Subscriber::find(1);
+$board = FluentBoards\App\Models\Board::find(1);
  
 // Retrieve the first model matching the query constraints...
-$subscriber = FluentCrm\App\Models\Subscriber::where('status', 'subscribed')->first();
+$board = FluentBoards\App\Models\Board::where('type', 'to-do')->first();
 ```
 
 You may also call the find method with an array of primary keys, which will return a collection of the matching records:
 
 ```php
-$subscribers = FluentCrm\App\Models\Subscriber::find([1,2,3]);
+$boards = FluentBoards\App\Models\Board::find([1,2,3]);
  ```
 
 ## Retrieving Aggregates
 
 You may also use the count, sum, max, and other aggregate methods available. These methods return the appropriate scalar value instead of a full model instance:
 ```php
-$count = FluentCrm\App\Models\Subscriber::where('status', 'subscribed')->count();
+$count = FluentBoards\App\Models\Board::where('type', 'to-do')->count();
 
-$max = FluentCrm\App\Models\Subscriber::where('status', 'subscribed')->max('id');
+$max = FluentBoards\App\Models\Board::where('type', 'to-do')->max('id');
 ```
 
 Available aggregate methods such as `count`, `max`, `min`, `avg`, and `sum`.
@@ -78,11 +78,9 @@ Available aggregate methods such as `count`, `max`, `min`, `avg`, and `sum`.
 To create a new record in the database, create a new model instance, set attributes on the model, then call the save method:
 
 ```php 
-$subscriber = FluentCrm\App\Models\Subscriber::create([
-        'first_name' => 'John',
-        'last_name'  => 'Doe',
-        'email' => 'john@doe.com',
-        'status' => 'subscribed'       
+$board = FluentBoards\App\Models\Board::create([
+        'title' => 'My First Board',
+        'description'  => 'This is my first board',    
 ]);
 ```
 
@@ -91,21 +89,21 @@ $subscriber = FluentCrm\App\Models\Subscriber::create([
 You can update a model few different way. You can assign property and then call `save()` method
 
 ```php 
-$subscriber = FluentCrm\App\Models\Subscriber::find(1);
+$board = FluentBoards\App\Models\Board::find(1);
 
-$subscriber->first_name = 'Jewel';
-$subscriber->last_name = 'Shah';
-$subscriber->save();
+$board->title = 'Updated Title';
+$board->description = 'Updated Description';
+$board->save();
 ```
 
 You can also update with an array
 
 ```php 
-$subscriber = FluentCrm\App\Models\Subscriber::find(1);
+$board = FluentBoards\App\Models\Board::find(1);
 
-$subscriber->update([
-    'first_name' => 'Jewel',
-    'last_name' => 'Shah'
+$board->update([
+    'title' => 'Updated Title',
+    'last_name' => 'Updated Description'
 ]);
 ```
 
@@ -114,11 +112,10 @@ $subscriber->update([
 You can just call the database table column name for accessing the attributes
 
 ```php 
-$subscriber = FluentCrm\App\Models\Subscriber::find(1);
+$board = FluentBoards\App\Models\Board::find(1);
 
-$firstName = $subscriber->first_name;
-$lastName = $subscriber->last_name;
-$email = $subscriber->email;
+$title = $board->title;
+$description = $board->description;
 ```
 
 # Deleting Models
@@ -126,8 +123,8 @@ $email = $subscriber->email;
 To delete a model, call the delete method on a model instance:
 
 ```php 
-  $subscriber = FluentCrm\App\Models\Subscriber::find(1);
-  $subscriber->delete();
+  $board = FluentBoards\App\Models\Board::find(1);
+  $board->delete();
 ```
 
 ### Deleting Models By Query
@@ -135,24 +132,24 @@ To delete a model, call the delete method on a model instance:
 Of course, you may also run a delete statement on a set of models. In this example, we will delete all flights that are marked as inactive. Like mass updates, mass deletes will not fire any model events for the models that are deleted:
 
 ```php
-FluentCrm\App\Models\Subscriber::where('status', 'unsubscribed')->delete();
+FluentBoards\App\Models\Board::where('type', 'to-do')->delete();
 ```
 
 # Query Scopes
-Scopes allow you to define common sets of constraints that you may easily re-use throughout application. For example, you may need to frequently retrieve all subscribers by given statuses.In FluentCRM Subscriber model we already have this scope defined like this.
+Scopes allow you to define common sets of constraints that you may easily re-use throughout application. For example, you may need to frequently retrieve all boards by given types.In FluentBoards Board model we already have this scope defined like this.
 
 ```php
 
     /**
-     * Local scope to filter subscribers by search/query string
-     * @param \FluentCrm\Framework\Database\Query\Builder $query
-     * @param array $statuses
-     * @return \FluentCrm\Framework\Database\Query\Builder $query
+     * Local scope to filter boards by search/query string
+     * @param \FluentBoards\Framework\Database\Query\Builder $query
+     * @param array $types
+     * @return \FluentBoards\Framework\Database\Query\Builder $query
      */
-    public function scopeFilterByStatues($query, $statuses)
+    public function scopeFilterByType($query, $types)
     {
-        if ($statuses) {
-            $query->whereIn('status', $statuses);
+        if ($types) {
+            $query->whereIn('type', $types);
         }
 
         return $query;
@@ -160,33 +157,33 @@ Scopes allow you to define common sets of constraints that you may easily re-use
 
 ```
 
-Now say you want to get subscribers where status equal subscribed and pending
+Now say you want to get boards where types equal to-do and roadmap
 
 ```php 
-$subsctibers = FluentCrm\App\Models\Subscriber::filterByStatues(['subscribed', 'pending'])->get();
+$boards = FluentBoards\App\Models\Board::filterByType(['type', 'to-do'])->get();
 ```
 Please note that, the first letter will be small case.
 
-In the individual model documentation, you will find which FluentCRM models have scopes.
+In the individual model documentation, you will find which FluentBoards models have scopes.
 
 # Relationships
-Database tables are often related to one another. For example, a subscriber has multiple campaign emails, or multiple tags / lists. FluentCRM ORM makes managing and working with these relationships easy.
+Database tables are often related to one another. For example, a board has multiple tasks, or multiple stages. FluentBoards ORM makes managing and working with these relationships easy.
 Each Model has predefined relationships and you will find those in the individual model documentation.
 
 ```php 
 
-$subsctiber = FluentCrm\App\Models\Subscriber::find(1);
+$board = FluentBoards\App\Models\Board::find(1);
 
 // These will return corresponding Tag and List collection
-$subscriberTags = $subsctiber->tags;
-$subscriberLists = $subsctiber->lists;
+$tasks = $board->tasks;
+$stage = $board->stages;
 
 ```
 
-For a single relation like and `CampaignEmail` belongs to a subscriber
+For a single relation like and `Task` belongs to a board
 
 ```php 
 
-$campaignEmail = FluentCrm\App\Models\CampaignEmail::find(1);
-$subscriber = $campaignEmail->subscriber; // will return FluentCrm\App\Models\Subscriber
+$task = FluentBoards\App\Models\Task::find(1);
+$board = $task->board; // will return FluentBoards\App\Models\Board
 ```
