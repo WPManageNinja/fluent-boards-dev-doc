@@ -11,14 +11,9 @@ Our Query Builder is compatible the PHP Laravel Framework's Query Builder. If yo
 Here is an example Fluent Query Builder 
 
 ```php
-$query = fluentCrmDb()->table('fc_contact_relation_items')
-            ->select(['item_value', 'status', 'item_type'])
-            ->where('provider', 'woo')
-            ->whereBetween('created_at', ['2022-12-05 00:00:00', '2022-12-30 23:59:59'])
-            ->when($productId, function ($query) use ($productId) {
-                return $query->where('item_id', $productId);
-            })
-            ->orderBy('date', 'ASC');
+$query = fluentBoardsDb()->table('fbs_boards')
+            ->orderBy('date', 'ASC')
+            ->first();
 ```
 
 
