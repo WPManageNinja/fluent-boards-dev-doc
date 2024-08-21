@@ -22,8 +22,8 @@ $taskData = [
 - `$taskData['title']` `string` required
 - `$taskData['board_id']` `integer` required
 - `$taskData['stage_id']` `integer` required
-- `$taskData['priority']` `integer`
-- `$taskData['status']` `integer`
+- `$taskData['priority']` `string`
+- `$taskData['status']` `string`
 
 ## Getting Tasks of a Board
 ```php
