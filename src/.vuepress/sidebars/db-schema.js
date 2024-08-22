@@ -28,10 +28,6 @@ module.exports = [
                 'Board Model'
             ],
             [
-                '/database/models/board-term',
-                'BoardTerm Model'
-            ],
-            [
                 '/database/models/stage',
                 'Stage Model'
             ],
@@ -42,6 +38,14 @@ module.exports = [
             [
                 '/database/models/task',
                 'Task Model'
+            ],
+            [
+                '/database/models/comment',
+                'Comment Model'
+            ],
+            [
+                '/database/models/activity',
+                'Activity Model'
             ],
         ]
     },
