@@ -1,10 +1,10 @@
 # Webhook Model
 
-| DB Table Name | Inherits from the `Meta` model (presumably `{wp_db_prefix}_meta`)                                        |
-|---------------|----------------------------------------------------------------------------------|
-| Source File   | fluent-Webhooks/app/Models/Webhook.php                         |
-| Name Space    | FluentWebhooks\App\Models                                               |
-| Class         | FluentWebhooks\App\Models\Webhook                              |
+| DB Table Name | Inherits from the `Meta` model {wp_db_prefix}_fbs_metas |
+|---------------|---------------------------------------------------------|
+| Source File   | fluent-boards/app/Models/Webhook.php                    |
+| Name Space    | FluentBoards\App\Models                               |
+| Class         | FluentBoards\App\Models\Webhook                       |
 
 ## Attributes
 * object_id: The ID of the object associated with the webhook.

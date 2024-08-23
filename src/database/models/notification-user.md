@@ -3,9 +3,9 @@
 | DB Table Name | {wp_db_prefix}_fbs_NotificationUsers                                             |
 |---------------|----------------------------------------------------------------------------------|
 | Schema        | <a :href="$withBase('/database/#fbs-notification-users-table')">Check Schema</a> |
-| Source File   | fluent-NotificationUsers/app/Models/NotificationUser.php                         |
-| Name Space    | FluentNotificationUsers\App\Models                                               |
-| Class         | FluentNotificationUsers\App\Models\NotificationUser                              |
+| Source File   | fluent-boards/app/Models/NotificationUser.php                                    |
+| Name Space    | FluentBoards\App\Models                                               |
+| Class         | FluentBoards\App\Models\NotificationUser                              |
 
 ## Attributes
 <table class="nowrap">

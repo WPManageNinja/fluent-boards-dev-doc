@@ -1,11 +1,11 @@
 # TaskMeta Model
 
-| DB Table Name | {wp_db_prefix}_fbs_task_metas                                             |
-|---------------|----------------------------------------------------------------------------------|
+| DB Table Name | {wp_db_prefix}_fbs_task_metas                                            |
+|---------------|--------------------------------------------------------------------------|
 | Schema        | <a :href="$withBase('/database/#fbs-task-metas-table')">Check Schema</a> |
-| Source File   | fluent-TaskMetas/app/Models/TaskMeta.php                         |
-| Name Space    | FluentTaskMetas\App\Models                                               |
-| Class         | FluentTaskMetas\App\Models\TaskMeta                              |
+| Source File   | fluent-boards/app/Models/TaskMeta.php                                    |
+| Name Space    | FluentBoards\App\Models                                               |
+| Class         | FluentBoards\App\Models\TaskMeta                                      |
 
 ## Attributes
 <table class="nowrap">

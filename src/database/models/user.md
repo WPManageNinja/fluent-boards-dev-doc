@@ -3,9 +3,9 @@
 | DB Table Name | {wp_db_prefix}_users                                            |
 |---------------|-----------------------------------------------------------------|
 | Schema        | <a :href="$withBase('/database/#users-table')">Check Schema</a> |
-| Source File   | fluent-Users/app/Models/User.php                                |
-| Name Space    | FluentUsers\App\Models                                          |
-| Class         | FluentUsers\App\Models\User                                     |
+| Source File   | fluent-boards/app/Models/User.php                               |
+| Name Space    | FluentBoards\App\Models                                          |
+| Class         | FluentBoards\App\Models\User                                     |
 
 ## Attributes
 <table class="nowrap">

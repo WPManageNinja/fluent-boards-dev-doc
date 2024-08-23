@@ -1,11 +1,11 @@
 # Team Model
 
-| DB Table Name | {wp_db_prefix}_fbs_teams                                             |
-|---------------|----------------------------------------------------------------------------------|
+| DB Table Name | {wp_db_prefix}_fbs_teams                                            |
+|---------------|---------------------------------------------------------------------|
 | Schema        | <a :href="$withBase('/database/#fbs-teams-table')">Check Schema</a> |
-| Source File   | fluent-Teams/app/Models/Team.php                         |
-| Name Space    | FluentTeams\App\Models                                               |
-| Class         | FluentTeams\App\Models\Team                              |
+| Source File   | fluent-boards/app/Models/Team.php                                   |
+| Name Space    | FluentBoards\App\Models                                              |
+| Class         | FluentBoards\App\Models\Team                                         |
 
 ## Attributes
 <table class="nowrap">

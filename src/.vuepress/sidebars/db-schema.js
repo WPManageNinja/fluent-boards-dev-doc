@@ -71,6 +71,14 @@ module.exports = [
                 '/database/models/webhook',
                 'Webhook Model'
             ],
+            [
+                '/database/models/custom-field',
+                'CustomField Model'
+            ],
+            [
+                '/database/models/task-attachment',
+                'TaskAttachment Model'
+            ],
         ]
     },
     {
