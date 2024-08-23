@@ -177,4 +177,185 @@ add_action('fluent_boards/stage_updated', function($boardId, $updatedStage, $old
 ### Task Specific
 <hr />
 
+::: details fluent_boards/task_created
+This action runs when a task is created
+
+**Parameters**
+- `$task` `object` Task 
+
+**Usage:**
+```php 
+add_action('fluent_boards/task_created', function($task) {
+   // Do whatever you want
+}, 10, 1);
+```
+:::
+
+::: details fluent_boards/task_deleted
+This action runs when a task is deleted
+
+**Parameters**
+- `$task` `object` Task
+
+**Usage:**
+```php 
+add_action('fluent_boards/task_deleted', function($task) {
+   // Do whatever you want
+}, 10, 1);
+```
+:::
+
+::: details fluent_boards/task_stage_updated
+This action runs when stage of a task is updated
+
+**Parameters**
+- `$task` `object` Task
+- `$oldStageId` `int` stage id
+
+**Usage:**
+```php 
+add_action('fluent_boards/task_stage_updated', function($task, $oldStageId) {
+   // Do whatever you want
+}, 10, 2);
+```
+:::
+
+::: details fluent_boards/comment_created
+This action runs when comment is added to a task
+
+**Parameters**
+- `$comment` `object` Comment
+
+**Usage:**
+```php 
+add_action('fluent_boards/comment_created', function($comment) {
+   // Do whatever you want
+}, 10, 1);
+```
+:::
+
+::: details fluent_boards/comment_updated
+This action runs when a comment is updated
+
+**Parameters**
+- `$comment` `object` Comment
+- `$oldComment` `object` Comment before updated
+
+**Usage:**
+```php 
+add_action('fluent_boards/comment_updated', function($comment, $oldComment) {
+   // Do whatever you want
+}, 10, 2);
+```
+:::
+
+::: details fluent_boards/comment_deleted
+This action runs when a comment is deleted
+
+**Parameters**
+- `$comment` `object` Comment
+
+**Usage:**
+```php 
+add_action('fluent_boards/comment_deleted', function($comment) {
+   // Do whatever you want
+}, 10, 1);
+```
+:::
+
+::: details fluent_boards/task_added_from_fluent_form
+This action runs when a task is added from fluent form plugin
+
+**Parameters**
+- `$task` `object` Task
+
+**Usage:**
+```php 
+add_action('fluent_boards/task_added_from_fluent_form', function($task) {
+   // Do whatever you want
+}, 10, 1);
+```
+:::
+
+::: details fluent_boards/task_assignee_added
+This action runs when a assignee is added to a task
+
+**Parameters**
+- `$task` `object` Task
+- `$assigneeId` `int` id of the user
+
+**Usage:**
+```php 
+add_action('fluent_boards/task_assignee_added', function($task, $assigneeId) {
+   // Do whatever you want
+}, 10, 2);
+```
+:::
+
+::: details fluent_boards/task_assignee_removed
+This action runs when a assignee is removed from a task
+
+**Parameters**
+- `$task` `object` Task
+- `$assigneeId` `int` id of the user
+
+**Usage:**
+```php 
+add_action('fluent_boards/task_assignee_removed', function($task, $assigneeId) {
+   // Do whatever you want
+}, 10, 2);
+```
+:::
+
+::: details fluent_boards/task_start_date_changed
+This action runs when start date of a task is changed
+
+**Parameters**
+- `$task` `object` Task
+- `$oldStartDateValue` `datetime` format `YYYY-MM-DD HH:MM:SS`
+
+**Usage:**
+```php 
+add_action('fluent_boards/task_start_date_changed', function($task, $oldStartDateValue) {
+   // Do whatever you want
+}, 10, 2);
+```
+:::
+
+::: details fluent_boards/task_due_date_changed
+This action runs when due date of a task is changed
+
+**Parameters**
+- `$task` `object` Task
+- `$oldDueDateValue` `datetime` format `YYYY-MM-DD HH:MM:SS`
+
+**Usage:**
+```php 
+add_action('fluent_boards/task_due_date_changed', function($task, $oldDueDateValue) {
+   // Do whatever you want
+}, 10, 2);
+```
+:::
+
+::: details fluent_boards/task_deleted
+This action runs when a task has been deleted
+
+**Parameters**
+- `$task` `object` Task
+
+**Usage:**
+```php 
+add_action('fluent_boards/task_deleted', function($task) {
+   // Do whatever you want
+}, 10, 1);
+```
+:::
+
+
+
+
+
+
+
+
 
