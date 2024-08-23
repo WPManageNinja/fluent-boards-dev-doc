@@ -1,15 +1,15 @@
-# FluentCRM Action Hooks
+# FluentBoards Action Hooks
 
-<Badge type="tip" vertical="top" text="FluentCRM Core" /> <Badge type="warning" vertical="top" text="Intermediate" />
+<Badge type="tip" vertical="top" text="FluentBoards Core" /> <Badge type="warning" vertical="top" text="Intermediate" />
 
-FluentCRM has many interesting filter hooks that let developers change default settings and even extend FluentCRM with
+FluentBoards has many interesting filter hooks that let developers change default settings and even extend FluentBoards with
 new functionality.
 
 ## What are Action Hooks
 
 Action hooks are used to run custom code when certain events occur.
  
-## Available of Action Hooks in FluentCRM
+## Available of Action Hooks in FluentBoard
 
 ### Board Specific
 <hr />
@@ -24,7 +24,7 @@ This action runs when a board has been created
 ```php 
 add_action('fluent_boards/board_created', function($board) {
    // Do whatever you want
-}, 10, 2);
+}, 10, 1);
 ```
 :::
 
@@ -38,109 +38,143 @@ This action runs when a board is invoked
 ```php 
 add_action('fluent_boards/board_find', function($board) {
    // Do whatever you want
+}, 10, 1);
+```
+:::
+
+::: details fluent_boards/board_updated
+This action runs when a board is updated
+
+**Parameters**
+- `$board` Board Model
+- `$oldBoard` Board Model
+
+**Usage:**
+```php 
+add_action('fluent_boards/board_updated', function($board, $oldBoard) {
+   // Do whatever you want
 }, 10, 2);
 ```
 :::
 
-### Admin App & View Specific
-<hr />
-
-::: details fluent_crm/admin_app
-After Main FluentCRM Admin View
-
-**Usage:**
-```php 
-add_action('fluent_crm/admin_app', function() {
-   echo 'My Custom Content Here';
-});
-```
-:::
-
-### Email Template Design Specific
-<hr />
-
-::: details fluent_crm/email_header
-If you want to add your own custom CSS for a specific email template or all email template then you can use this hook.
+::: details fluent_boards/board_label_created
+This action runs when a label is created in a board
 
 **Parameters**
-- `$designSlug` String - Design Name (classic | plain | raw_classic | simple)
+- `$label` Label Model
 
 **Usage:**
 ```php 
-/*
-* Add Custom CSS for plain design type
-*/
-add_action('fluent_crm/email_header', function($designName) {
-   if($designName == 'plain') {
-    ?>
-    <style>
-      h1 {
-        color: red;
-      }
-    </style>
-    <?php
-   }
-});
+add_action('fluent_boards/board_label_created', function($label) {
+   // Do whatever you want
+}, 10, 1);
 ```
 :::
 
-### Double Optin Confirmation Page Actions
-<hr />
-
-!!!include(./src/hooks/actions/_double_optin_page.md)!!!
-
-### Manage Subscriptions Page Actions
-<hr />
-
-!!!include(./src/hooks/actions/_manage_subscription_page.md)!!!
-
-### Unsubscribe Page Actions
-<hr />
-
-!!!include(./src/hooks/actions/_unsubscribe_page_actions.md)!!!
-
-### View On Browser Page Actions
-
-<hr />
-
-!!!include(./src/hooks/actions/_view_on_browser_page_actions.md)!!!
-
-### Fluent Forms - Contact Specific
-<hr />
-
-::: details fluent_crm/contact_added_by_fluentform
-This action runs when a contact has been added via Fluent Forms
+::: details fluent_boards/board_label_updated
+This action runs when a label is updated in a board
 
 **Parameters**
-- `$subscriber` Subscriber Model
-- `$entry` Array
-- `$form` Object
-- `$feed` Array
+- `$label` Label Model
 
 **Usage:**
 ```php 
-add_action('fluent_crm/contact_added_by_fluentform', function($subscriber, $entry, $form, $feed) {
-   // Do whatever you want with the $subscriber created by Fluent Forms
-}, 10, 4);
+add_action('fluent_boards/board_label_updated', function($label) {
+   // Do whatever you want
+}, 10, 1);
 ```
 :::
 
-::: details fluent_crm/contact_updated_by_fluentform
-This action runs when a contact has been updated via Fluent Forms
+::: details fluent_boards/board_label_deleted
+This action runs when a label is deleted in a board
 
 **Parameters**
-- `$subscriber` Subscriber Model
-- `$entry` Array
-- `$form` Object
-- `$feed` Array
+- `$label` Label Model
 
 **Usage:**
 ```php 
-add_action('fluent_crm/contact_updated_by_fluentform', function($subscriber, $entry, $form, $feed) {
-   // Do whatever you want with the $subscriber updated via Fluent Forms
-}, 10, 4);
+add_action('fluent_boards/board_label_deleted', function($label) {
+   // Do whatever you want
+}, 10, 1);
 ```
 :::
 
+::: details fluent_boards/board_stages_reordered
+This action runs when a stage is moved
 
-fluent_boards/board_created
+**Parameters**
+- `$boardId` `int` Board id
+- `$stageIds` `array` List of stage ids
+
+**Usage:**
+```php 
+add_action('fluent_boards/board_stages_reordered', function($boardId, $stageIds) {
+   // Do whatever you want
+}, 10, 2);
+```
+:::
+
+::: details fluent_boards/stage_archived
+This action runs when a stage is archived
+
+**Parameters**
+- `$boardId` `int` Board id
+- `$stage` `object`  Stage object
+
+**Usage:**
+```php 
+add_action('fluent_boards/stage_archived', function($boardId, $stage) {
+   // Do whatever you want
+}, 10, 2);
+```
+:::
+
+::: details fluent_boards/board_member_added
+This action runs when a member is added to board
+
+**Parameters**
+- `$boardId` `int` Board id
+- `$boardMember` `object`  User object
+
+**Usage:**
+```php 
+add_action('fluent_boards/board_member_added', function($boardId, $boardMember) {
+   // Do whatever you want
+}, 10, 2);
+```
+:::
+
+::: details fluent_boards/task_archived
+This action runs when a task is archived
+
+**Parameters**
+- `$task` `object` Task object
+
+**Usage:**
+```php 
+add_action('fluent_boards/task_archived', function($task) {
+   // Do whatever you want
+}, 10, 1);
+```
+:::
+
+::: details fluent_boards/stage_updated
+This action runs when a stage's title or background color is updated
+
+**Parameters**
+- `$boardId` `int` Board id
+- `$updatedStage` `object` Stage object after update
+- `$oldStage` `object` Stage object before update
+
+**Usage:**
+```php 
+add_action('fluent_boards/stage_updated', function($boardId, $updatedStage, $oldStage) {
+   // Do whatever you want
+}, 10, 3);
+```
+:::
+
+### Task Specific
+<hr />
+
+
