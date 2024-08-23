@@ -47,6 +47,30 @@ module.exports = [
                 '/database/models/activity',
                 'Activity Model'
             ],
+            [
+                '/database/models/notification',
+                'Notification Model'
+            ],
+            [
+                '/database/models/notification-user',
+                'NotificationUser Model'
+            ],
+            [
+                '/database/models/task-meta',
+                'TaskMeta Model'
+            ],
+            [
+                '/database/models/team',
+                'Team Model'
+            ],
+            [
+                '/database/models/user',
+                'User Model'
+            ],
+            [
+                '/database/models/webhook',
+                'Webhook Model'
+            ],
         ]
     },
     {

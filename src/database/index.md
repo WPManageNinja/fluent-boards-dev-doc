@@ -324,3 +324,64 @@ This table tracks time-related information for tasks.
 - **`status`**: Index for the status of the time track.
 - **`task_id`**: Index for the ID of the task.
 - **`board_id`**: Index for the ID of the board.
+
+
+# _users Table
+
+This table contains information about users, including login details, email, and registration data.
+
+<table cellspacing="0" class="nowrap">
+<thead><tr><th>Column</th><th>Type</th><th>Comment</th></tr></thead>
+<tbody>
+      <tr>
+         <th>ID</th>
+         <td>Integer</td>
+         <td></td>
+      </tr>
+      <tr>
+         <th>user_login</th>
+         <td>String</td>
+         <td></td>
+      </tr>
+      <tr>
+         <th>user_pass</th>
+         <td>String</td>
+         <td></td>
+      </tr>
+      <tr>
+         <th>user_nicename</th>
+         <td>String</td>
+         <td></td>
+      </tr>
+      <tr>
+         <th>user_email</th>
+         <td>String</td>
+         <td></td>
+      </tr>
+      <tr>
+         <th>user_url</th>
+         <td>String</td>
+         <td></td>
+      </tr>
+      <tr>
+         <th>user_registered</th>
+         <td>Date Time</td>
+         <td></td>
+      </tr>
+      <tr>
+         <th>user_activation_key</th>
+         <td>String</td>
+         <td></td>
+      </tr>
+      <tr>
+         <th>user_status</th>
+         <td>Integer</td>
+         <td></td>
+      </tr>
+      <tr>
+         <th>display_name</th>
+         <td>String</td>
+         <td></td>
+      </tr>
+   </tbody>
+</table>
