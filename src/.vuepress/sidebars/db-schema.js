@@ -81,31 +81,4 @@ module.exports = [
             ],
         ]
     },
-    {
-        title: 'Fluent ORM',
-        collapsable: true,
-        sidebarDepth: -1,
-        children: [
-            [
-                '/database/orm/',
-                'Getting Started'
-            ],
-            [
-                '/database/orm/relationship',
-                'Relationships'
-            ],
-            [
-                '/database/orm/collections',
-                'Collections'
-            ],
-            [
-                '/database/orm/mutators',
-                'Mutators'
-            ],
-            [
-                '/database/orm/serialization',
-                'Serialization'
-            ],
-        ]
-    }
 ];
