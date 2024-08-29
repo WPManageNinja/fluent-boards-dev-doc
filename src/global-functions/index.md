@@ -4,228 +4,162 @@ pageClass: global-functions
 
 ## Global Functions
 
-FluentCRM has few global functions which are located at `app/functions/helpers.php` file.
+FluentBoards provides a set of global functions that can be used throughout the plugin.
 In this article, we are documenting few useful functions that you may use. For full understanding, please check the `app/functions/helpers.php` file 
 
 [[toc]]
 
-### fluentcrm\_get\_option
-Get FluentCRM Option. This is similar to WordPress's `get_option()` function, but it uses its own database table instead of `wp_options` table
+### fluentBoards
+Retrieve an instance of the `FluentBoards` application or a specific module.
 
 **Parameters**
-- $optionName `string` required
-- $default `mixed`
+- `$module` (string, optional): The module you want to retrieve. Defaults to `null`.
 
-**Return** `mixed`
+**Return**
+- `App`: An instance of the `FluentBoards\App\App` class.
 
-
-### fluentcrm\_update\_option
-Update FluentCRM Option. This is similar to WordPress's `update_option()` function, but it uses its own database table instead of `wp_options` table
-
-**Parameters**
-- $optionName `string` required
-- $value `mixed`
-
-**Return** INT updated uption id
-
-### fluentcrm\_delete\_option
-Delete FluentCRM Option. This is similar to WordPress's `delete_option()` function, but it uses its own database table instead of `wp_options` table
-
-**Parameters**
-- $optionName `string` required
-
-**Return** boolean
-
-
-### fluentcrm\_get\_campaign\_meta
-Get Campaign Meta value or Model by campaign id and key
-
-**Parameters**
-- $campaignId `int` required
-- $key `string` required
-- $returnValue `boolean' If true then it will return the value otherwise returns Meta Model
-
-**Return** mixed
-
-### fluentcrm\_update\_campaign\_meta
-Update Campaign Meta
-
-**Parameters**
-- $campaignId `int` required
-- $key `string` required, Meta Key of the campaign
-- $value `mixed' 
-
-**Return** \FluentCrm\App\Models\Meta Model
-
-### fluentcrm\_delete\_campaign\_meta
-Delete Campaign Meta
-
-**Parameters**
-- $campaignId `int` required
-- $key `string` required, Meta Key of the campaign
-
-**Return** Boolean
-
-### fluentcrm\_get\_subscriber\_meta
-Get Contact's Meta Value
-
-**Parameters**
-- $subscriberId `int` required
-- $key `string` required, Meta Key of the subscriber
-- $deafult `mixed` default value if no meta found
-
-**Return** mixed
-
-
-### fluentcrm\_update\_subscriber\_meta
-Update Contact's Meta Value
-
-**Parameters**
-- $subscriberId `int` required
-- $key `string` required, Meta Key of the subscriber
-- $value `mixed` value of the meat
-
-**Return** \FluentCrm\App\Models\SubscriberMeta
-
-
-### fluentcrm\_delete\_subscriber\_meta
-Delete Subscriber's Meta
-
-**Parameters**
-- $subscriberId `int` required
-- $key `string` required, Meta Key of the campaign
-
-**Return** Boolean
-
-
-### fluentcrm\_subscriber\_statuses
-Get Contact Statuses.
-
-**Parameters**
-- $isOptions `boolean` if true then it will return as options structure array with `id`, `slug`, `title` properties
-
-**Return** array
-
-Example: 
-```php 
-fluentcrm_subscriber_statuses();
-//returns
-[
-    'subscribed',
-    'pending',
-    'unsubscribed',
-    'bounced',
-    'complained'
-]
-
-fluentcrm_subscriber_statuses(true);
-// returns
-[
-    [
-        'id' => 'subscribed',
-        'title' => 'Subscribed',
-        'slug' => 'subscribed'
-    ],
-    .....,
-    .....
-]
+**Example**
+```php
+$fluentBoards = fluentBoards(); // Retrieve the main app instance
+$api = fluentBoards('api');     // Retrieve the API module
 ```
 
-**Available Filter Hook:** `fluent_crm/contact_statuses`
-
-### fluentcrm\_subscriber\_editable\_statuses
-Get Contact Statuses except `bounced` and `complained`
+### FluentBoardsApi
+Retrieve the API instance or a specific key from the API.
 
 **Parameters**
-- $isOptions `boolean` if true then it will return as options structure array with `id`, `slug`, `title` properties
+- `$key` (string, optional): The specific API key to retrieve. Defaults to `null`.
 
-**Return** array
+**Return**
+- `mixed`: The API instance or a specific key value.
 
-**Available Filter Hook:** `fluent_crm/contact_editable_statuses`
-
-### fluentcrm\_contact\_types
-Get Contact Types as array
-
-**Parameters**
-- $isOptions `boolean` if true then it will return as options structure array with `id`, `slug`, `title` properties
-
-**Return** array
-
-Example:
-```php 
-fluentcrm_contact_types();
-//returns
-[
-    'lead'     => 'Lead',
-    'customer' => 'Customer'
-]
-
-fluentcrm_contact_types(true);
-// returns
-[
-    [
-        'id' => 'lead',
-        'title' => 'Lead',
-        'slug' => 'lead'
-    ],
-    .....
-]
-
+**Example**
+```php
+$api = FluentBoardsApi();        // Retrieve the entire API instance
+$specificApi = FluentBoardsApi('specificKey'); // Retrieve a specific API key
 ```
 
-**Available Filter Hook:** `fluentcrm_contact_types`
-
-
-### fluentcrm\_activity\_types
-Get Contact Note Activity Types items as array
-
-**Return** array
-
-Source:
-```php 
-function fluentcrm_activity_types()
-{
-    return apply_filters('fluentcrm_contact_activity_types', [
-        'note'              => __('Note', 'fluent-crm'),
-        'call'              => __('Call', 'fluent-crm'),
-        'email'             => __('Email', 'fluent-crm'),
-        'meeting'           => __('Meeting', 'fluent-crm'),
-        'quote_sent'        => __('Quote: Sent', 'fluent-crm'),
-        'quote_accepted'    => __('Quote: Accepted', 'fluent-crm'),
-        'quote_refused'     => __('Quote: Refused', 'fluent-crm'),
-        'invoice_sent'      => __('Invoice: Sent', 'fluent-crm'),
-        'invoice_part_paid' => __('Invoice: Part Paid', 'fluent-crm'),
-        'invoice_paid'      => __('Invoice: Paid', 'fluent-crm'),
-        'invoice_refunded'  => __('Invoice: Refunded', 'fluent-crm'),
-        'transaction'       => __('Transaction', 'fluent-crm'),
-        'feedback'          => __('Feedback', 'fluent-crm'),
-        'tweet'             => __('Tweet', 'fluent-crm'),
-        'facebook_post'     => __('Facebook Post', 'fluent-crm')
-    ]);
-}
-```
-**Available Filter Hook:** `fluentcrm_contact_activity_types`
-
-### fluentcrm\_get\_current\_contact
-Get Current Contact based on the current userID or contact from the cookie value
-
-**@return** `false|object` \FluentCrm\App\Models\Subscriber
-
-### fluentcrm\_get\_crm\_profile\_html
-Get FluentCRM's contact profile widget HTML
+### fluent_boards_user_avatar
+Generate a user avatar URL based on the user's email.
 
 **Parameters**
-- $userIdOrEmail `int|string` User ID or email address of the contact
-- $checkPermission `boolean` Whether to check current user's permission
-- $withCss `boolean` Whether to include CSS
+- `$email`: (string): The user's email address.
+- `$name` (string, optional): The user's name to be used as a fallback if no Gravatar is found.
+
+**Return**
+- `string`: The URL of the user's avatar.
+
+**Example**
+```php
+$avatarUrl = fluent_boards_user_avatar('user@example.com', 'John Doe');
+```
+
+### fluent_boards_mix
+Get the asset URL for the specified path.
+
+**Parameters**
+- `$path` (string): The path to the asset.
+- `$manifestDirectory` (string, optional): The manifest directory. Defaults to an empty string.
+
+**Return**
+- `string`: The full URL to the asset.
+
+**Example**
+```php
+$assetUrl = fluent_boards_mix('/js/app.js');
+```
+
+### FluentBoardsAssetUrl
+Get the base URL for FluentBoards assets.
+
+**Parameters**
+- `$path` (string, optional): The relative path to the asset. Defaults to null.
+
+**Return**
+- `string`: The full URL to the asset or the base asset URL.
+
+**Example**
+```php
+$assetUrl = FluentBoardsAssetUrl('/images/logo.png');
+```
+
+### fluent_boards_page_url
+Get the URL of the FluentBoards admin page.
+
+**Return**
+- `string`: The URL of the FluentBoards admin page.
+
+**Example**
+```php
+$pageUrl = fluent_boards_page_url();
+```
+
+### fluent_boards_get_pref_settings
+Get the URL of the FluentBoards admin page.
+
+**Parameters**
+- `$cached` (boolean, optional): Whether to use cached settings. Defaults to `true`.
+
+**Return**
+- `array`: An associative array of preference settings.
+
+**Example**
+```php
+$settings = fluent_boards_get_pref_settings();
+```
+
+### fluent_boards_site_logo
+Get the site logo URL.
+
+**Return**
+- `string`: The URL of the site's logo.
+
+**Example**
+```php
+$logoUrl = fluent_boards_site_logo();
+```
+
+### fluent_boards_get_option
+Get the site logo URL.
+
+**Parameters**
+- `$key` (string): The option key.
+- `$default` (mixed, optional): The default value to return if the option does not exist. Defaults to `null`.
+
+**Return**
+- `mixed`: The value of the option or the default value.
+
+**Example**
+```php
+$optionValue = fluent_boards_get_option('some_option_key', 'default_value');
+```
+
+### fluent_boards_update_option
+Get the site logo URL.
+
+**Parameters**
+- `key` (string): The option key.
+- `$value` (mixed): The value to set for the option.
+
+**Return**
+- `\FluentBoards\App\Models\Meta`: The updated `Meta` model instance.
+
+**Example**
+```php
+$updatedOption = fluent_boards_update_option('some_option_key', 'new_value');
+```
+
+### fluentBoardsDb
+Get the FluentBoards database instance.
+
+**Return**
+- `\FluentBoards\App\App`
+
+**Example**
+```php
+$db = fluentBoardsDb();
+```
 
 
-**@return** `false|string` HTML of the contact's profile widget
-
-### fluentcrm\_get\_custom\_contact\_fields
-Get Custom Fields schema for contacts
-
-
-### fluentCrmGetContactSecureHash
-Get unique long hash of a contact which can be used to identify the contact for various usage when is not logged in.
+This documentation provides a comprehensive overview of the global functions available in the `FluentBoards` plugin, including their usage, parameters, and return values.
 
