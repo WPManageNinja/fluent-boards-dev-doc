@@ -12,10 +12,9 @@ module.exports = [
     collapsable: false,
     sidebarDepth: -1,
     children: [
-      'contact-api-function',
-      'company-api-function',
-      'list-api-function',
-      'tag-api-function',
+      'boards-api-function',
+      'stages-api-function',
+      'tasks-api-function',
     ]
   }
 ];
