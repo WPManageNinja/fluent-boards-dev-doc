@@ -1,6 +1,6 @@
 module.exports = [
     {
-        title: 'FluentCRM Helper Classes',
+        title: 'FluentBoards Helper Classes',
         collapsable: false,
         sidebarDepth: -1,
         children: [
