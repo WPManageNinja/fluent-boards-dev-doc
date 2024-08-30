@@ -12,7 +12,7 @@ Here is an example Fluent Query Builder
 
 ```php
 $query = fluentBoardsDb()->table('fbs_boards')
-            ->orderBy('date', 'ASC')
+            ->orderBy('title', 'ASC')
             ->first();
 ```
 
@@ -20,26 +20,26 @@ $query = fluentBoardsDb()->table('fbs_boards')
 # Retrieving Results
 
 ### Retrieving All Rows From A Table
-You may use the `table` method on the `fluentCrmDb` function to begin a query. The `table` method returns a fluent query builder instance for the given table, allowing you to chain more constraints onto the query and then finally get the results using the `get` method:
+You may use the `table` method on the `fluentBoardsDb` function to begin a query. The `table` method returns a fluent query builder instance for the given table, allowing you to chain more constraints onto the query and then finally get the results using the `get` method:
 
 ```php
 <?php
  
-namespace FluentCrm\App\Http\Controllers;
+namespace FluentBoards\App\Http\Controllers;
  
-class UserController extends Controller
+class TaskController extends Controller
 {
     /**
-     * Show a list of all the application's subscribers.
+     * Show a list of all the tasks
      *
      * @return Response
      */
     public function index()
     {
-        $subscribers = fluentCrmDb()->table('fc_subscribers')->get();
+        $tasks = fluentBoardsDb()->table('fc_tasks')->get();
  
         return [
-            'subscribers' => $subscribers
+            'tasks' => $tasks
         ];   
     }
 }
@@ -47,8 +47,9 @@ class UserController extends Controller
 The `get` method returns an array containing the results where each result is an instance of the PHP stdClass object. You may access each column's value by accessing the column as a property of the object:
 
 ```php
-foreach ($subscribers as $subscriber) {
-    echo $subscriber->first_name;
+foreach ($tasks as $task) {
+    echo $task->title;
+    echo $task->status;
 }
 ```
 
