@@ -9,35 +9,6 @@ In this article, we are documenting few useful functions that you may use. For f
 
 [[toc]]
 
-### fluentBoards
-Retrieve an instance of the `FluentBoards` application or a specific module.
-
-**Parameters**
-- `$module` (string, optional): The module you want to retrieve. Defaults to `null`.
-
-**Return**
-- `App`: An instance of the `FluentBoards\App\App` class.
-
-**Example**
-```php
-$fluentBoards = fluentBoards(); // Retrieve the main app instance
-$api = fluentBoards('api');     // Retrieve the API module
-```
-
-### FluentBoardsApi
-Retrieve the API instance or a specific key from the API.
-
-**Parameters**
-- `$key` (string, optional): The specific API key to retrieve. Defaults to `null`.
-
-**Return**
-- `mixed`: The API instance or a specific key value.
-
-**Example**
-```php
-$api = FluentBoardsApi();        // Retrieve the entire API instance
-$specificApi = FluentBoardsApi('specificKey'); // Retrieve a specific API key
-```
 
 ### fluent_boards_user_avatar
 Generate a user avatar URL based on the user's email.
@@ -52,35 +23,6 @@ Generate a user avatar URL based on the user's email.
 **Example**
 ```php
 $avatarUrl = fluent_boards_user_avatar('user@example.com', 'John Doe');
-```
-
-### fluent_boards_mix
-Get the asset URL for the specified path.
-
-**Parameters**
-- `$path` (string): The path to the asset.
-- `$manifestDirectory` (string, optional): The manifest directory. Defaults to an empty string.
-
-**Return**
-- `string`: The full URL to the asset.
-
-**Example**
-```php
-$assetUrl = fluent_boards_mix('/js/app.js');
-```
-
-### FluentBoardsAssetUrl
-Get the base URL for FluentBoards assets.
-
-**Parameters**
-- `$path` (string, optional): The relative path to the asset. Defaults to null.
-
-**Return**
-- `string`: The full URL to the asset or the base asset URL.
-
-**Example**
-```php
-$assetUrl = FluentBoardsAssetUrl('/images/logo.png');
 ```
 
 ### fluent_boards_page_url
