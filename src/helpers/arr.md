@@ -1,6 +1,6 @@
 # Array Helper aka Arr
 
-- Class with Namespace: `\FluentCrm\Framework\Support\Arr`
+- Class with Namespace: `\FluentBoards\Framework\Support\Arr`
 - Method Types: `static`
 
 <a name="method-array-add"></a>
@@ -8,7 +8,7 @@
 
 The `Arr::add` method adds a given key / value pair to an array if the given key doesn't already exist in the array:
 ```php 
-use FluentCrm\Framework\Support\Arr;
+use FluentBoards\Framework\Support\Arr;
 
 $array = Arr::add(['name' => 'Desk'], 'price', 100);
 
@@ -21,7 +21,7 @@ $array = Arr::add(['name' => 'Desk'], 'price', 100);
 
 The `Arr::collapse` method collapses an array of arrays into a single array:
 ```php 
-use FluentCrm\Framework\Support\Arr;
+use FluentBoards\Framework\Support\Arr;
 
 $array = Arr::collapse([[1, 2, 3], [4, 5, 6], [7, 8, 9]]);
 
@@ -33,7 +33,7 @@ $array = Arr::collapse([[1, 2, 3], [4, 5, 6], [7, 8, 9]]);
 
 The `Arr::divide` method returns two arrays, one containing the keys, and the other containing the values of the given array:
 ```php 
-use FluentCrm\Framework\Support\Arr;
+use FluentBoards\Framework\Support\Arr;
 
 [$keys, $values] = Arr::divide(['name' => 'Desk']);
 
@@ -47,7 +47,7 @@ use FluentCrm\Framework\Support\Arr;
 
 The `Arr::dot` method flattens a multi-dimensional array into a single level array that uses "dot" notation to indicate depth:
 ```php 
-use FluentCrm\Framework\Support\Arr;
+use FluentBoards\Framework\Support\Arr;
 
 $array = ['products' => ['desk' => ['price' => 100]]];
 
@@ -61,7 +61,7 @@ $flattened = Arr::dot($array);
 
 The `Arr::except` method removes the given key / value pairs from an array:
 ```php 
-use FluentCrm\Framework\Support\Arr;
+use FluentBoards\Framework\Support\Arr;
 
 $array = ['name' => 'Desk', 'price' => 100];
 
@@ -74,7 +74,7 @@ $filtered = Arr::except($array, ['price']);
 
 The `Arr::first` method returns the first element of an array passing a given truth test:
 ```php 
-use FluentCrm\Framework\Support\Arr;
+use FluentBoards\Framework\Support\Arr;
 
 $array = [100, 200, 300];
 
@@ -86,7 +86,7 @@ $first = Arr::first($array, function ($value, $key) {
 ```
 A default value may also be passed as the third parameter to the method. This value will be returned if no value passes the truth test:
 ```php 
-use FluentCrm\Framework\Support\Arr;
+use FluentBoards\Framework\Support\Arr;
 
 $first = Arr::first($array, $callback, $default);
 ```
@@ -97,7 +97,7 @@ $first = Arr::first($array, $callback, $default);
 The `Arr::flatten` method flattens a multi-dimensional array into a single level array:
 
 ```php 
-use FluentCrm\Framework\Support\Arr;
+use FluentBoards\Framework\Support\Arr;
 
 $array = ['name' => 'Joe', 'languages' => ['PHP', 'Ruby']];
 
@@ -112,7 +112,7 @@ $flattened = Arr::flatten($array);
 The `Arr::forget` method removes a given key / value pair from a deeply nested array using "dot" notation:
 
 ```php 
-use FluentCrm\Framework\Support\Arr;
+use FluentBoards\Framework\Support\Arr;
 
 $array = ['products' => ['desk' => ['price' => 100]]];
 
@@ -126,7 +126,7 @@ Arr::forget($array, 'products.desk');
 
 The `Arr::get` method retrieves a value from a deeply nested array using "dot" notation:
 ```php 
-use FluentCrm\Framework\Support\Arr;
+use FluentBoards\Framework\Support\Arr;
 
 $array = ['products' => ['desk' => ['price' => 100]]];
 
@@ -138,7 +138,7 @@ $price = Arr::get($array, 'products.desk.price');
 The `Arr::get` method also accepts a default value, which will be returned if the specific key is not found:
 
 ```php 
-use FluentCrm\Framework\Support\Arr;
+use FluentBoards\Framework\Support\Arr;
 
 $discount = Arr::get($array, 'products.desk.discount', 0);
 
@@ -151,7 +151,7 @@ $discount = Arr::get($array, 'products.desk.discount', 0);
 The `Arr::has` method checks whether a given item or items exists in an array using "dot" notation:
 
 ```php 
-use FluentCrm\Framework\Support\Arr;
+use FluentBoards\Framework\Support\Arr;
 
 $array = ['product' => ['name' => 'Desk', 'price' => 100]];
 
@@ -169,7 +169,7 @@ $contains = Arr::has($array, ['product.price', 'product.discount']);
 
 The `Arr::last` method returns the last element of an array passing a given truth test:
 ```php 
-use FluentCrm\Framework\Support\Arr;
+use FluentBoards\Framework\Support\Arr;
 
 $array = [100, 200, 300, 110];
 
@@ -182,7 +182,7 @@ $last = Arr::last($array, function ($value, $key) {
 
 A default value may be passed as the third argument to the method. This value will be returned if no value passes the truth test:
 ```php 
-use FluentCrm\Framework\Support\Arr;
+use FluentBoards\Framework\Support\Arr;
 
 $last = Arr::last($array, $callback, $default);
 ```
@@ -192,7 +192,7 @@ $last = Arr::last($array, $callback, $default);
 
 The `Arr::only` method returns only the specified key / value pairs from the given array:
 ```php 
-use FluentCrm\Framework\Support\Arr;
+use FluentBoards\Framework\Support\Arr;
 
 $array = ['name' => 'Desk', 'price' => 100, 'orders' => 10];
 
@@ -205,7 +205,7 @@ $slice = Arr::only($array, ['name', 'price']);
 
 The `Arr::pluck` method retrieves all of the values for a given key from an array:
 ```php 
-use FluentCrm\Framework\Support\Arr;
+use FluentBoards\Framework\Support\Arr;
 
 $array = [
     ['developer' => ['id' => 1, 'name' => 'Jewel']],
@@ -218,7 +218,7 @@ $names = Arr::pluck($array, 'developer.name');
 ```
 You may also specify how you wish the resulting list to be keyed:
 ```php 
-use FluentCrm\Framework\Support\Arr;
+use FluentBoards\Framework\Support\Arr;
 
 $names = Arr::pluck($array, 'developer.name', 'developer.id');
 
@@ -229,7 +229,7 @@ $names = Arr::pluck($array, 'developer.name', 'developer.id');
 
 The `Arr::prepend` method will push an item onto the beginning of an array:
 ```php 
-use FluentCrm\Framework\Support\Arr;
+use FluentBoards\Framework\Support\Arr;
 
 $array = ['one', 'two', 'three', 'four'];
 
@@ -240,7 +240,7 @@ $array = Arr::prepend($array, 'zero');
 
 If needed, you may specify the key that should be used for the value:
 ```php 
-use FluentCrm\Framework\Support\Arr;
+use FluentBoards\Framework\Support\Arr;
 
 $array = ['price' => 100];
 
@@ -254,7 +254,7 @@ $array = Arr::prepend($array, 'Desk', 'name');
 
 The `Arr::pull` method returns and removes a key / value pair from an array:
 ```php 
-use FluentCrm\Framework\Support\Arr;
+use FluentBoards\Framework\Support\Arr;
 
 $array = ['name' => 'Desk', 'price' => 100];
 
@@ -267,7 +267,7 @@ $name = Arr::pull($array, 'name');
 
 A default value may be passed as the third argument to the method. This value will be returned if the key doesn't exist:
 ```php 
-use FluentCrm\Framework\Support\Arr;
+use FluentBoards\Framework\Support\Arr;
 
 $value = Arr::pull($array, $key, $default);
 ```
@@ -276,7 +276,7 @@ $value = Arr::pull($array, $key, $default);
 
 The `Arr::random` method returns a random value from an array:
 ```php 
-use FluentCrm\Framework\Support\Arr;
+use FluentBoards\Framework\Support\Arr;
 
 $array = [1, 2, 3, 4, 5];
 
@@ -286,7 +286,7 @@ $random = Arr::random($array);
 ```
 You may also specify the number of items to return as an optional second argument. Note that providing this argument will return an array, even if only one item is desired:
 ```php 
-use FluentCrm\Framework\Support\Arr;
+use FluentBoards\Framework\Support\Arr;
 
 $items = Arr::random($array, 2);
 
@@ -298,7 +298,7 @@ $items = Arr::random($array, 2);
 
 The `Arr::set` method sets a value within a deeply nested array using "dot" notation:
 ```php 
-use FluentCrm\Framework\Support\Arr;
+use FluentBoards\Framework\Support\Arr;
 
 $array = ['products' => ['desk' => ['price' => 100]]];
 
@@ -312,7 +312,7 @@ Arr::set($array, 'products.desk.price', 200);
 
 The `Arr::sort` method sorts an array by its values:
 ```php 
-use FluentCrm\Framework\Support\Arr;
+use FluentBoards\Framework\Support\Arr;
 
 $array = ['Desk', 'Table', 'Chair'];
 
@@ -323,7 +323,7 @@ $sorted = Arr::sort($array);
 
 You may also sort the array by the results of the given Closure:
 ```php 
-use FluentCrm\Framework\Support\Arr;
+use FluentBoards\Framework\Support\Arr;
 
 $array = [
     ['name' => 'Desk'],
@@ -348,7 +348,7 @@ $sorted = array_values(Arr::sort($array, function ($value) {
 
 The `Arr::sortRecursive` method recursively sorts an array using the `sort` function for numeric sub=arrays and `ksort` for associative sub-arrays:
 ```php 
-use FluentCrm\Framework\Support\Arr;
+use FluentBoards\Framework\Support\Arr;
 
 $array = [
     ['Roman', 'Taylor', 'Li'],
@@ -372,7 +372,7 @@ $sorted = Arr::sortRecursive($array);
 
 The `Arr::where` method filters an array using the given Closure:
 ```php 
-use FluentCrm\Framework\Support\Arr;
+use FluentBoards\Framework\Support\Arr;
 
 $array = [100, '200', 300, '400', 500];
 

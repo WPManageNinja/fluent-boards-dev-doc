@@ -1,6 +1,6 @@
 # String Helper aka Str
 
-- Class with Namespace: `\FluentCrm\Framework\Support\Str`
+- Class with Namespace: `\FluentBoards\Framework\Support\Str`
 - Method Types: `static`
 
 
@@ -11,7 +11,7 @@
 The `Str::camel` method converts the given string to `camelCase`:
 
 ```php 
-    use FluentCrm\Framework\Support\Str;
+    use FluentBoards\Framework\Support\Str;
 
     $converted = Str::camel('foo_bar');
 
@@ -24,7 +24,7 @@ The `Str::camel` method converts the given string to `camelCase`:
 The `Str::endsWith` method determines if the given string ends with the given value:
 
 ```php 
-    use FluentCrm\Framework\Support\Str;
+    use FluentBoards\Framework\Support\Str;
 
     $result = Str::endsWith('This is my name', 'name');
 
@@ -37,7 +37,7 @@ The `Str::endsWith` method determines if the given string ends with the given va
 The `Str::kebab` method converts the given string to `kebab-case`:
 
 ```php 
-    use FluentCrm\Framework\Support\Str;
+    use FluentBoards\Framework\Support\Str;
 
     $converted = Str::kebab('fooBar');
 
@@ -63,7 +63,7 @@ The `preg_replace_array` function replaces a given pattern in the string sequent
 The `Str::snake` method converts the given string to `snake_case`:
 
 ```php 
-    use FluentCrm\Framework\Support\Str;
+    use FluentBoards\Framework\Support\Str;
 
     $converted = Str::snake('fooBar');
 
@@ -76,7 +76,7 @@ The `Str::snake` method converts the given string to `snake_case`:
 The `Str::startsWith` method determines if the given string begins with the given value:
 
 ```php 
-    use FluentCrm\Framework\Support\Str;
+    use FluentBoards\Framework\Support\Str;
 
     $result = Str::startsWith('This is my name', 'This');
 
@@ -89,7 +89,7 @@ The `Str::startsWith` method determines if the given string begins with the give
 The `Str::after` method returns everything after the given value in a string:
 
 ```php 
-    use FluentCrm\Framework\Support\Str;
+    use FluentBoards\Framework\Support\Str;
 
     $slice = Str::after('This is my name', 'This is');
 
@@ -101,7 +101,7 @@ The `Str::after` method returns everything after the given value in a string:
 
 The `Str::before` method returns everything before the given value in a string:
 ```php 
-    use FluentCrm\Framework\Support\Str;
+    use FluentBoards\Framework\Support\Str;
 
     $slice = Str::before('This is my name', 'my name');
 
@@ -114,7 +114,7 @@ The `Str::before` method returns everything before the given value in a string:
 The `Str::contains` method determines if the given string contains the given value (case sensitive):
 
 ```php 
-    use FluentCrm\Framework\Support\Str;
+    use FluentBoards\Framework\Support\Str;
 
     $contains = Str::contains('This is my name', 'my');
 
@@ -124,7 +124,7 @@ The `Str::contains` method determines if the given string contains the given val
 You may also pass an array of values to determine if the given string contains any of the values:
 
 ```php 
-    use FluentCrm\Framework\Support\Str;
+    use FluentBoards\Framework\Support\Str;
 
     $contains = Str::contains('This is my name', ['my', 'foo']);
 
@@ -137,7 +137,7 @@ You may also pass an array of values to determine if the given string contains a
 The `Str::finish` method adds a single instance of the given value to a string if it does not already end with the value:
 
 ```php 
-    use FluentCrm\Framework\Support\Str;
+    use FluentBoards\Framework\Support\Str;
 
     $adjusted = Str::finish('this/string', '/');
 
@@ -154,7 +154,7 @@ The `Str::finish` method adds a single instance of the given value to a string i
 The `Str::is` method determines if a given string matches a given pattern. Asterisks may be used to indicate wildcards:
 
 ```php 
-    use FluentCrm\Framework\Support\Str;
+    use FluentBoards\Framework\Support\Str;
 
     $matches = Str::is('foo*', 'foobar');
 
@@ -171,7 +171,7 @@ The `Str::is` method determines if a given string matches a given pattern. Aster
 The `Str::limit` method truncates the given string at the specified length:
 
 ```php 
-    use FluentCrm\Framework\Support\Str;
+    use FluentBoards\Framework\Support\Str;
 
     $truncated = Str::limit('The quick brown fox jumps over the lazy dog', 20);
 
@@ -181,7 +181,7 @@ The `Str::limit` method truncates the given string at the specified length:
 You may also pass a third argument to change the string that will be appended to the end:
 
 ```php 
-    use FluentCrm\Framework\Support\Str;
+    use FluentBoards\Framework\Support\Str;
 
     $truncated = Str::limit('The quick brown fox jumps over the lazy dog', 20, ' (...)');
 
@@ -194,7 +194,7 @@ You may also pass a third argument to change the string that will be appended to
 The `Str::orderedUuid` method generates a "timestamp first" UUID that may be efficiently stored in an indexed database column:
 
 ```php 
-    use FluentCrm\Framework\Support\Str;
+    use FluentBoards\Framework\Support\Str;
 
     return (string) Str::orderedUuid();
 ```
@@ -205,7 +205,7 @@ The `Str::orderedUuid` method generates a "timestamp first" UUID that may be eff
 The `Str::plural` method converts a string to its plural form. This function currently only supports the English language:
 
 ```php 
-    use FluentCrm\Framework\Support\Str;
+    use FluentBoards\Framework\Support\Str;
 
     $plural = Str::plural('car');
 
@@ -219,7 +219,7 @@ The `Str::plural` method converts a string to its plural form. This function cur
 You may provide an integer as a second argument to the function to retrieve the singular or plural form of the string:
 
 ```php 
-    use FluentCrm\Framework\Support\Str;
+    use FluentBoards\Framework\Support\Str;
 
     $plural = Str::plural('child', 2);
 
@@ -236,7 +236,7 @@ You may provide an integer as a second argument to the function to retrieve the 
 The `Str::random` method generates a random string of the specified length. This function uses PHP's `random_bytes` function:
 
 ```php 
-    use FluentCrm\Framework\Support\Str;
+    use FluentBoards\Framework\Support\Str;
 
     $random = Str::random(40);
 ```
@@ -247,7 +247,7 @@ The `Str::random` method generates a random string of the specified length. This
 The `Str::replaceArray` method replaces a given value in the string sequentially using an array:
 
 ```php 
-    use FluentCrm\Framework\Support\Str;
+    use FluentBoards\Framework\Support\Str;
 
     $string = 'The event will take place between ? and ?';
 
@@ -262,7 +262,7 @@ The `Str::replaceArray` method replaces a given value in the string sequentially
 The `Str::replaceFirst` method replaces the first occurrence of a given value in a string:
 
 ```php 
-    use FluentCrm\Framework\Support\Str;
+    use FluentBoards\Framework\Support\Str;
 
     $replaced = Str::replaceFirst('the', 'a', 'the quick brown fox jumps over the lazy dog');
 
@@ -275,7 +275,7 @@ The `Str::replaceFirst` method replaces the first occurrence of a given value in
 The `Str::replaceLast` method replaces the last occurrence of a given value in a string:
 
 ```php 
-    use FluentCrm\Framework\Support\Str;
+    use FluentBoards\Framework\Support\Str;
 
     $replaced = Str::replaceLast('the', 'a', 'the quick brown fox jumps over the lazy dog');
 
@@ -288,7 +288,7 @@ The `Str::replaceLast` method replaces the last occurrence of a given value in a
 The `Str::singular` method converts a string to its singular form. This function currently only supports the English language:
 
 ```php 
-    use FluentCrm\Framework\Support\Str;
+    use FluentBoards\Framework\Support\Str;
 
     $singular = Str::singular('cars');
 
@@ -305,7 +305,7 @@ The `Str::singular` method converts a string to its singular form. This function
 The `Str::slug` method generates a URL friendly "slug" from the given string:
 
 ```php 
-    use FluentCrm\Framework\Support\Str;
+    use FluentBoards\Framework\Support\Str;
 
     $slug = Str::slug('Laravel 5 Framework', '-');
 
@@ -318,7 +318,7 @@ The `Str::slug` method generates a URL friendly "slug" from the given string:
 The `Str::start` method adds a single instance of the given value to a string if it does not already start with the value:
 
 ```php 
-    use FluentCrm\Framework\Support\Str;
+    use FluentBoards\Framework\Support\Str;
 
     $adjusted = Str::start('this/string', '/');
 
@@ -335,7 +335,7 @@ The `Str::start` method adds a single instance of the given value to a string if
 The `Str::studly` method converts the given string to `StudlyCase`:
 
 ```php 
-    use FluentCrm\Framework\Support\Str;
+    use FluentBoards\Framework\Support\Str;
 
     $converted = Str::studly('foo_bar');
 
@@ -348,7 +348,7 @@ The `Str::studly` method converts the given string to `StudlyCase`:
 The `Str::title` method converts the given string to `Title Case`:
 
 ```php 
-    use FluentCrm\Framework\Support\Str;
+    use FluentBoards\Framework\Support\Str;
 
     $converted = Str::title('a nice title uses the correct case');
 
@@ -363,7 +363,7 @@ If the specified translation key does not exist, the `trans` function will retur
 The `Str::uuid` method generates a UUID (version 4):
 
 ```php 
-    use FluentCrm\Framework\Support\Str;
+    use FluentBoards\Framework\Support\Str;
 
     return (string) Str::uuid();
 ```
