@@ -1,7 +1,7 @@
 {
-  "name": "fluentcrm-developers-docs",
+  "name": "fluent-boards-developers-docs",
   "version": "1.0.0",
-  "description": "Resources and tutorials for FluentCRM developers",
+  "description": "Resources and tutorials for FluentBoards developers",
   "main": "index.js",
   "base": "/",
   "authors": {

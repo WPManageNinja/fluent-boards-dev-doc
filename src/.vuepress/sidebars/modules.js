@@ -10,12 +10,12 @@ module.exports = [
             ['/modules/tasks', 'Tasks ']
         ]
     },
-    {
-        title: 'Smart Codes',
-        collapsable: false,
-        sidebarDepth: -1,
-        children: [
-            ['/modules/smart-code', 'Smart Code'],
-        ]
-    }
+    // {
+    //     title: 'Smart Codes',
+    //     collapsable: false,
+    //     sidebarDepth: -1,
+    //     children: [
+    //         ['/modules/smart-code', 'Smart Code'],
+    //     ]
+    // }
 ];

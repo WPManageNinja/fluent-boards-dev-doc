@@ -1,6 +1,6 @@
 # FluentCRM CLI
 
-<Badge type="tip" vertical="top" text="FluentCRM Core" /> <Badge type="warning" vertical="top" text="Advanced" />
+<Badge type="tip" vertical="top" text="FluentBoards Core" /> <Badge type="warning" vertical="top" text="Advanced" />
 
 FluentCRM integrates with [WP-CLI](https://wp-cli.org/), enabling you to run certain FluentCRM tasks via the command line interface, without using a web browser.
 
