@@ -5,7 +5,7 @@
 Fluent's database query builder provides a convenient, fluent interface to creating and running database queries. It can be used to perform most database operations in your application.
 
 ::: tip
-Our Query Builder is compatible the PHP Laravel Framework's Query Builder. If you are familiar with Laravel's Query Builder, you will feel right at home using the FluentCRM's Query Builder.
+Our Query Builder is compatible the PHP Laravel Framework's Query Builder. If you are familiar with Laravel's Query Builder, you will feel right at home using the FluentBoards' Query Builder.
 :::
 ### Example
 Here is an example Fluent Query Builder 

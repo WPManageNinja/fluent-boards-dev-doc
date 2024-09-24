@@ -68,9 +68,9 @@ module.exports = {
         searchPlaceholder: 'Search...',
         searchMaxSuggestions: 10,
         algolia: {
-            apiKey: '9d00a167e089bf90059b2085cc88559c',
-            indexName: 'crawler_FluentCRM Developers Docs',
-            appId: '2PWH5XIPGO',
+            apiKey: '',
+            indexName: ' Developers Docs',
+            appId: '',
         },
         nav: [
             {
@@ -129,25 +129,13 @@ module.exports = {
                     {
                         text: 'Tasks',
                         link: '/modules/tasks/',
-                    },
-                    // {
-                    //     text: 'Extending REST API',
-                    //     link: '/extending-rest-api/',
-                    // },
-                    // {
-                    //     text: 'Event Tracking',
-                    //     link: '/modules/event-tracking/',
-                    // }
+                    }
                 ],
             },
-            // {
-            //     text: 'Blog',
-            //     link: 'https://fluentcrm.com/blog/',
-            // },
-            // {
-            //     text: 'REST API',
-            //     link: 'https://rest-api.fluentcrm.com/',
-            // },
+            {
+                text: 'Blog',
+                link: 'https://fluentboards.com/blog/',
+            }
         ],
         sidebar: {
 
