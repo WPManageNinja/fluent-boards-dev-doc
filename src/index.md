@@ -4,7 +4,7 @@ tagline: Resources and tutorials for FluentBoards developer
 sidebar: false
 prev: false
 next: false
-editLink: false
+editLink: true
 pageClass: docs-home
 ---
 
