@@ -65,7 +65,7 @@ echo $task->title;
 
 If you don't even need an entire row, you may extract a single value from a record using the `value` method. This method will return the value of the column directly:
 ```php
-$taskTitle = FluentBoardsDb()->table('fbs_tasks')->where('board_id', 1)->value('email');
+$taskTitle = FluentBoardsDb()->table('fbs_tasks')->where('board_id', 1)->value('title');
 ```
 
 ### Retrieving A List Of Column Values
@@ -168,9 +168,10 @@ $tasks = FluentBoardsDb()->table('fbs_tasks')
 The `whereRaw` and `orWhereRaw` methods can be used to inject a raw `where` clause into your query. These methods accept an optional array of bindings as their second argument:
 ```php
 $boards = FluentBoardsDb()->table('fbs_boards')
-            ->whereRaw('LOWER(title) LIKE ?', ['%' . $query . '%'])
-            ->whereRaw('id LIKE ?', ['%' . $query . '%'])
-            ->get();
+    ->whereRaw('LOWER(title) LIKE ?', ['%' . strtolower($query) . '%'])
+    ->orWhereRaw('id LIKE ?', ['%' . $query . '%'])
+    ->get();
+
 
 ```
 
