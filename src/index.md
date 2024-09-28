@@ -10,7 +10,7 @@ pageClass: docs-home
 
 <section id="home-hero">
   <h1>FluentBoards Developers Docs</h1>
-  <p>Learn how to extend FluentBoards core to create new integrations or add custom functionalities to your CRM. Here you will find detailed documentation, handy code snippets and full code examples.</p>
+  <p>Learn how to extend FluentBoards core to create new integrations or add custom functionalities to your boards. Here you will find detailed documentation, handy code snippets and full code examples.</p>
 </section>
 
 <section id="home-get-started" class="home-content">
