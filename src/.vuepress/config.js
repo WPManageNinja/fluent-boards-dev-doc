@@ -65,7 +65,7 @@ module.exports = {
         logo: '/assets/img/icon.svg',
         displayAllHeaders: true,
         smoothScroll: true,
-        search: false, // built in search disabled because of Algolia search
+        search: true, // built in search disabled because of Algolia search
         searchPlaceholder: 'Search...',
         searchMaxSuggestions: 10,
         algolia: {
