@@ -70,7 +70,7 @@ module.exports = {
         searchMaxSuggestions: 10,
         algolia: {
             apiKey: 'f07487500b8e8e1456d054f87a2ce71f',
-            indexName: 'developers_fluentboards_com_bfuq6c81lb_pages',
+            indexName: 'fluent_board_dev_docs_crawl_pages',
             appId: 'BFUQ6C81LB',
         },
         nav: [
