@@ -219,5 +219,45 @@ add_filter('fluent_boards/email_header', function($email_header) {
 ```
 </explain-block>
 
+<explain-block title="fluent_boards/task_priorities">
+If you want to modify task priorities then you can use this filter.
+
+**Parameters**
+- `$priorities` Array - 'high', 'medium', 'low'
+
+**Usage:**
+```php
+/*
+* Modify task priorities
+*/
+add_filter('fluent_boards/task_priorities', function($priorities) {
+    $priorities['urgent'] = __('Urgent', 'fluent-boards');
+    return $priorities;
+});
+```
+</explain-block>
+
+<explain-block title="fluent_boards/task_tabs">
+If you want to modify the order of activity, comment log in task modal then you can use this filter.
+
+**Parameters**
+- `$tabs` Array - 'all', 'comment', 'activity'
+
+**Usage:**
+```php
+/*
+* Modify task tabs
+*/
+add_filter('fluent_boards/task_tabs', function($tabs) {
+    $reorderedTabs = [
+        'activity' => $tabs['activity'], //1st 
+        'comment' => $tabs['comment'], //2nd
+        'all' => $tabs['all'], //3rd  
+    ];
+    
+    return $reorderedTabs;
+});
+```
+</explain-block>
 
 
