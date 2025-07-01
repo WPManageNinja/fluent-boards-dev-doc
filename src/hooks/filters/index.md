@@ -261,3 +261,21 @@ add_filter('fluent_boards/task_tabs', function($tabs) {
 </explain-block>
 
 
+<explain-block title="fluent_boards/menu_items">
+If you want to modify the menu items ( add new menu or remove/replace existing ones) in FluentBoards, you can use this filter.
+
+**Parameters**
+- `$menuItems` Array
+
+**Usage:**
+```php
+/*
+* Modify menu items
+*/
+add_filter('fluent_boards/menu_items', function($menuItems) {
+   // your modification logic here
+
+   return $menuItems;
+});
+```
+</explain-block>
