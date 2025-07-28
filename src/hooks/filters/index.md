@@ -262,7 +262,7 @@ add_filter('fluent_boards/task_tabs', function($tabs) {
 
 
 <explain-block title="fluent_boards/board_menu_items">
-Modify board menu items - add, remove, or reorder menu items in the board sidebar. This filter runs when the board menu is loaded and allows you to customize the sidebar menu that appears on the right side of the board.
+Modify board menu items. This filter runs when the board menu is loaded and allows you to customize the sidebar menu that appears on the right side of the board.
 
 **Parameters**
 - `$menuItems` Array - Array of existing menu items with their properties (key, label, type, position, etc.)
@@ -274,11 +274,11 @@ Modify board menu items - add, remove, or reorder menu items in the board sideba
     'key' => 'unique_identifier',        // Required: Unique key for the menu item
     'label' => 'Menu Label',             // Required: Display text
     'type' => 'default|custom',          // Required: Item type
-    'position' => 1,                     // Optional: Position in menu (lower = higher)
+    'position' => 13,                    // Optional: Position in menu (lower = higher)
     'icon' => '<svg>...</svg>',          // Required for custom items: SVG icon HTML
     'html' => '<div>Content</div>',      // Required for custom items: HTML content
     'width' => '500px',                  // Optional: Modal/drawer width
-    'is_drawer' => true,                 // Optional: Open as drawer instead of modal
+    'render_in' => 'drawer|modal',       // Optional: 'drawer' (default) or 'modal' to open as popup modal
     'role' => 'manager|admin'            // Optional: Required user role
 ]
 ```
@@ -289,43 +289,21 @@ Modify board menu items - add, remove, or reorder menu items in the board sideba
 * Modify board menu items
 */
 add_filter('fluent_boards/board_menu_items', function($menuItems, $board_id) {
-   // Remove unwanted default menu items
-   $itemsToRemove = ['board_activity', 'custom_fields'];
-   $menuItems = array_filter($menuItems, function($item) use ($itemsToRemove) {
-       return !in_array($item['key'], $itemsToRemove);
-   });
-   
-   // Add custom menu item
+   // Add custom menu item (will open in drawer by default)
    $menuItems['my_custom_item'] = [
        'key' => 'my_custom_item',
        'label' => 'My Custom Item',
        'type' => 'custom',
-       'position' => 1,
+       'position' => 13,
        'icon' => '<svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M8 1a7 7 0 100 14A7 7 0 008 1zM3.5 8a4.5 4.5 0 119 0 4.5 4.5 0 01-9 0z"/></svg>',
-       'html' => '<div>Custom content</div>',
-       'width' => '500px'
+       'html' => '<div>Custom content</div>', // Required for custom items
+       'width' => '500px',
+       'render_in' => 'drawer' // or 'modal' for popup modal
    ];
    
    return $menuItems;
 }, 10, 2);
 ```
-
-**Default Menu Items Available (in order):**
-
-1. `about_this_board` - About this Board
-2. `board_activity` - Board Activity  
-3. `change_background` - Change Background (managers & admins, non-archived boards)
-4. `notification_settings` - Notification Settings (not for viewer-only users)
-5. `board_labels` - Board Labels
-6. `custom_fields` - Custom Fields (pro feature)
-7. `board_members` - Board Members
-8. `archived_items` - Archived Items
-9. `associated_crm_contacts` - Associated CRM Contacts (if FluentCRM active)
-10. `duplicate_board` - Duplicate Board (managers & admins, non-archived boards)
-11. `export` - Export Board (pro feature, managers & admins, non-archived boards)
-12. `archive_board` - Archive Board (managers & admins, non-archived boards)
-13. `restore_board` - Restore Board (managers & admins, archived boards)
-14. `delete_board` - Delete Board (admins only, archived boards)
 
 </explain-block>
 
