@@ -1,6 +1,6 @@
 # Time Tracking
 
-The Time Tracking API allows you to manage time tracking for tasks in Fluent Boards. You can start, stop, pause, and commit time tracking sessions, as well as generate time reports.
+The Time Tracking API allows you to manage time tracking for tasks in Fluent Boards. You can commit manual time entries, update or delete tracks, and generate time reports.
 
 ## Time Track Object
 
@@ -12,21 +12,24 @@ A time track represents a time tracking session for a task.
 |----------|------|-------------|
 | `id` | integer | Unique identifier for the time track |
 | `task_id` | integer | ID of the task being tracked |
-| `board_id` | integer | ID of the project |
+| `board_id` | integer | ID of the board/project |
 | `user_id` | integer | ID of the user tracking time |
 | `started_at` | string | Start time of the tracking session |
-| `ended_at` | string | End time of the tracking session |
-| `duration` | integer | Duration in seconds |
-| `description` | string | Description of the work done |
-| `status` | string | Status of the time track (running, paused, completed) |
+| `completed_at` | string | End time of the tracking session |
+| `status` | string | Status of the time track (active, paused, completed) |
+| `working_minutes` | integer | Worked minutes (system-calculated or committed) |
+| `billable_minutes` | integer | Billable minutes |
+| `is_manual` | integer | 1 if manually committed; 0 if auto-tracked |
+| `message` | string | Description/notes of the work |
 | `created_at` | string | Creation timestamp |
 | `updated_at` | string | Last update timestamp |
 
 ### Status Values
 
-- `running` - Currently tracking time
+- `active` - Currently tracking time
 - `paused` - Time tracking is paused
 - `completed` - Time tracking session completed
+- `commited` - Time entry manually committed
 
 ## Get Time Tracks for a Task
 
@@ -36,15 +39,6 @@ Retrieve all time tracks for a specific task.
 ```
 GET /wp-json/fluent-boards/v2/projects/{board_id}/tasks/{task_id}/time-tracks
 ```
-
-### Parameters
-
-| Parameter | Type | Description |
-|-----------|------|-------------|
-| `board_id` | integer | The ID of the project |
-| `task_id` | integer | The ID of the task |
-| `per_page` | integer | Number of time tracks per page (default: 20) |
-| `page` | integer | Page number for pagination |
 
 ### Example Request
 
@@ -57,47 +51,61 @@ curl "https://yourdomain.com/wp-json/fluent-boards/v2/projects/1/tasks/1/time-tr
 
 ```json
 {
-  "current_page": 1,
-  "per_page": 20,
-  "total": 5,
-  "data": [
+  "tracks": [
     {
       "id": 1,
       "task_id": 1,
       "board_id": 1,
       "user_id": 1,
-      "started_at": "2023-02-15 10:00:00",
-      "ended_at": "2023-02-15 12:00:00",
-      "duration": 7200,
-      "description": "Design work on homepage",
+      "started_at": "2025-08-06 10:00:00",
+      "completed_at": "2025-08-06 12:00:00",
       "status": "completed",
-      "created_at": "2023-02-15 10:00:00",
-      "updated_at": "2023-02-15 12:00:00"
+      "working_minutes": 120,
+      "billable_minutes": 0,
+      "is_manual": 0,
+      "message": "Design work on homepage",
+      "created_at": "2025-08-06 10:00:00",
+      "updated_at": "2025-08-06 12:00:00",
+      "user": {
+        "ID": 1,
+        "display_name": "John Doe",
+        "user_email": "john@example.com"
+      }
     },
     {
       "id": 2,
       "task_id": 1,
       "board_id": 1,
       "user_id": 1,
-      "started_at": "2023-02-15 14:00:00",
-      "ended_at": null,
-      "duration": 0,
-      "description": "Continued design work",
-      "status": "running",
-      "created_at": "2023-02-15 14:00:00",
-      "updated_at": "2023-02-15 14:00:00"
+      "started_at": "2025-08-06 14:00:00",
+      "completed_at": null,
+      "status": "active",
+      "working_minutes": 0,
+      "billable_minutes": 0,
+      "is_manual": 0,
+      "message": "Continued design work",
+      "created_at": "2025-08-06 14:00:00",
+      "updated_at": "2025-08-06 14:00:00",
+      "user": {
+        "ID": 1,
+        "display_name": "John Doe",
+        "user_email": "john@example.com"
+      }
     }
-  ]
+  ],
+  "estimated_minutes": 60
 }
 ```
 
-## Start Time Tracking
 
-Start tracking time for a task.
+
+## Commit Time Tracking (Manual Entry)
+
+Create a manual time track entry.
 
 **HTTP Request**
 ```
-POST /wp-json/fluent-boards/v2/projects/{board_id}/tasks/{task_id}/time-tracks/start
+POST /wp-json/fluent-boards/v2/projects/{board_id}/tasks/{task_id}/time-tracks
 ```
 
 ### Parameters
@@ -111,16 +119,21 @@ POST /wp-json/fluent-boards/v2/projects/{board_id}/tasks/{task_id}/time-tracks/s
 
 | Parameter | Type | Required | Description |
 |-----------|------|----------|-------------|
-| `description` | string | No | Description of the work to be done |
+| `billable_minutes` | integer | Yes | Total billable minutes |
+| `message` | string | No | Description/notes |
+| `completed_at` | string | No | End time (YYYY-MM-DD HH:MM:SS; timezone suffix allowed) |
+| `started_at` | string | No | Start time (YYYY-MM-DD HH:MM:SS) |
 
 ### Example Request
 
 ```bash
-curl -X POST "https://yourdomain.com/wp-json/fluent-boards/v2/projects/1/tasks/1/time-tracks/start" \
+curl -X POST "https://yourdomain.com/wp-json/fluent-boards/v2/projects/{board_id}/tasks/{task_id}/time-tracks" \
   -H "Authorization: Basic API_USERNAME:API_PASSWORD" \
   -H "Content-Type: application/json" \
   -d '{
-    "description": "Starting design work on homepage"
+    "billable_minutes": 60,
+    "message": "Lorem ipsum",
+    "completed_at": "2025-08-08"
   }'
 ```
 
@@ -128,166 +141,33 @@ curl -X POST "https://yourdomain.com/wp-json/fluent-boards/v2/projects/1/tasks/1
 
 ```json
 {
-  "data": {
-    "id": 3,
-    "task_id": 1,
-    "board_id": 1,
+  "track": {
+    "status": "commited",
+    "completed_at": "2025-08-08 00:00:00",
+    "billable_minutes": 60,
+    "working_minutes": 60,
+    "message": "Lorem ipsum",
     "user_id": 1,
-    "started_at": "2023-02-15 16:00:00",
-    "ended_at": null,
-    "duration": 0,
-    "description": "Starting design work on homepage",
-    "status": "running",
-    "created_at": "2023-02-15 16:00:00",
-    "updated_at": "2023-02-15 16:00:00"
+    "board_id": "7",
+    "is_manual": 1,
+    "task_id": "272",
+    "started_at": "2025-08-08 08:57:05",
+    "updated_at": "2025-08-08T08:57:05+00:00",
+    "created_at": "2025-08-08T08:57:05+00:00",
+    "id": 2,
+    "user": {
+      "ID": 1,
+      "user_login": "saikatcdas55Cancrie",
+      "user_nicename": "saikat-c-das",
+      "user_email": "saikatcdas@gmail.com",
+      "user_url": "http://saikatcdas.com",
+      "user_registered": "2024-08-28 03:33:23",
+      "user_status": "0",
+      "display_name": "Saikat Chandra Das",
+      "photo": "https://secure.gravatar.com/avatar/628af4ad6672a9298e1e76af147689ba889521e9f7a65ac212ea70bdc2e8c6a1?s=128&d=mm&r=g"
+    }
   },
-  "message": "Time tracking started successfully"
-}
-```
-
-## Pause Time Tracking
-
-Pause the current time tracking session.
-
-**HTTP Request**
-```
-POST /wp-json/fluent-boards/v2/projects/{board_id}/tasks/{task_id}/time-tracks/pause
-```
-
-### Parameters
-
-| Parameter | Type | Description |
-|-----------|------|-------------|
-| `board_id` | integer | The ID of the project |
-| `task_id` | integer | The ID of the task |
-
-### Example Request
-
-```bash
-curl -X POST "https://yourdomain.com/wp-json/fluent-boards/v2/projects/1/tasks/1/time-tracks/pause" \
-  -H "Authorization: Basic API_USERNAME:API_PASSWORD"
-```
-
-### Example Response
-
-```json
-{
-  "data": {
-    "id": 3,
-    "task_id": 1,
-    "board_id": 1,
-    "user_id": 1,
-    "started_at": "2023-02-15 16:00:00",
-    "ended_at": "2023-02-15 17:30:00",
-    "duration": 5400,
-    "description": "Starting design work on homepage",
-    "status": "paused",
-    "created_at": "2023-02-15 16:00:00",
-    "updated_at": "2023-02-15 17:30:00"
-  },
-  "message": "Time tracking paused successfully"
-}
-```
-
-## Stop Time Tracking
-
-Stop the current time tracking session.
-
-**HTTP Request**
-```
-POST /wp-json/fluent-boards/v2/projects/{board_id}/tasks/{task_id}/time-tracks/stop
-```
-
-### Parameters
-
-| Parameter | Type | Description |
-|-----------|------|-------------|
-| `board_id` | integer | The ID of the project |
-| `task_id` | integer | The ID of the task |
-
-### Example Request
-
-```bash
-curl -X POST "https://yourdomain.com/wp-json/fluent-boards/v2/projects/1/tasks/1/time-tracks/stop" \
-  -H "Authorization: Basic API_USERNAME:API_PASSWORD"
-```
-
-### Example Response
-
-```json
-{
-  "data": {
-    "id": 3,
-    "task_id": 1,
-    "board_id": 1,
-    "user_id": 1,
-    "started_at": "2023-02-15 16:00:00",
-    "ended_at": "2023-02-15 18:00:00",
-    "duration": 7200,
-    "description": "Starting design work on homepage",
-    "status": "completed",
-    "created_at": "2023-02-15 16:00:00",
-    "updated_at": "2023-02-15 18:00:00"
-  },
-  "message": "Time tracking stopped successfully"
-}
-```
-
-## Commit Time Tracking
-
-Commit a time tracking session manually.
-
-**HTTP Request**
-```
-POST /wp-json/fluent-boards/v2/projects/{board_id}/tasks/{task_id}/time-tracks/commit
-```
-
-### Parameters
-
-| Parameter | Type | Description |
-|-----------|------|-------------|
-| `board_id` | integer | The ID of the project |
-| `task_id` | integer | The ID of the task |
-
-### Request Body
-
-| Parameter | Type | Required | Description |
-|-----------|------|----------|-------------|
-| `started_at` | string | Yes | Start time (YYYY-MM-DD HH:MM:SS) |
-| `ended_at` | string | Yes | End time (YYYY-MM-DD HH:MM:SS) |
-| `description` | string | No | Description of the work done |
-
-### Example Request
-
-```bash
-curl -X POST "https://yourdomain.com/wp-json/fluent-boards/v2/projects/1/tasks/1/time-tracks/commit" \
-  -H "Authorization: Basic API_USERNAME:API_PASSWORD" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "started_at": "2023-02-15 09:00:00",
-    "ended_at": "2023-02-15 11:30:00",
-    "description": "Manual time entry for design work"
-  }'
-```
-
-### Example Response
-
-```json
-{
-  "data": {
-    "id": 4,
-    "task_id": 1,
-    "board_id": 1,
-    "user_id": 1,
-    "started_at": "2023-02-15 09:00:00",
-    "ended_at": "2023-02-15 11:30:00",
-    "duration": 9000,
-    "description": "Manual time entry for design work",
-    "status": "completed",
-    "created_at": "2023-02-15 18:30:00",
-    "updated_at": "2023-02-15 18:30:00"
-  },
-  "message": "Time tracking committed successfully"
+  "message": "You have successfully submitted your working time"
 }
 ```
 
@@ -311,7 +191,7 @@ POST /wp-json/fluent-boards/v2/projects/{board_id}/tasks/{task_id}/time-tracks/e
 
 | Parameter | Type | Required | Description |
 |-----------|------|----------|-------------|
-| `estimated_hours` | float | Yes | Estimated time in hours |
+| `estimated_minutes` | integer | Yes | Estimated time in minutes |
 
 ### Example Request
 
@@ -320,7 +200,7 @@ curl -X POST "https://yourdomain.com/wp-json/fluent-boards/v2/projects/1/tasks/1
   -H "Authorization: Basic API_USERNAME:API_PASSWORD" \
   -H "Content-Type: application/json" \
   -d '{
-    "estimated_hours": 12.5
+    "estimated_minutes": 60
   }'
 ```
 
@@ -328,12 +208,7 @@ curl -X POST "https://yourdomain.com/wp-json/fluent-boards/v2/projects/1/tasks/1
 
 ```json
 {
-  "data": {
-    "task_id": 1,
-    "estimated_hours": 12.5,
-    "actual_hours": 8.0
-  },
-  "message": "Time estimation updated successfully"
+  "message": "Estimated time has been updated"
 }
 ```
 
@@ -365,7 +240,8 @@ curl -X DELETE "https://yourdomain.com/wp-json/fluent-boards/v2/projects/1/tasks
 
 ```json
 {
-  "message": "Time track deleted successfully"
+  "success": true,
+  "message": "Selected time track has been deleted"
 }
 ```
 
@@ -390,9 +266,10 @@ PUT /wp-json/fluent-boards/v2/projects/{board_id}/tasks/{task_id}/time-tracks/co
 
 | Parameter | Type | Required | Description |
 |-----------|------|----------|-------------|
+| `billable_minutes` | integer | Yes | Billable minutes (also used as working minutes) |
+| `message` | string | No | Description/notes of the work done |
+| `completed_at` | string | No | End time |
 | `started_at` | string | No | Start time |
-| `ended_at` | string | No | End time |
-| `description` | string | No | Description of the work done |
 
 ### Example Request
 
@@ -401,7 +278,9 @@ curl -X PUT "https://yourdomain.com/wp-json/fluent-boards/v2/projects/1/tasks/1/
   -H "Authorization: Basic API_USERNAME:API_PASSWORD" \
   -H "Content-Type: application/json" \
   -d '{
-    "description": "Updated description for design work"
+    "billable_minutes": 90,
+    "message": "Updated description for design work",
+    "completed_at": "2025-08-08 12:00:00"
   }'
 ```
 
@@ -409,20 +288,8 @@ curl -X PUT "https://yourdomain.com/wp-json/fluent-boards/v2/projects/1/tasks/1/
 
 ```json
 {
-  "data": {
-    "id": 1,
-    "task_id": 1,
-    "board_id": 1,
-    "user_id": 1,
-    "started_at": "2023-02-15 10:00:00",
-    "ended_at": "2023-02-15 12:00:00",
-    "duration": 7200,
-    "description": "Updated description for design work",
-    "status": "completed",
-    "created_at": "2023-02-15 10:00:00",
-    "updated_at": "2023-02-15 19:00:00"
-  },
-  "message": "Time track updated successfully"
+  "success": true,
+  "message": "Selected Time-track has been updated"
 }
 ```
 
@@ -442,16 +309,12 @@ GET /wp-json/fluent-boards/v2/projects/timesheet/by-tasks
 | Parameter | Type | Description |
 |-----------|------|-------------|
 | `board_id` | integer | Filter by project ID |
-| `user_id` | integer | Filter by user ID |
-| `start_date` | string | Start date (YYYY-MM-DD) |
-| `end_date` | string | End date (YYYY-MM-DD) |
-| `per_page` | integer | Number of records per page (default: 20) |
-| `page` | integer | Page number for pagination |
+| `date_range[]` | string[] | Array with two dates: start and end (YYYY-MM-DD) |
 
 ### Example Request
 
 ```bash
-curl "https://yourdomain.com/wp-json/fluent-boards/v2/projects/timesheet/by-tasks?board_id=1&start_date=2023-02-01&end_date=2023-02-28" \
+curl "https://yourdomain.com/wp-json/fluent-boards/v2/projects/timesheet/by-tasks?board_id=3&date_range[]=2025-08-01&date_range[]=2025-08-08" \
   -H "Authorization: Basic API_USERNAME:API_PASSWORD"
 ```
 
@@ -459,27 +322,22 @@ curl "https://yourdomain.com/wp-json/fluent-boards/v2/projects/timesheet/by-task
 
 ```json
 {
-  "current_page": 1,
-  "per_page": 20,
-  "total": 15,
-  "data": [
-    {
-      "task_id": 1,
-      "task_title": "Design Homepage",
-      "board_id": 1,
-      "board_title": "Project Alpha",
-      "total_hours": 8.5,
-      "estimated_hours": 10.0,
-      "time_tracks": [
-        {
-          "id": 1,
-          "started_at": "2023-02-15 10:00:00",
-          "ended_at": "2023-02-15 12:00:00",
-          "duration": 7200,
-          "description": "Design work"
-        }
-      ]
-    }
+  "tasks": [],
+  "date_labels": [
+    "2025-08-01",
+    "2025-08-02",
+    "2025-08-03",
+    "2025-08-04",
+    "2025-08-05",
+    "2025-08-06",
+    "2025-08-07",
+    "2025-08-08"
+  ],
+  "totalMinutes": 0,
+  "time_sheets": [],
+  "date_range": [
+    "2025-08-01 00:00:00",
+    "2025-08-08 23:59:59"
   ]
 }
 ```
@@ -498,15 +356,12 @@ GET /wp-json/fluent-boards/v2/projects/timesheet/by-users
 | Parameter | Type | Description |
 |-----------|------|-------------|
 | `board_id` | integer | Filter by project ID |
-| `start_date` | string | Start date (YYYY-MM-DD) |
-| `end_date` | string | End date (YYYY-MM-DD) |
-| `per_page` | integer | Number of records per page (default: 20) |
-| `page` | integer | Page number for pagination |
+| `date_range[]` | string[] | Array with two dates: start and end (YYYY-MM-DD) |
 
 ### Example Request
 
 ```bash
-curl "https://yourdomain.com/wp-json/fluent-boards/v2/projects/timesheet/by-users?board_id=1&start_date=2023-02-01&end_date=2023-02-28" \
+curl "https://yourdomain.com/wp-json/fluent-boards/v2/projects/timesheet/by-users?board_id=3&date_range[]=2025-08-01&date_range[]=2025-08-08" \
   -H "Authorization: Basic API_USERNAME:API_PASSWORD"
 ```
 
@@ -514,28 +369,22 @@ curl "https://yourdomain.com/wp-json/fluent-boards/v2/projects/timesheet/by-user
 
 ```json
 {
-  "current_page": 1,
-  "per_page": 20,
-  "total": 8,
-  "data": [
-    {
-      "user_id": 1,
-      "user_name": "John Doe",
-      "user_email": "john@example.com",
-      "total_hours": 45.5,
-      "tasks_worked_on": 12,
-      "time_tracks": [
-        {
-          "id": 1,
-          "task_id": 1,
-          "task_title": "Design Homepage",
-          "started_at": "2023-02-15 10:00:00",
-          "ended_at": "2023-02-15 12:00:00",
-          "duration": 7200,
-          "description": "Design work"
-        }
-      ]
-    }
+  "users": [],
+  "date_labels": [
+    "2025-08-01",
+    "2025-08-02",
+    "2025-08-03",
+    "2025-08-04",
+    "2025-08-05",
+    "2025-08-06",
+    "2025-08-07",
+    "2025-08-08"
+  ],
+  "totalMinutes": 0,
+  "time_sheets": [],
+  "date_range": [
+    "2025-08-01 09:16:56",
+    "2025-08-08 23:59:59"
   ]
 }
 ```

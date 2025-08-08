@@ -2,6 +2,8 @@
 
 The Users & Members API allows you to manage board members, permissions, and user roles in Fluent Boards. You can add, remove, and manage user permissions across projects.
 
+> Note: Endpoints labeled "Pro" require Fluent Boards Pro.
+
 ## User Object
 
 A user represents a WordPress user who can be a member of one or more boards. The User model extends the WordPress users table and includes computed attributes and relationships for board management.
@@ -39,6 +41,13 @@ Retrieve all users in the system with their board memberships and roles.
 **HTTP Request**
 ```
 GET /wp-json/fluent-boards/v2/fluent-boards-users
+```
+
+### Example Request
+
+```bash
+curl "https://yourdomain.com/wp-json/fluent-boards/v2/fluent-boards-users" \
+  -H "Authorization: Basic API_USERNAME:API_PASSWORD"
 ```
 
 
@@ -122,12 +131,15 @@ GET /wp-json/fluent-boards/v2/search-fluent-boards-users
 |-----------|------|-------------|
 | `searchInput` | string | Search term for user display name |
 
-### Example Request Body
+### Example Request
 
-```json
-{
-  "searchInput": "john"
-}
+```bash
+curl "https://yourdomain.com/wp-json/fluent-boards/v2/search-fluent-boards-users" \
+  -H "Authorization: Basic API_USERNAME:API_PASSWORD" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "searchInput": "john"
+  }'
 ```
 
 
@@ -241,6 +253,13 @@ Retrieve all members of a specific project.
 GET /wp-json/fluent-boards/v2/projects/{board_id}/users
 ```
 
+### Example Request
+
+```bash
+curl "https://yourdomain.com/wp-json/fluent-boards/v2/projects/{board_id}/users" \
+  -H "Authorization: Basic API_USERNAME:API_PASSWORD"
+```
+
 
 ### Example Response
 
@@ -290,13 +309,17 @@ POST /wp-json/fluent-boards/v2/projects/{board_id}/add-members
 
 
 
-### Example Request Body
+### Example Request
 
-```json
-{
-  "memberId": 5,
-  "isViewerOnly": "yes"
-}
+```bash
+curl "https://yourdomain.com/wp-json/fluent-boards/v2/projects/{board_id}/add-members" \
+  -X POST \
+  -H "Authorization: Basic API_USERNAME:API_PASSWORD" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "memberId": 5,
+    "isViewerOnly": "yes"
+  }'
 ```
 
 ### Example Response
@@ -327,6 +350,14 @@ Remove a user from a project.
 POST /wp-json/fluent-boards/v2/projects/{board_id}/user/{user_id}/remove
 ```
 
+### Example Request
+
+```bash
+curl "https://yourdomain.com/wp-json/fluent-boards/v2/projects/{board_id}/user/{user_id}/remove" \
+  -X POST \
+  -H "Authorization: Basic API_USERNAME:API_PASSWORD"
+```
+
 ### Example Response
 
 ```json
@@ -339,9 +370,19 @@ POST /wp-json/fluent-boards/v2/projects/{board_id}/user/{user_id}/remove
 
 Promote a user to manager role in a project. This gives the user administrative privileges for the specific board. **Note:** The user must already be a member of the board before they can be promoted to manager.
 
+> Pro
+
 **HTTP Request**
 ```
 POST /wp-json/fluent-boards/v2/projects/{board_id}/user/{user_id}/make-manager
+```
+
+### Example Request
+
+```bash
+curl "https://yourdomain.com/wp-json/fluent-boards/v2/projects/{board_id}/user/{user_id}/make-manager" \
+  -X POST \
+  -H "Authorization: Basic API_USERNAME:API_PASSWORD"
 ```
 
 
@@ -370,9 +411,19 @@ POST /wp-json/fluent-boards/v2/projects/{board_id}/user/{user_id}/make-manager
 
 Remove manager role from a user.
 
+> Pro
+
 **HTTP Request**
 ```
 POST /wp-json/fluent-boards/v2/projects/{board_id}/user/{user_id}/remove-manager
+```
+
+### Example Request
+
+```bash
+curl "https://yourdomain.com/wp-json/fluent-boards/v2/projects/{board_id}/user/{user_id}/remove-manager" \
+  -X POST \
+  -H "Authorization: Basic API_USERNAME:API_PASSWORD"
 ```
 
 
@@ -401,9 +452,19 @@ POST /wp-json/fluent-boards/v2/projects/{board_id}/user/{user_id}/remove-manager
 
 Set a user's role to member in a project. This endpoint can convert admins to regular members (removing admin privileges) or upgrade viewers to members (increasing permissions). Members have full access to tasks and boards. **Note:** The user must already be a board viewer or manager before they can be converted to a member.
 
+> Pro
+
 **HTTP Request**
 ```
 POST /wp-json/fluent-boards/v2/projects/{board_id}/user/{user_id}/make-member
+```
+
+### Example Request
+
+```bash
+curl "https://yourdomain.com/wp-json/fluent-boards/v2/projects/{board_id}/user/{user_id}/make-member" \
+  -X POST \
+  -H "Authorization: Basic API_USERNAME:API_PASSWORD"
 ```
 
 
@@ -432,9 +493,19 @@ POST /wp-json/fluent-boards/v2/projects/{board_id}/user/{user_id}/make-member
 
 Set a user's role to viewer in a project. This endpoint can convert admins or members to viewers (reducing permissions). Viewers have read-only access to tasks and boards. **Note:** The user must already be a board member or manager before they can be converted to a viewer.
 
+> Pro
+
 **HTTP Request**
 ```
 POST /wp-json/fluent-boards/v2/projects/{board_id}/user/{user_id}/make-viewer
+```
+
+### Example Request
+
+```bash
+curl "https://yourdomain.com/wp-json/fluent-boards/v2/projects/{board_id}/user/{user_id}/make-viewer" \
+  -X POST \
+  -H "Authorization: Basic API_USERNAME:API_PASSWORD"
 ```
 
 
@@ -571,13 +642,17 @@ DELETE /wp-json/fluent-boards/v2/remove-user-from-board
 | `boardId` | integer | Yes | The ID of the board |
 | `userId` | integer | Yes | The ID of the user |
 
-### Example Request Body
+### Example Request
 
-```json
-{
-  "boardId": 3,
-  "userId": 5
-}
+```bash
+curl "https://yourdomain.com/wp-json/fluent-boards/v2/remove-user-from-board" \
+  -X DELETE \
+  -H "Authorization: Basic API_USERNAME:API_PASSWORD" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "boardId": 3,
+    "userId": 5
+  }'
 ```
 
 ### Example Response
@@ -592,6 +667,8 @@ DELETE /wp-json/fluent-boards/v2/remove-user-from-board
 
 Synchronize user roles across multiple boards. This endpoint allows you to update or remove user roles from multiple boards in a single request. **Note:** Super admin users cannot have their roles synced.
 
+> Pro
+
 **HTTP Request**
 ```
 POST /wp-json/fluent-boards/v2/managers/roles/{user_id}
@@ -603,16 +680,20 @@ POST /wp-json/fluent-boards/v2/managers/roles/{user_id}
 |-----------|------|----------|-------------|
 | `roles` | object | Yes | Object with board_id as key and role as value. Valid roles: `admin`, `member`, `viewer`. Empty values will remove the user from that board. |
 
-### Example Request Body
+### Example Request
 
-```json
-{
-  "roles": {
-    "1": "admin",
-    "2": "member", 
-    "3": "viewer",
-  }
-}
+```bash
+curl "https://yourdomain.com/wp-json/fluent-boards/v2/managers/roles/{user_id}" \
+  -X POST \
+  -H "Authorization: Basic API_USERNAME:API_PASSWORD" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "roles": {
+      "1": "admin",
+      "2": "member",
+      "3": "viewer"
+    }
+  }'
 ```
 
 ### Example Response
@@ -630,6 +711,13 @@ Get all users who can be assigned to tasks in a project.
 **HTTP Request**
 ```
 GET /wp-json/fluent-boards/v2/projects/{board_id}/assignees
+```
+
+### Example Request
+
+```bash
+curl "https://yourdomain.com/wp-json/fluent-boards/v2/projects/{board_id}/assignees" \
+  -H "Authorization: Basic API_USERNAME:API_PASSWORD"
 ```
 
 

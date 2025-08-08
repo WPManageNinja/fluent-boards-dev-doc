@@ -32,7 +32,7 @@ Create a new stage. The stage will be positioned at the end of the board by defa
 POST /wp-json/fluent-boards/v2/projects/{board_id}/stage-create
 ```
 
-### Request Body
+### Parameters
 
 | Parameter | Type | Required | Description |
 |-----------|------|----------|-------------|
@@ -40,14 +40,18 @@ POST /wp-json/fluent-boards/v2/projects/{board_id}/stage-create
 | `position` | numeric | No | Position within the board |
 | `status` | string | No | Default task status (defaults to 'open') |
 
-### Example Request Body
+### Example Request
 
-```json
-{
-  "title": "Review",
-  "position": 3,
-  "status": "open"
-}
+```bash
+curl "https://yourdomain.com/wp-json/fluent-boards/v2/projects/{board_id}/stage-create" \
+  -X POST \
+  -H "Authorization: Basic API_USERNAME:API_PASSWORD" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "title": "Review",
+    "position": 3,
+    "status": "open"
+  }'
 ```
 
 
@@ -88,8 +92,19 @@ Update an existing stage.
 PUT /wp-json/fluent-boards/v2/projects/{board_id}/update-stage/{stage_id}
 ```
 
+### Parameters
+### Example Request
 
-### Request Body
+```bash
+curl "https://yourdomain.com/wp-json/fluent-boards/v2/projects/{board_id}/update-stage/{stage_id}" \
+  -X PUT \
+  -H "Authorization: Basic API_USERNAME:API_PASSWORD" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "title": "In Development",
+    "settings": {"default_task_status": "open"}
+  }'
+```
 
 | Parameter | Type | Required | Description |
 |-----------|------|----------|-------------|
@@ -130,7 +145,13 @@ Archive a stage (soft delete).
 PUT /wp-json/fluent-boards/v2/projects/{board_id}/archive-stage/{stage_id}
 ```
 
+### Example Request
 
+```bash
+curl "https://yourdomain.com/wp-json/fluent-boards/v2/projects/{board_id}/archive-stage/{stage_id}" \
+  -X PUT \
+  -H "Authorization: Basic API_USERNAME:API_PASSWORD"
+```
 
 ### Example Response
 
@@ -166,7 +187,13 @@ Restore an archived stage.
 PUT /wp-json/fluent-boards/v2/projects/{board_id}/restore-stage/{stage_id}
 ```
 
+### Example Request
 
+```bash
+curl "https://yourdomain.com/wp-json/fluent-boards/v2/projects/{board_id}/restore-stage/{stage_id}" \
+  -X PUT \
+  -H "Authorization: Basic API_USERNAME:API_PASSWORD"
+```
 
 ### Example Response
 
@@ -203,18 +230,22 @@ Update the positions of multiple stages at once. This endpoint can trigger autom
 PUT /wp-json/fluent-boards/v2/projects/{board_id}/re-position-stages
 ```
 
-### Request Body
+### Parameters
 
 | Parameter | Type | Required | Description |
 |-----------|------|----------|-------------|
 | `list` | array | Yes | Array of stage IDs in the desired order |
 
-### Example Request Body
+### Example Request
 
-```json
-{
-  "list": [107, 106, 105, 104]
-}
+```bash
+curl "https://yourdomain.com/wp-json/fluent-boards/v2/projects/{board_id}/re-position-stages" \
+  -X PUT \
+  -H "Authorization: Basic API_USERNAME:API_PASSWORD" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "list": [107, 106, 105, 104]
+  }'
 ```
 
 ### Example Response
@@ -269,7 +300,13 @@ Archive all tasks within a specific stage. This will set the position to 0 and m
 PUT /wp-json/fluent-boards/v2/projects/{board_id}/stage/{stage_id}/archive-all-task
 ```
 
+### Example Request
 
+```bash
+curl "https://yourdomain.com/wp-json/fluent-boards/v2/projects/{board_id}/stage/{stage_id}/archive-all-task" \
+  -X PUT \
+  -H "Authorization: Basic API_USERNAME:API_PASSWORD"
+```
 ### Example Response
 
 ```json
@@ -302,7 +339,7 @@ Sort tasks within a specific stage by various criteria. The system will automati
 PUT /wp-json/fluent-boards/v2/projects/{board_id}/stage/{stage_id}/sort-task
 ```
 
-### Request Body
+### Parameters
 
 | Parameter | Type | Required | Description |
 |-----------|------|----------|-------------|
@@ -311,13 +348,17 @@ PUT /wp-json/fluent-boards/v2/projects/{board_id}/stage/{stage_id}/sort-task
 
 
 
-### Example Request Body
+### Example Request
 
-```json
-{
-  "order": "title",
-  "orderBy": "DESC"
-}
+```bash
+curl "https://yourdomain.com/wp-json/fluent-boards/v2/projects/{board_id}/stage/{stage_id}/sort-task" \
+  -X PUT \
+  -H "Authorization: Basic API_USERNAME:API_PASSWORD" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "order": "title",
+    "orderBy": "DESC"
+  }'
 ```
 
 ### Example Response
@@ -351,6 +392,12 @@ GET /wp-json/fluent-boards/v2/projects/{board_id}/archived-stages
 ```
 
 ### Parameters
+### Example Request
+
+```bash
+curl "https://yourdomain.com/wp-json/fluent-boards/v2/projects/{board_id}/archived-stages?per_page=30&page=1" \
+  -H "Authorization: Basic API_USERNAME:API_PASSWORD"
+```
 
 | Parameter | Type | Default | Description |
 |-----------|------|---------|-------------|
@@ -423,6 +470,12 @@ Get available positions for tasks within a stage.
 GET /wp-json/fluent-boards/v2/projects/{board_id}/stage-task-available-positions/{stage_id}
 ```
 
+### Example Request
+
+```bash
+curl "https://yourdomain.com/wp-json/fluent-boards/v2/projects/{board_id}/stage-task-available-positions/{stage_id}" \
+  -H "Authorization: Basic API_USERNAME:API_PASSWORD"
+```
 ### Example Response
 
 ```json

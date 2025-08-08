@@ -151,6 +151,13 @@ Retrieve a paginated list of tasks.
 GET /wp-json/fluent-boards/v2/projects/{board_id}/tasks
 ```
 
+### Example Request
+
+```bash
+curl "https://yourdomain.com/wp-json/fluent-boards/v2/projects/{board_id}/tasks" \
+  -H "Authorization: Basic API_USERNAME:API_PASSWORD"
+```
+
 
 ### Example Response
 
@@ -201,6 +208,13 @@ Retrieve a specific task by ID.
 **HTTP Request**
 ```
 GET /wp-json/fluent-boards/v2/projects/{board_id}/tasks/{task_id}
+```
+
+### Example Request
+
+```bash
+curl "https://yourdomain.com/wp-json/fluent-boards/v2/projects/{board_id}/tasks/{task_id}" \
+  -H "Authorization: Basic API_USERNAME:API_PASSWORD"
 ```
 
 
@@ -293,15 +307,19 @@ POST /wp-json/fluent-boards/v2/projects/{board_id}/tasks
 
 ### Example Request
 
-```json
-{
-  "task": {
-    "title": "New Task",
-    "board_id": 10,
-    "stage_id": 104,
-    "is_template": "no"
-  }
-}
+```bash
+curl "https://yourdomain.com/wp-json/fluent-boards/v2/projects/{board_id}/tasks" \
+  -X POST \
+  -H "Authorization: Basic API_USERNAME:API_PASSWORD" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "task": {
+      "title": "New Task",
+      "board_id": 10,
+      "stage_id": 104,
+      "is_template": "no"
+    }
+  }'
 ```
 
 ### Example Response
@@ -377,11 +395,15 @@ PUT /wp-json/fluent-boards/v2/projects/{board_id}/tasks/{task_id}
 
 ### Example Request
 
-```json
-{
-  "property": "title",
-  "value": "Updated Task Title"
-}
+```bash
+curl "https://yourdomain.com/wp-json/fluent-boards/v2/projects/{board_id}/tasks/{task_id}" \
+  -X PUT \
+  -H "Authorization: Basic API_USERNAME:API_PASSWORD" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "property": "title",
+    "value": "Updated Task Title"
+  }'
 ```
 
 ### Example Response
@@ -415,6 +437,14 @@ Delete a task.
 DELETE /wp-json/fluent-boards/v2/projects/{board_id}/tasks/{task_id}
 ```
 
+### Example Request
+
+```bash
+curl "https://yourdomain.com/wp-json/fluent-boards/v2/projects/{board_id}/tasks/{task_id}" \
+  -X DELETE \
+  -H "Authorization: Basic API_USERNAME:API_PASSWORD"
+```
+
 
 ### Example Response
 
@@ -445,12 +475,16 @@ PUT /wp-json/fluent-boards/v2/projects/{board_id}/tasks/{task_id}/move-task
 
 ### Example Request
 
-```json
-{
-  "newStageId": 96,
-  "newIndex": 1,
-  "newBoardId": 9
-}
+```bash
+curl "https://yourdomain.com/wp-json/fluent-boards/v2/projects/{board_id}/tasks/{task_id}/move-task" \
+  -X PUT \
+  -H "Authorization: Basic API_USERNAME:API_PASSWORD" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "newStageId": 96,
+    "newIndex": 1,
+    "newBoardId": 9
+  }'
 ```
 
 ### Example Response
@@ -502,16 +536,20 @@ POST /wp-json/fluent-boards/v2/projects/{board_id}/tasks/{task_id}/clone-task
 
 ### Example Request
 
-```json
-{
-  "title": "Design Homepage (Cloned)",
-  "stage_id": 29,
-  "assignee": true,
-  "subtask": false,
-  "label": true,
-  "attachment": false,
-  "comment": true
-}
+```bash
+curl "https://yourdomain.com/wp-json/fluent-boards/v2/projects/{board_id}/tasks/{task_id}/clone-task" \
+  -X POST \
+  -H "Authorization: Basic API_USERNAME:API_PASSWORD" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "title": "Design Homepage (Cloned)",
+    "stage_id": 29,
+    "assignee": true,
+    "subtask": false,
+    "label": true,
+    "attachment": false,
+    "comment": true
+  }'
 ```
 
 ### Example Response
@@ -560,6 +598,14 @@ Assign the current user to a task.
 POST /wp-json/fluent-boards/v2/projects/{board_id}/tasks/{task_id}/assign-yourself
 ```
 
+### Example Request
+
+```bash
+curl "https://yourdomain.com/wp-json/fluent-boards/v2/projects/{board_id}/tasks/{task_id}/assign-yourself" \
+  -X POST \
+  -H "Authorization: Basic API_USERNAME:API_PASSWORD"
+```
+
 
 ### Example Response
 
@@ -605,6 +651,14 @@ Remove the current user from a task assignment.
 POST /wp-json/fluent-boards/v2/projects/{board_id}/tasks/{task_id}/detach-yourself
 ```
 
+### Example Request
+
+```bash
+curl "https://yourdomain.com/wp-json/fluent-boards/v2/projects/{board_id}/tasks/{task_id}/detach-yourself" \
+  -X POST \
+  -H "Authorization: Basic API_USERNAME:API_PASSWORD"
+```
+
 
 
 ### Example Response
@@ -636,6 +690,13 @@ Retrieve comments for a specific task.
 **HTTP Request**
 ```
 GET /wp-json/fluent-boards/v2/projects/{board_id}/tasks/{task_id}/comments
+```
+
+### Example Request
+
+```bash
+curl "https://yourdomain.com/wp-json/fluent-boards/v2/projects/{board_id}/tasks/{task_id}/comments" \
+  -H "Authorization: Basic API_USERNAME:API_PASSWORD"
 ```
 
 ### Parameters
@@ -729,6 +790,13 @@ Retrieve recent activities for a specific task.
 GET /wp-json/fluent-boards/v2/projects/{board_id}/tasks/{task_id}/activities
 ```
 
+### Example Request
+
+```bash
+curl "https://yourdomain.com/wp-json/fluent-boards/v2/projects/{board_id}/tasks/{task_id}/activities" \
+  -H "Authorization: Basic API_USERNAME:API_PASSWORD"
+```
+
 ### Parameters
 
 | Parameter | Type | Description |
@@ -797,6 +865,97 @@ GET /wp-json/fluent-boards/v2/projects/{board_id}/tasks/{task_id}/activities
     "last_page": 1
     // ... pagination URLs and links
   }
+}
+```
+
+## Upload Task Cover Image
+
+Upload a cover image for a task.
+
+**HTTP Request**
+```
+POST /wp-json/fluent-boards/v2/projects/{board_id}/tasks/{task_id}/task-cover-image-upload
+```
+
+### Example Request
+
+```bash
+curl "https://yourdomain.com/wp-json/fluent-boards/v2/projects/{board_id}/tasks/{task_id}/task-cover-image-upload" \
+  -X POST \
+  -H "Authorization: Basic API_USERNAME:API_PASSWORD" \
+  -F "file=@/path/to/cover.png"
+```
+
+Form data
+- file (binary): Image file to upload
+
+### Example Response
+
+```json
+{
+  "message": "Image has been uploaded",
+  "public_url": "https://yourdomain.com/index.php?fbs=1&fbs_type=public_url&fbs_bid=1&fbs_comment_image=aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+}
+```
+## Remove Task Cover Image
+
+Remove the cover image from a task.
+
+**HTTP Request**
+```
+POST /wp-json/fluent-boards/v2/projects/{board_id}/tasks/{task_id}/remove-task-cover
+```
+
+### Example Request
+
+```bash
+curl "https://yourdomain.com/wp-json/fluent-boards/v2/projects/{board_id}/tasks/{task_id}/remove-task-cover" \
+  -X POST \
+  -H "Authorization: Basic API_USERNAME:API_PASSWORD"
+```
+
+### Example Response
+
+```json
+{
+  "task": {
+    "id": 123,
+    "parent_id": null,
+    "board_id": "1",
+    "crm_contact_id": null,
+    "title": "Sample Task Title",
+    "slug": "sample-task-title",
+    "type": "task",
+    "status": "open",
+    "stage_id": "25",
+    "source": "web",
+    "source_id": null,
+    "priority": "low",
+    "description": "<p>Task description</p>",
+    "lead_value": "0.00",
+    "created_by": "1",
+    "position": "23.00",
+    "comments_count": "3",
+    "issue_number": null,
+    "reminder_type": "none",
+    "settings": {
+      "subtask_count": "6",
+      "attachment_count": "3",
+      "subtask_completed_count": "2"
+    },
+    "remind_at": null,
+    "started_at": null,
+    "due_at": "2025-07-04 23:45:00",
+    "last_completed_at": null,
+    "archived_at": null,
+    "created_at": "2024-12-24T08:43:52+00:00",
+    "updated_at": "2025-08-08T06:53:07+00:00",
+    "meta": {
+      "is_template": "no"
+    },
+    "repeat_task_meta": null
+  },
+  "message": "Task Cover removed successfully"
 }
 ```
 

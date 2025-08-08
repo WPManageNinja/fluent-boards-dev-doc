@@ -47,7 +47,14 @@ Retrieve all comments for a specific task.
 GET /wp-json/fluent-boards/v2/projects/{board_id}/tasks/{task_id}/comments
 ```
 
-### Query Parameters
+### Example Request
+
+```bash
+curl "https://yourdomain.com/wp-json/fluent-boards/v2/projects/{board_id}/tasks/{task_id}/comments?per_page=10&page=1&include_replies=true&include_images=true" \
+  -H "Authorization: Basic API_USERNAME:API_PASSWORD"
+```
+
+### Parameters
 
 | Parameter | Type | Description |
 |-----------|------|-------------|
@@ -160,6 +167,23 @@ Create a new comment on a task.
 **HTTP Request**
 ```
 POST /wp-json/fluent-boards/v2/projects/{board_id}/tasks/{task_id}/comments
+```
+
+### Example Request
+
+```bash
+curl "https://yourdomain.com/wp-json/fluent-boards/v2/projects/{board_id}/tasks/{task_id}/comments" \
+  -X POST \
+  -H "Authorization: Basic API_USERNAME:API_PASSWORD" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "comment": "Hey @johndoe, please review this design...",
+    "parent_id": null,
+    "comment_type": "comment",
+    "comment_by": 789,
+    "images": [1, 2],
+    "mentionData": [789]
+  }'
 ```
 
 ### Request Body
@@ -330,6 +354,20 @@ Update an existing comment. Only the comment author can update their own comment
 PUT /wp-json/fluent-boards/v2/projects/{board_id}/tasks/{task_id}/comments/{comment_id}
 ```
 
+### Example Request
+
+```bash
+curl "https://yourdomain.com/wp-json/fluent-boards/v2/projects/{board_id}/tasks/{task_id}/comments/{comment_id}" \
+  -X PUT \
+  -H "Authorization: Basic API_USERNAME:API_PASSWORD" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "comment": "This is the updated comment content with https://example.com link",
+    "images": [1, 2],
+    "mentionData": [789]
+  }'
+```
+
 ### Request Body
 
 | Parameter | Type | Required | Description |
@@ -425,6 +463,14 @@ Delete a comment. Only the comment author can delete their own comments.
 DELETE /wp-json/fluent-boards/v2/projects/{board_id}/tasks/comments/{comment_id}
 ```
 
+### Example Request
+
+```bash
+curl "https://yourdomain.com/wp-json/fluent-boards/v2/projects/{board_id}/tasks/comments/{comment_id}" \
+  -X DELETE \
+  -H "Authorization: Basic API_USERNAME:API_PASSWORD"
+```
+
 ### Example Response
 
 ```json
@@ -447,6 +493,23 @@ Create a threaded reply to an existing comment. Replies use the same endpoint as
 **HTTP Request**
 ```
 POST /wp-json/fluent-boards/v2/projects/{board_id}/tasks/{task_id}/comments
+```
+
+### Example Request
+
+```bash
+curl "https://yourdomain.com/wp-json/fluent-boards/v2/projects/{board_id}/tasks/{task_id}/comments" \
+  -X POST \
+  -H "Authorization: Basic API_USERNAME:API_PASSWORD" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "comment": "This is a reply to the comment",
+    "parent_id": 3,
+    "comment_type": "reply",
+    "comment_by": 789,
+    "images": [],
+    "mentionData": []
+  }'
 ```
 
 ### Request Body
@@ -566,6 +629,15 @@ Upload images that can be attached to comments. This endpoint uploads the image 
 POST /wp-json/fluent-boards/v2/projects/{board_id}/tasks/{task_id}/comment-image-upload
 ```
 
+### Example Request
+
+```bash
+curl "https://yourdomain.com/wp-json/fluent-boards/v2/projects/{board_id}/tasks/{task_id}/comment-image-upload" \
+  -X POST \
+  -H "Authorization: Basic API_USERNAME:API_PASSWORD" \
+  -F "file=@/path/to/unnamed-3.png"
+```
+
 ### Request Body
 
 | Parameter | Type | Required | Description |
@@ -581,21 +653,23 @@ POST /wp-json/fluent-boards/v2/projects/{board_id}/tasks/{task_id}/comment-image
     "object_id": 0,
     "object_type": "comment_image",
     "attachment_type": "image/png",
-    "title": "design-mockup.png",
-    "file_path": "/var/www/example.com/wp-content/uploads/fluent-boards/board_5/1705312800-design-mockup.png",
-    "full_url": "https://example.com/wp-content/uploads/fluent-boards/board_5/1705312800-design-mockup.png",
+    "title": "unnamed-3.png",
+    "file_path": "1711111111-unnamed-3.png",
+    "full_url": "https://yourdomain.com/wp-content/uploads/fluent-boards/board_1/1711111111-unnamed-3.png",
     "file_size": "484 KB",
     "settings": "",
     "driver": "local",
-    "file_hash": "abc123def456789ghi012jkl345mno678",
-    "updated_at": "2024-01-15T15:00:00+00:00",
-    "created_at": "2024-01-15T15:00:00+00:00",
-    "id": 29,
-    "public_url": "https://example.com/index.php?fbs=1&fbs_type=public_url&fbs_bid=5&fbs_comment_image=abc123def456789ghi012jkl345mno678",
-    "secure_url": "https://example.com/index.php?fbs=1&fbs_comment_image=abc123def456789ghi012jkl345mno678&secure_sign=def456ghi789012jkl345mno678pqr901"
+    "file_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "updated_at": "2025-08-08T06:56:07+00:00",
+    "created_at": "2025-08-08T06:56:07+00:00",
+    "id": 24,
+    "public_url": "https://yourdomain.com/index.php?fbs=1&fbs_type=public_url&fbs_bid=1&fbs_comment_image=aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "secure_url": "https://yourdomain.com/index.php?fbs=1&fbs_comment_image=aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa&secure_sign=bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
   }
 }
 ```
+
+
 
 ### Features
 

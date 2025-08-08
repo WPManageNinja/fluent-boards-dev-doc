@@ -96,7 +96,6 @@ The background is automatically set to a random solid color if not provided duri
 
 The `settings` object is serialized in the database and can contain various board configuration options:
 - `tasks_count` - Number of tasks in the board
-- `allow_public_view` - Whether the board is publicly viewable
 - `enable_time_tracking` - Whether time tracking is enabled
 - Custom settings as needed
 
@@ -241,6 +240,7 @@ The `activities` relationship provides access to board activities:
 - One-to-many relationship with Activity model
 - Object type: `Constant::ACTIVITY_BOARD`
 
+
 ## List All Boards
 
 Retrieve a paginated list of boards.
@@ -248,6 +248,13 @@ Retrieve a paginated list of boards.
 **HTTP Request**
 ```
 GET /wp-json/fluent-boards/v2/projects
+```
+
+### Example Request
+
+```bash
+curl "https://yourdomain.com/wp-json/fluent-boards/v2/projects?per_page=10&page=1" \
+  -H "Authorization: Basic API_USERNAME:API_PASSWORD"
 ```
 
 ### Parameters
@@ -349,11 +356,12 @@ Retrieve a specific board by ID.
 GET /wp-json/fluent-boards/v2/projects/{board_id}
 ```
 
-### Parameters
+### Example Request
 
-| Parameter | Type | Description |
-|-----------|------|-------------|
-| `board_id` | integer | The ID of the board |
+```bash
+curl "https://yourdomain.com/wp-json/fluent-boards/v2/projects/{board_id}" \
+  -H "Authorization: Basic API_USERNAME:API_PASSWORD"
+```
 
 
 
@@ -440,20 +448,23 @@ POST /wp-json/fluent-boards/v2/projects
 | `board[description]` | string | No | Board description |
 | `board[type]` | string | Yes | Board type (to-do, roadmap) |
 | `board[currency]` | string | No | Currency for the board |
-
 | `folder_id` | integer | No | Folder ID to add board to (Pro feature) |
 | `stages` | array | No | Custom stages for roadmap boards |
 
 ### Example Request
 
-```json
-{
-  "board": {
-    "title": "New Project Board",
-    "description": "A new project board for development tasks",
-    "type": "to-do"
-  }
-}
+```bash
+curl "https://yourdomain.com/wp-json/fluent-boards/v2/projects" \
+  -X POST \
+  -H "Authorization: Basic API_USERNAME:API_PASSWORD" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "board": {
+      "title": "New Project Board",
+      "description": "A new project board for development tasks",
+      "type": "to-do"
+    }
+  }'
 ```
 
 ### Example Response
@@ -518,11 +529,18 @@ Update an existing board.
 PUT /wp-json/fluent-boards/v2/projects/{board_id}
 ```
 
-### Parameters
+### Example Request
 
-| Parameter | Type | Description |
-|-----------|------|-------------|
-| `board_id` | integer | The ID of the board |
+```bash
+curl "https://yourdomain.com/wp-json/fluent-boards/v2/projects/{board_id}" \
+  -X PUT \
+  -H "Authorization: Basic API_USERNAME:API_PASSWORD" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "title": "Updated Board Title",
+    "description": "Updated board description"
+  }'
+```
 
 ### Request Body
 
@@ -587,11 +605,13 @@ Delete a board.
 DELETE /wp-json/fluent-boards/v2/projects/{board_id}
 ```
 
-### Parameters
+### Example Request
 
-| Parameter | Type | Description |
-|-----------|------|-------------|
-| `board_id` | integer | The ID of the board |
+```bash
+curl "https://yourdomain.com/wp-json/fluent-boards/v2/projects/{board_id}" \
+  -X DELETE \
+  -H "Authorization: Basic API_USERNAME:API_PASSWORD"
+```
 
 
 
@@ -612,11 +632,13 @@ Archive a board (soft delete).
 PUT /wp-json/fluent-boards/v2/projects/{board_id}/archive-board
 ```
 
-### Parameters
+### Example Request
 
-| Parameter | Type | Description |
-|-----------|------|-------------|
-| `board_id` | integer | The ID of the board |
+```bash
+curl "https://yourdomain.com/wp-json/fluent-boards/v2/projects/{board_id}/archive-board" \
+  -X PUT \
+  -H "Authorization: Basic API_USERNAME:API_PASSWORD"
+```
 
 
 
@@ -648,11 +670,13 @@ Restore an archived board.
 PUT /wp-json/fluent-boards/v2/projects/{board_id}/restore-board
 ```
 
-### Parameters
+### Example Request
 
-| Parameter | Type | Description |
-|-----------|------|-------------|
-| `board_id` | integer | The ID of the board |
+```bash
+curl "https://yourdomain.com/wp-json/fluent-boards/v2/projects/{board_id}/restore-board" \
+  -X PUT \
+  -H "Authorization: Basic API_USERNAME:API_PASSWORD"
+```
 
 
 
@@ -675,6 +699,101 @@ PUT /wp-json/fluent-boards/v2/projects/{board_id}/restore-board
 }
 ```
 
+## Set Board Background
+
+Set a board background color or external image URL.
+
+**HTTP Request**
+```
+PUT /wp-json/fluent-boards/v2/projects/{board_id}/upload/background
+```
+
+### Example Request (color)
+
+```bash
+curl "https://yourdomain.com/wp-json/fluent-boards/v2/projects/{board_id}/upload/background" \
+  -X PUT \
+  -H "Authorization: Basic API_USERNAME:API_PASSWORD" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "id": "gradient_1",
+    "color": "linear-gradient(111.53deg, #4A9B7F 2%, #0A3431 100%)"
+  }'
+```
+
+### Example Request (image_url)
+
+```bash
+curl "https://yourdomain.com/wp-json/fluent-boards/v2/projects/{board_id}/upload/background" \
+  -X PUT \
+  -H "Authorization: Basic API_USERNAME:API_PASSWORD" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "id": "333",
+    "image_url": "https://yourdomain.com/wp-content/uploads/2025/08/image_2.jpg"
+  }'
+```
+
+### Example Response (image_url)
+
+```json
+{
+  "message": "Background updated successfully",
+  "background": {
+    "color": null,
+    "id": "333",
+    "image_url": "https://yourdomain.com/wp-content/uploads/2025/08/image_2.jpg",
+    "is_image": true
+  }
+}
+```
+
+### Example Response (color)
+
+```json
+{
+  "message": "Background updated successfully",
+  "background": {
+    "color": "linear-gradient(111.53deg, #4A9B7F 2%, #0A3431 100%)",
+    "id": "gradient_1",
+    "image_url": null,
+    "is_image": false
+  }
+}
+```
+
+## Upload Board Background Image
+
+Upload an image file and set it as the board background.
+
+**HTTP Request**
+```
+POST /wp-json/fluent-boards/v2/projects/{board_id}/upload/background-image
+```
+
+### Example Request
+
+```bash
+curl "https://yourdomain.com/wp-json/fluent-boards/v2/projects/{board_id}/upload/background-image" \
+  -X POST \
+  -H "Authorization: Basic API_USERNAME:API_PASSWORD" \
+  -F "file=@/path/to/board-background.png"
+```
+
+### Example Response
+
+```json
+{
+  "message": "Background updated successfully",
+  "background": {
+    "color": null,
+    "id": 101,
+    "image_url": "https://yourdomain.com/index.php?fbs=1&fbs_type=public_url&fbs_bid=1&fbs_comment_image=aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "is_image": true
+  }
+}
+```
+
 ## Duplicate a Board
 
 Create a copy of an existing board.
@@ -684,11 +803,20 @@ Create a copy of an existing board.
 POST /wp-json/fluent-boards/v2/projects/{board_id}/duplicate-board
 ```
 
-### Parameters
+### Example Request
 
-| Parameter | Type | Description |
-|-----------|------|-------------|
-| `board_id` | integer | The ID of the board to duplicate |
+```bash
+curl "https://yourdomain.com/wp-json/fluent-boards/v2/projects/{board_id}/duplicate-board" \
+  -X POST \
+  -H "Authorization: Basic API_USERNAME:API_PASSWORD" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "board": {"title": "Board Alpha - Copy"},
+    "isWithTasks": "yes",
+    "isWithLabels": "yes",
+    "isWithTemplates": "no"
+  }'
+```
 
 ### Request Body
 
@@ -750,11 +878,13 @@ PUT /wp-json/fluent-boards/v2/projects/{board_id}/pin-board
 PUT /wp-json/fluent-boards/v2/projects/{board_id}/unpin-board
 ```
 
-### Parameters
+### Example Request
 
-| Parameter | Type | Description |
-|-----------|------|-------------|
-| `board_id` | integer | The ID of the board |
+```bash
+curl "https://yourdomain.com/wp-json/fluent-boards/v2/projects/{board_id}/pin-board" \
+  -X PUT \
+  -H "Authorization: Basic API_USERNAME:API_PASSWORD"
+```
 
 
 
@@ -783,11 +913,12 @@ Retrieve all members of a board.
 GET /wp-json/fluent-boards/v2/projects/{board_id}/users
 ```
 
-### Parameters
+### Example Request
 
-| Parameter | Type | Description |
-|-----------|------|-------------|
-| `board_id` | integer | The ID of the board |
+```bash
+curl "https://yourdomain.com/wp-json/fluent-boards/v2/projects/{board_id}/users" \
+  -H "Authorization: Basic API_USERNAME:API_PASSWORD"
+```
 
 
 
@@ -832,11 +963,17 @@ GET /wp-json/fluent-boards/v2/projects/{board_id}/activities
 
 ### Parameters
 
-| Parameter | Type | Description |
-|-----------|------|-------------|
-| `board_id` | integer | The ID of the board |
-| `per_page` | integer | Number of activities per page (default: 20) |
-| `page` | integer | Page number for pagination |
+| Parameter | Type | Default | Description |
+|-----------|------|---------|-------------|
+| `per_page` | integer | 20 | Number of activities per page |
+| `page` | integer | 1 | Page number for pagination |
+
+### Example Request
+
+```bash
+curl "https://yourdomain.com/wp-json/fluent-boards/v2/projects/{board_id}/activities?per_page=40&page=1" \
+  -H "Authorization: Basic API_USERNAME:API_PASSWORD"
+```
 
 
 
