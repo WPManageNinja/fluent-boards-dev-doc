@@ -1,73 +1,167 @@
-# Templates API
+# Templates (Pro)
 
-> **Note:** This is a Pro feature. The Templates API allows you to create and manage project and task templates.
+Endpoints to list template stages and tasks, toggle stage template status, and create a task from a template.
 
-## Overview
-
-The Templates API provides endpoints for creating, managing, and using templates for boards and tasks in Fluent Boards Pro.
-
-## Base Endpoint
-
+Base path for all endpoints below:
 ```
-/fluent-boards/v2/templates
+/wp-json/fluent-boards/v2
 ```
 
-## Available Endpoints
+## List Template Stages
 
-### List Templates
-- **GET** `/templates`
-- **GET** `/templates/project`
-- **GET** `/templates/task`
+**HTTP Request**
+```
+GET /wp-json/fluent-boards/v2/projects/template-stages
+```
 
-### Create Template
-- **POST** `/templates`
-
-### Get Template
-- **GET** `/templates/{template_id}`
-
-### Update Template
-- **PUT** `/templates/{template_id}`
-
-### Delete Template
-- **DELETE** `/templates/{template_id}`
-
-### Use Template
-- **POST** `/templates/{template_id}/use`
-
-### Duplicate Template
-- **POST** `/templates/{template_id}/duplicate`
-
-## Template Object
-
+### Example Response
 ```json
 {
-  "id": 123,
-  "name": "Software Development Project",
-  "type": "project",
-  "description": "Template for software development boards",
-  "is_public": false,
-  "created_by": 789,
-  "usage_count": 15,
-  "created_at": "2024-01-15T10:30:00Z",
-  "updated_at": "2024-01-15T10:30:00Z"
+  "stages": [
+    {
+      "id": 10,
+      "title": "Backlog",
+      "board_id": 2,
+      "settings": {
+        "default_task_status": "open",
+        "is_template": true
+      },
+      "board": {
+        "id": 2,
+        "title": "Example Board",
+        "type": "to-do"
+      }
+    }
+  ]
 }
 ```
 
-## Template Types
+## List Template Tasks
 
-- `project` - Complete project template with stages and tasks
-- `task` - Individual task template
-- `workflow` - Workflow template with automation rules
+**HTTP Request**
+```
+GET /wp-json/fluent-boards/v2/projects/get-template-tasks
+```
 
-## Features
+### Example Response
+```json
+[
+  {
+    "id": 101,
+    "board_id": 1,
+    "title": "Example Template Task",
+    "status": "open",
+    "stage_id": 10,
+    "meta": { "is_template": "yes" },
+    "assignees": [ { "ID": 1, "display_name": "John Doe" } ],
+    "labels": [ { "id": 7, "title": "bug", "bg_color": "#999999" } ]
+  }
+]
+```
 
-- Pre-built templates
-- Custom template creation
-- Template sharing
-- Version control
-- Template categories
-- Bulk template operations
+## Toggle Stage Template
 
----
+Marks/unmarks a stage as a template.
 
-*This documentation will be expanded with detailed examples and complete API reference.* 
+**HTTP Request**
+```
+PUT /wp-json/fluent-boards/v2/projects/{board_id}/stage/{stage_id}/update-stage-template
+```
+
+### Example Response
+```json
+{
+  "stage": {
+    "id": 12,
+    "board_id": 1,
+    "title": "To Do",
+    "type": "stage",
+    "position": "1.00",
+    "settings": { "default_task_status": "open", "is_template": false },
+    "created_at": "2025-01-01T00:00:00+00:00",
+    "updated_at": "2025-01-01T00:00:00+00:00"
+  },
+  "message": "Stage updated successfully"
+}
+```
+
+## Import Stages From Board
+
+Import one or more stages from another board into the current board.
+
+**HTTP Request**
+```
+POST /wp-json/fluent-boards/v2/projects/{board_id}/import-from-board
+```
+
+### Request Body
+
+| Field | Type | Required | Description |
+|------|------|----------|-------------|
+| `selectedStages[]` | array[integer] | Yes | Stage IDs to import |
+| `position` | integer | No | Insert starting position (optional) |
+
+### Example Response
+```json
+{
+  "message": "Import successfully"
+}
+```
+
+
+## Create Task From Template
+
+Creates a new task by cloning a template task and optionally copying related data.
+
+**HTTP Request**
+```
+POST /wp-json/fluent-boards/v2/projects/{board_id}/tasks/{task_id}/task-create-from-template
+```
+
+### Request Body
+
+| Field | Type | Required | Description |
+|------|------|----------|-------------|
+| `title` | string | Yes | Title for the new task |
+| `board_id` | integer | Yes | Target board ID |
+| `stage_id` | integer | Yes | Target stage ID |
+| `assignee` | boolean/string | Yes | Copy assignees from template (`true`/`false`) |
+| `subtask` | boolean/string | Yes | Copy subtasks (`true`/`false`) |
+| `label` | boolean/string | Yes | Copy labels (`true`/`false`) |
+| `attachment` | boolean/string | Yes | Copy attachments (`true`/`false`) |
+
+### Example Request
+```json
+{
+  "title": "Example Task",
+  "board_id": 1,
+  "stage_id": 10,
+  "assignee": "true",
+  "subtask": "true",
+  "label": "true",
+  "attachment": "true"
+}
+```
+
+### Example Response
+```json
+{
+  "task": {
+    "id": 999,
+    "board_id": 1,
+    "stage_id": 10,
+    "title": "Example Task",
+    "settings": { "subtask_count": 2, "attachment_count": 1 },
+    "assignees": [ { "ID": 1, "display_name": "John Doe" } ],
+    "labels": [ { "id": 7, "title": "bug" } ],
+    "attachments": [ { "id": 1, "attachment_type": "image/png", "secure_url": "..." } ]
+  },
+  "message": "Task has been successfully created",
+  "updatedTasks": [ { "id": 999, "stage_id": 10 } ]
+}
+```
+
+Notes:
+- Paths use `projects` and placeholders `{board_id}` and `{task_id}`.
+- All endpoints are Pro-only and require authentication/permissions.
+
