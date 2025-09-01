@@ -29,38 +29,16 @@ https://yourdomain.com/wp-json/fluent-boards/v2
 
 ## Available Resources
 
-### Core Resources
+### Resources
 - **[Boards](/rest-api/boards)** - Manage boards
 - **[Tasks](/rest-api/tasks)** - Handle tasks and task operations
 - **[Stages](/rest-api/stages)** - Manage project stages and workflows
 - **[Users & Members](/rest-api/users)** - Handle board members and permissions
 - **[Labels](/rest-api/labels)** - Organize tasks with labels
 - **[Comments](/rest-api/comments)** - Handle task comments and discussions
-
-
-### Pro Features
 - **[Subtasks](/rest-api/subtasks)** - Manage task subtasks and checklists
-- **[Attachments](/rest-api/attachments)** - Manage task files and attachments
-- **[Time Tracking](/rest-api/time-tracking)** - Track time and generate reports
 - **[Custom Fields](/rest-api/custom-fields)** - Handle custom task data
 - **[Folders](/rest-api/folders)** - Organize boards into folders
-- **[Templates](/rest-api/templates)** - Work with board and task templates
-- **[Roadmaps](/rest-api/roadmaps)** - Manage project roadmaps and timelines
-- **[Cloud Storage](/rest-api/cloud-storage)** - Configure external storage
-- **[Import/Export](/rest-api/import-export)** - Import and export data
-
-### Integration & Automation
-- **[Webhooks](/rest-api/webhooks)** - Set up webhook integrations
-- **[Notifications](/rest-api/notifications)** - Handle user notifications
-
-### Analytics & Monitoring
-- **[Reports](/rest-api/reports)** - Access analytics and performance data
-- **[Activities](/rest-api/activities)** - Track board and task activities
-
-### Administration
-- **[Admin](/rest-api/admin)** - Platform administration and management
-- **[Settings](/rest-api/settings)** - Platform settings and configuration
-- **[Permissions](/rest-api/permissions)** - User permissions and access control
 
 ## Response Format
 
