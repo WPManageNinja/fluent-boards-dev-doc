@@ -1,37 +1,57 @@
 # Custom Fields
 
-Custom Fields let you define additional data fields for tasks on a board. These endpoints are available in Fluent Boards Pro.
+The Custom Fields API allows you to define additional data fields for tasks on a board. These endpoints are available in Fluent Boards Pro.
+
+## Base Endpoint
+
+```
+/fluent-boards/v2/projects/{board_id}/custom-fields
+```
 
 ## Custom Field Object
 
+Custom fields extend task data with additional structured information:
+
+```json
+{
+  "id": 110,
+  "board_id": "3",
+  "title": "Loerm ipsum",
+  "slug": "loerm-ipsum",
+  "type": "custom-field",
+  "position": "1.00",
+  "color": null,
+  "bg_color": null,
+  "settings": {
+    "custom_field_type": "text"
+  },
+  "archived_at": null,
+  "created_at": "2025-08-08T10:56:47+00:00",
+  "updated_at": "2025-08-08T10:56:47+00:00"
+}
+```
+
+### Key Properties
+
 | Property | Type | Description |
 |----------|------|-------------|
-| `id` | integer | Unique identifier of the custom field |
-| `board_id` | integer | Board ID the field belongs to |
-| `title` | string | Field label shown in UI |
-| `slug` | string | URL-safe identifier derived from title |
-| `type` | string | Always `custom-field` |
-| `position` | number | Ordering index (may be fractional) |
-| `settings` | object | Field configuration |
-| `settings.custom_field_type` | string | One of: `text`, `textarea`, `number`, `select`, `checkbox`, `date`, `url`, `email` |
-| `settings.select_options` | array[string] | Options for `select` type (if provided) |
-| `created_at` | string | Creation timestamp |
-| `updated_at` | string | Update timestamp |
-
-Note: The model extends `BoardTerm`, so `color` and `bg_color` may exist but are not used for custom fields.
+| `id` | integer | Unique identifier for the custom field |
+| `board_id` | string | ID of the board this field belongs to |
+| `title` | string | Display label for the custom field |
+| `slug` | string | URL-friendly identifier |
+| `type` | string | Always "custom-field" |
+| `position` | string | Position for ordering fields |
+| `settings.custom_field_type` | string | Field type (text, select, checkbox, date, etc.) |
+| `archived_at` | string or null | Archive timestamp (null if active) |
 
 ## List Board Custom Fields
+
+Retrieve all custom fields defined for a specific board.
 
 **HTTP Request**
 ```
 GET /wp-json/fluent-boards/v2/projects/{board_id}/custom-fields
 ```
-
-### Parameters
-
-| Parameter | Type | Description |
-|-----------|------|-------------|
-| `board_id` | integer | The ID of the board |
 
 ### Example Request
 
@@ -65,26 +85,14 @@ curl "https://yourdomain.com/wp-json/fluent-boards/v2/projects/{board_id}/custom
 }
 ```
 
-## Create Custom Field
+## Create a Custom Field
+
+Create a new custom field for a board.
 
 **HTTP Request**
 ```
 POST /wp-json/fluent-boards/v2/projects/{board_id}/custom-field
 ```
-
-### Parameters
-
-| Parameter | Type | Description |
-|-----------|------|-------------|
-| `board_id` | integer | The ID of the board |
-
-### Request Body
-
-| Field | Type | Required | Description |
-|------|------|----------|-------------|
-| `customField.title` | string | Yes | Field label |
-| `customField.type` | string | Yes | One of supported types (stored as `settings.custom_field_type`) |
-| `customField.options` | array[string] | No | Options for `select` type |
 
 ### Example Request
 
@@ -94,6 +102,14 @@ curl -X POST "https://yourdomain.com/wp-json/fluent-boards/v2/projects/{board_id
   -H "Content-Type: application/x-www-form-urlencoded" \
   -d "customField[title]=My custom filed&customField[type]=text"
 ```
+
+### Request Body
+
+| Field | Type | Required | Description |
+|------|------|----------|-------------|
+| `customField.title` | string | Yes | Field label |
+| `customField.type` | string | Yes | One of supported types (stored as `settings.custom_field_type`) |
+| `customField.options` | array[string] | No | Options for `select` type |
 
 ### Example Response
 
@@ -116,27 +132,14 @@ curl -X POST "https://yourdomain.com/wp-json/fluent-boards/v2/projects/{board_id
 }
 ```
 
-## Update Custom Field
+## Update a Custom Field
+
+Update an existing custom field.
 
 **HTTP Request**
 ```
 PUT /wp-json/fluent-boards/v2/projects/{board_id}/custom-field/{custom_field_id}
 ```
-
-### Parameters
-
-| Parameter | Type | Description |
-|-----------|------|-------------|
-| `board_id` | integer | The ID of the board |
-| `custom_field_id` | integer | The ID of the custom field |
-
-### Request Body
-
-| Field | Type | Required | Description |
-|------|------|----------|-------------|
-| `customField.title` | string | Yes | Field label |
-| `customField.type` | string | Yes | One of supported types (stored as `settings.custom_field_type`) |
-| `customField.options` | array[string] | No | Options for `select` type |
 
 ### Example Request
 
@@ -146,6 +149,14 @@ curl -X PUT "https://yourdomain.com/wp-json/fluent-boards/v2/projects/{board_id}
   -H "Content-Type: application/x-www-form-urlencoded" \
   -d "customField[title]=Custom text field&customField[type]=text"
 ```
+
+### Request Body
+
+| Field | Type | Required | Description |
+|------|------|----------|-------------|
+| `customField.title` | string | Yes | Field label |
+| `customField.type` | string | Yes | One of supported types (stored as `settings.custom_field_type`) |
+| `customField.options` | array[string] | No | Options for `select` type |
 
 ### Example Response
 
@@ -173,23 +184,12 @@ curl -X PUT "https://yourdomain.com/wp-json/fluent-boards/v2/projects/{board_id}
 
 ## Update Custom Field Position
 
+Change the position/order of a custom field within the board.
+
 **HTTP Request**
 ```
 PUT /wp-json/fluent-boards/v2/projects/{board_id}/custom-field/{custom_field_id}/update-position
 ```
-
-### Parameters
-
-| Parameter | Type | Description |
-|-----------|------|-------------|
-| `board_id` | integer | The ID of the board |
-| `custom_field_id` | integer | The ID of the custom field |
-
-### Request Body
-
-| Field | Type | Required | Description |
-|------|------|----------|-------------|
-| `newIndex` | integer | Yes | 1-based new position index |
 
 ### Example Request
 
@@ -200,6 +200,12 @@ curl -X PUT "https://yourdomain.com/wp-json/fluent-boards/v2/projects/{board_id}
   -d "newIndex=1"
 ```
 
+### Request Body
+
+| Field | Type | Required | Description |
+|------|------|----------|-------------|
+| `newIndex` | integer | Yes | 1-based new position index |
+
 ### Example Response
 
 ```json
@@ -208,19 +214,14 @@ curl -X PUT "https://yourdomain.com/wp-json/fluent-boards/v2/projects/{board_id}
 }
 ```
 
-## Delete Custom Field
+## Delete a Custom Field
+
+Remove a custom field from a board.
 
 **HTTP Request**
 ```
 DELETE /wp-json/fluent-boards/v2/projects/{board_id}/custom-field/{custom_field_id}
 ```
-
-### Parameters
-
-| Parameter | Type | Description |
-|-----------|------|-------------|
-| `board_id` | integer | The ID of the board |
-| `custom_field_id` | integer | The ID of the custom field |
 
 ### Example Request
 
@@ -239,17 +240,12 @@ curl -X DELETE "https://yourdomain.com/wp-json/fluent-boards/v2/projects/{board_
 
 ## Get Custom Fields for a Task
 
+Retrieve custom field values for a specific task.
+
 **HTTP Request**
 ```
 GET /wp-json/fluent-boards/v2/projects/{board_id}/tasks/{task_id}/custom-fields
 ```
-
-### Parameters
-
-| Parameter | Type | Description |
-|-----------|------|-------------|
-| `board_id` | integer | The ID of the board |
-| `task_id` | integer | The ID of the task |
 
 ### Example Request
 
@@ -279,24 +275,12 @@ curl "https://yourdomain.com/wp-json/fluent-boards/v2/projects/{board_id}/tasks/
 
 ## Save Custom Field Value for a Task
 
+Set or update a custom field value for a specific task.
+
 **HTTP Request**
 ```
 POST /wp-json/fluent-boards/v2/projects/{board_id}/tasks/{task_id}/custom-fields
 ```
-
-### Parameters
-
-| Parameter | Type | Description |
-|-----------|------|-------------|
-| `board_id` | integer | The ID of the board |
-| `task_id` | integer | The ID of the task |
-
-### Request Body
-
-| Field | Type | Required | Description |
-|------|------|----------|-------------|
-| `custom_field_id` | integer | Yes | The custom field ID |
-| `value` | string | Yes | Value to save; for `checkbox` send `true`/`false`; for `date` send a parseable date |
 
 ### Example Request
 
@@ -309,6 +293,13 @@ curl -X POST "https://yourdomain.com/wp-json/fluent-boards/v2/projects/{board_id
     "value": "Lorem ipsum"
   }'
 ```
+
+### Request Body
+
+| Field | Type | Required | Description |
+|------|------|----------|-------------|
+| `custom_field_id` | integer | Yes | The custom field ID |
+| `value` | string | Yes | Value to save; for `checkbox` send `true`/`false`; for `date` send a parseable date |
 
 ### Example Response
 
@@ -332,3 +323,20 @@ curl -X POST "https://yourdomain.com/wp-json/fluent-boards/v2/projects/{board_id
   }
 }
 ```
+
+## Error Responses
+
+See [Common Error Responses](/rest-api/shared/error-responses) for standard error formats.
+
+### Common Custom Field-Specific Errors
+
+- **404 Not Found** - Custom field or board not found
+- **403 Forbidden** - You don't have permission to manage custom fields
+- **400 Bad Request** - Invalid custom field data or missing required fields
+
+## Next Steps
+
+- [Manage Tasks](/rest-api/tasks) - Work with board tasks
+- [Handle Stages](/rest-api/stages) - Manage board stages
+- [User Management](/rest-api/users) - Add/remove board members
+- [Labels](/rest-api/labels) - Organize tasks with labels

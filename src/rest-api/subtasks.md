@@ -1,10 +1,6 @@
-# Subtasks API
+# Subtasks
 
-> **Note:** This documentation covers the Subtasks API for managing subtasks within main tasks in Fluent Boards.
-
-## Overview
-
-Subtasks in Fluent Boards are regular tasks with a `parent_id` field that references their parent task. They share the same model structure as regular tasks but are organized in groups within the parent task.
+The Subtasks API allows you to manage subtasks within main tasks in Fluent Boards. Subtasks are regular tasks with a `parent_id` field that references their parent task, organized in groups for better organization.
 
 ## Base Endpoint
 
@@ -12,9 +8,6 @@ Subtasks in Fluent Boards are regular tasks with a `parent_id` field that refere
 /fluent-boards/v2/projects/{board_id}/tasks/{task_id}/subtasks
 ```
 
-## Subtask Object
-
-Subtasks use the same structure as regular tasks with additional parent relationship and group metadata:
 
 ```json
 {
@@ -58,43 +51,6 @@ Subtasks use the same structure as regular tasks with additional parent relation
 }
 ```
 
-### Key Properties
-
-| Property | Type | Description |
-|----------|------|-------------|
-| `parent_id` | string | **Required.** ID of the parent task |
-| `title` | string | **Required.** Title of the subtask |
-| `status` | string | Task status: `open` or `closed` |
-| `priority` | string | Priority: `low`, `medium`, `high` |
-| `due_at` | string or null | Due date-time in ISO 8601 format (or null) |
-| `position` | number | Position within the subtask group |
-| `assignees` | array | Array of assigned users |
-| `meta.subtask_group_id` | string | ID of the subtask group this subtask belongs to |
-| `last_completed_at` | string | Timestamp when the subtask was completed (null if open) |
-| `comments_count` | string | Number of comments on the subtask |
-
-## Available Endpoints
-
-### Quick Reference
-
-| Method | Path |
-|--------|------|
-| GET | `/wp-json/fluent-boards/v2/projects/{board_id}/tasks/{task_id}/subtasks` |
-| POST | `/wp-json/fluent-boards/v2/projects/{board_id}/tasks/{task_id}/subtasks` |
-| POST | `/wp-json/fluent-boards/v2/projects/{board_id}/tasks/{task_id}/subtask-group` |
-| PUT | `/wp-json/fluent-boards/v2/projects/{board_id}/tasks/{task_id}/subtask-group` |
-| DELETE | `/wp-json/fluent-boards/v2/projects/{board_id}/tasks/{task_id}/subtask-group` |
-| POST | `/wp-json/fluent-boards/v2/projects/{board_id}/tasks/{task_id}/move-subtask` |
-| PUT | `/wp-json/fluent-boards/v2/projects/{board_id}/tasks/update-subtask-position/{subtask_id}` |
-| DELETE | `/wp-json/fluent-boards/v2/projects/{board_id}/tasks/{task_id}/delete-subtask` |
-| PUT | `/wp-json/fluent-boards/v2/projects/{board_id}/tasks/{task_id}/convert-to-subtask` |
-| PUT | `/wp-json/fluent-boards/v2/projects/{board_id}/tasks/{task_id}/move-to-board` |
-| POST | `/wp-json/fluent-boards/v2/projects/{board_id}/tasks/{task_id}/clone-subtask` |
-
-Notes:
-- `{task_id}` usually refers to the parent task, except where explicitly noted (Delete Subtask, Move to Board, Clone Subtask, Convert to Subtask).
-- `{subtask_id}` is used in Update Subtask Position.
-
 ### List Subtasks
 
 Retrieve all subtasks for a parent task, organized by groups.
@@ -104,11 +60,15 @@ Retrieve all subtasks for a parent task, organized by groups.
 GET /wp-json/fluent-boards/v2/projects/{board_id}/tasks/{task_id}/subtasks
 ```
 
-Path Params:
-- `board_id`: The board ID.
-- `task_id`: The parent task ID whose subtasks will be listed.
+### Example Request
 
-**Example Response**
+```bash
+curl "https://yourdomain.com/wp-json/fluent-boards/v2/projects/{board_id}/tasks/{task_id}/subtasks" \
+  -H "Authorization: Basic API_USERNAME:API_PASSWORD"
+```
+
+### Example Response
+
 ```json
 {
   "subtaskGroups": [
@@ -154,46 +114,7 @@ Path Params:
           },
           "repeat_task_meta": null,
           "assignees": []
-        },
-        {
-          "id": 124,
-          "parent_id": "456",
-          "board_id": "3",
-          "crm_contact_id": null,
-          "title": "Design mockups",
-          "slug": "design-mockups",
-          "type": "task",
-          "status": "closed",
-          "stage_id": "25",
-          "source": "web",
-          "source_id": null,
-          "priority": "medium",
-          "description": "Create high-fidelity mockups",
-          "lead_value": "0.00",
-          "created_by": "1",
-          "position": "2.00",
-          "comments_count": "0",
-          "issue_number": null,
-          "reminder_type": "none",
-          "settings": {
-            "cover": {
-              "backgroundColor": null
-            },
-            "subtask_count": null
-          },
-          "remind_at": null,
-          "started_at": null,
-          "due_at": null,
-          "last_completed_at": "2024-01-15 08:01:42",
-          "archived_at": null,
-          "created_at": "2024-01-15T08:43:52+00:00",
-          "updated_at": "2024-01-15T08:01:42+00:00",
-          "meta": {
-            "subtask_group_id": "127"
-          },
-          "repeat_task_meta": null,
-          "assignees": []
-        },
+        }
       ],
       "value": "Design Phase"
     }
@@ -201,7 +122,7 @@ Path Params:
 }
 ```
 
-### Create Subtask
+## Create a Subtask
 
 Create a new subtask within a parent task.
 
@@ -210,11 +131,21 @@ Create a new subtask within a parent task.
 POST /wp-json/fluent-boards/v2/projects/{board_id}/tasks/{task_id}/subtasks
 ```
 
-Path Params:
-- `board_id`: The board ID.
-- `task_id`: The parent task ID where the subtask will be created.
+### Example Request
 
-**Request Body**
+```bash
+curl -X POST "https://yourdomain.com/wp-json/fluent-boards/v2/projects/{board_id}/tasks/{task_id}/subtasks" \
+  -H "Authorization: Basic API_USERNAME:API_PASSWORD" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "title": "The new subtask",
+    "group_id": 127,
+    "due_at": null,
+    "add_to_top": false
+  }'
+```
+
+### Request Body
 
 | Parameter | Type | Required | Description |
 |-----------|------|----------|-------------|
@@ -223,17 +154,8 @@ Path Params:
 | `due_at` | string or null | No | Due date-time in ISO 8601 format or null |
 | `add_to_top` | boolean | No | If true, adds the subtask at the top of the group (default: false) |
 
-**Example Request**
-```json
-{
-  "title": "The new subtask",
-  "group_id": 127,
-  "due_at": null,
-  "add_to_top": false
-}
-```
+### Example Response
 
-**Example Response**
 ```json
 {
   "subtask": {
@@ -268,7 +190,7 @@ Path Params:
 }
 ```
 
-### Create Subtask Group
+## Create a Subtask Group
 
 Create a new group to organize subtasks.
 
@@ -277,24 +199,25 @@ Create a new group to organize subtasks.
 POST /wp-json/fluent-boards/v2/projects/{board_id}/tasks/{task_id}/subtask-group
 ```
 
-Path Params:
-- `board_id`: The board ID.
-- `task_id`: The parent task ID where the group will be created.
+### Example Request
 
-**Request Body**
+```bash
+curl -X POST "https://yourdomain.com/wp-json/fluent-boards/v2/projects/{board_id}/tasks/{task_id}/subtask-group" \
+  -H "Authorization: Basic API_USERNAME:API_PASSWORD" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "title": "Design Phase"
+  }'
+```
+
+### Request Body
 
 | Parameter | Type | Required | Description |
 |-----------|------|----------|-------------|
 | `title` | string | Yes | Name of the subtask group |
 
-**Example Request**
-```json
-{
-  "title": "Design Phase"
-}
-```
+### Example Response
 
-**Example Response**
 ```json
 {
   "subtaskGroup": {
@@ -309,7 +232,7 @@ Path Params:
 }
 ```
 
-### Update Subtask Group
+## Update a Subtask Group
 
 Update the title of a subtask group.
 
@@ -318,26 +241,27 @@ Update the title of a subtask group.
 PUT /wp-json/fluent-boards/v2/projects/{board_id}/tasks/{task_id}/subtask-group
 ```
 
-Path Params:
-- `board_id`: The board ID.
-- `task_id`: The parent task ID containing the group.
+### Example Request
 
-**Request Body**
+```bash
+curl -X PUT "https://yourdomain.com/wp-json/fluent-boards/v2/projects/{board_id}/tasks/{task_id}/subtask-group" \
+  -H "Authorization: Basic API_USERNAME:API_PASSWORD" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "group_id": 555,
+    "title": "Execution Phase"
+  }'
+```
+
+### Request Body
 
 | Parameter | Type | Required | Description |
 |-----------|------|----------|-------------|
 | `title` | string | Yes | New title for the group |
 | `group_id` | int | Yes | ID of the group to update |
 
-**Example Request**
-```json
-{
-  "group_id": 555,
-  "title": "Execution Phase"
-}
-```
+### Example Response
 
-**Example Response**
 ```json
 {
   "subtaskGroup": {
@@ -352,7 +276,7 @@ Path Params:
 }
 ```
 
-### Delete Subtask Group
+## Delete a Subtask Group
 
 Delete a subtask group and its subtasks.
 
@@ -361,31 +285,32 @@ Delete a subtask group and its subtasks.
 DELETE /wp-json/fluent-boards/v2/projects/{board_id}/tasks/{task_id}/subtask-group
 ```
 
-Path Params:
-- `board_id`: The board ID.
-- `task_id`: The parent task ID containing the group to delete.
+### Example Request
 
-**Request Body**
+```bash
+curl -X DELETE "https://yourdomain.com/wp-json/fluent-boards/v2/projects/{board_id}/tasks/{task_id}/subtask-group" \
+  -H "Authorization: Basic API_USERNAME:API_PASSWORD" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "group_id": 555
+  }'
+```
+
+### Request Body
 
 | Parameter | Type | Required | Description |
 |-----------|------|----------|-------------|
 | `group_id` | int | Yes | ID of the group to delete |
 
-**Example Request**
-```json
-{
-  "group_id": 555
-}
-```
+### Example Response
 
-**Example Response**
 ```json
 {
   "message": "Subtask group has been deleted"
 }
 ```
 
-### Delete Subtask
+## Delete a Subtask
 
 Delete a subtask.
 
@@ -394,13 +319,17 @@ Delete a subtask.
 DELETE /wp-json/fluent-boards/v2/projects/{board_id}/tasks/{task_id}/delete-subtask
 ```
 
-Note: `task_id` in the path is the subtask ID to delete. No request body is required.
+**Note:** `task_id` in the path is the subtask ID to delete. No request body is required.
 
-Path Params:
-- `board_id`: The board ID.
-- `task_id`: The subtask ID to delete.
+### Example Request
 
-**Example Response**
+```bash
+curl -X DELETE "https://yourdomain.com/wp-json/fluent-boards/v2/projects/{board_id}/tasks/{task_id}/delete-subtask" \
+  -H "Authorization: Basic API_USERNAME:API_PASSWORD"
+```
+
+### Example Response
+
 ```json
 {
   "deletedSubtask": {
@@ -447,7 +376,7 @@ Path Params:
 }
 ```
 
-### Move Subtask to Group
+## Move Subtask to Group
 
 Move a subtask from one group to another.
 
@@ -456,34 +385,27 @@ Move a subtask from one group to another.
 POST /wp-json/fluent-boards/v2/projects/{board_id}/tasks/{task_id}/move-subtask
 ```
 
-Path Params:
-- `board_id`: The board ID.
-- `task_id`: The parent task ID under which the subtask(s) belong.
+### Example Request
 
-**Request Body**
+```bash
+curl -X POST "https://yourdomain.com/wp-json/fluent-boards/v2/projects/{board_id}/tasks/{task_id}/move-subtask" \
+  -H "Authorization: Basic API_USERNAME:API_PASSWORD" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "group_id": 127,
+    "subtask_id": 284
+  }'
+```
+
+### Request Body
 
 | Parameter | Type | Required | Description |
 |-----------|------|----------|-------------|
 | `group_id` | int | Yes | Target group ID |
 | `subtask_id` | int or int[] | Yes | ID of the subtask to move (or an array of IDs) |
 
-**Example Request (single)**
-```json
-{
-  "group_id": 127,
-  "subtask_id": 284
-}
-```
+### Example Response
 
-**Example Request (multiple)**
-```json
-{
-  "group_id": 127,
-  "subtask_id": [284, 285, 286]
-}
-```
-
-**Example Response (single)**
 ```json
 {
   "subtask": {
@@ -496,7 +418,7 @@ Path Params:
 }
 ```
 
-### Move or Update Subtask Position
+## Update Subtask Position
 
 Move a subtask within its current group or to another group and update its position.
 
@@ -505,33 +427,35 @@ Move a subtask within its current group or to another group and update its posit
 PUT /wp-json/fluent-boards/v2/projects/{board_id}/tasks/update-subtask-position/{subtask_id}
 ```
 
-Note: `{subtask_id}` is the subtask being repositioned. If `newSubtasksGroupId` is omitted, the API infers the current group from the subtask meta.
+**Note:** `{subtask_id}` is the subtask being repositioned. If `newSubtasksGroupId` is omitted, the API infers the current group from the subtask meta.
 
-Path Params:
-- `board_id`: The board ID.
-- `subtask_id`: The subtask ID to move or reposition.
+### Example Request
 
-**Request Body**
+```bash
+curl -X PUT "https://yourdomain.com/wp-json/fluent-boards/v2/projects/{board_id}/tasks/update-subtask-position/{subtask_id}" \
+  -H "Authorization: Basic API_USERNAME:API_PASSWORD" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "newPosition": 1,
+    "newSubtasksGroupId": 198
+  }'
+```
+
+### Request Body
 
 | Parameter | Type | Required | Description |
 |-----------|------|----------|-------------|
 | `newPosition` | int | Yes | New position in the group |
 | `newSubtasksGroupId` | int | Yes | Group ID (can be same or different) |
 
-Behavior:
+### Behavior
+
 - If `newPosition` is 1, the subtask is placed at the top; the API uses fractional positions under the hood and may reindex if needed.
 - If `newSubtasksGroupId` differs from the current group, the subtask is moved to the new group and positioned there.
 - Response includes `changedSubtasks`: subtasks under the same parent updated within the last minute (with `assignees`).
 
-**Example Request**
-```json
-{
-  "newPosition": 1,
-  "newSubtasksGroupId": 198
-}
-```
+### Example Response
 
-**Example Response**
 ```json
 {
   "changedSubtasks": [
@@ -580,7 +504,7 @@ Behavior:
 }
 ```
 
-### Convert Task to Subtask
+## Convert Task to Subtask
 
 Convert an existing task to a subtask.
 
@@ -589,11 +513,19 @@ Convert an existing task to a subtask.
 PUT /wp-json/fluent-boards/v2/projects/{board_id}/tasks/{task_id}/convert-to-subtask
 ```
 
-Path Params:
-- `board_id`: The board ID.
-- `task_id`: The task ID that will be converted into a subtask.
+### Example Request
 
-**Request Body**
+```bash
+curl -X PUT "https://yourdomain.com/wp-json/fluent-boards/v2/projects/{board_id}/tasks/{task_id}/convert-to-subtask" \
+  -H "Authorization: Basic API_USERNAME:API_PASSWORD" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "parent_id": 133,
+    "assigneeId": 1
+  }'
+```
+
+### Request Body
 
 | Parameter | Type | Required | Description |
 |-----------|------|----------|-------------|
@@ -601,21 +533,15 @@ Path Params:
 | `assigneeId` | int | No | User ID to assign |
 | `subtaskGroupId` | int | No | Group ID to place the subtask |
 
-**Behavior**
+### Behavior
+
 - Sets the task's `parent_id` and clears `stage_id`.
 - If `subtaskGroupId` is provided, links the new subtask to that group; otherwise a "Default Subtask Group" is created on the parent task and the subtask is added there.
 - If `assigneeId` is provided, assigns the user to the new subtask.
 - Removes existing notifications for the converted task.
 
-**Example Request**
-```json
-{
-  "parent_id": 133,
-  "assigneeId": 1
-}
-```
+### Example Response
 
-**Example Response**
 ```json
 {
   "message": "Task has been converted to subtask",
@@ -664,7 +590,7 @@ Path Params:
 }
 ```
 
-### Move Subtask to Board
+## Move Subtask to Board
 
 Convert a subtask back to a regular task and move it to a specific stage.
 
@@ -673,26 +599,27 @@ Convert a subtask back to a regular task and move it to a specific stage.
 PUT /wp-json/fluent-boards/v2/projects/{board_id}/tasks/{task_id}/move-to-board
 ```
 
-Note: `{task_id}` in this route refers to the subtask ID you are converting back to a regular task and moving to the specified stage.
+**Note:** `{task_id}` in this route refers to the subtask ID you are converting back to a regular task and moving to the specified stage.
 
-Path Params:
-- `board_id`: The board ID.
-- `task_id`: The subtask ID to convert and move to a board stage.
+### Example Request
 
-**Request Body**
+```bash
+curl -X PUT "https://yourdomain.com/wp-json/fluent-boards/v2/projects/{board_id}/tasks/{task_id}/move-to-board" \
+  -H "Authorization: Basic API_USERNAME:API_PASSWORD" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "stage_id": 26
+  }'
+```
+
+### Request Body
 
 | Parameter | Type | Required | Description |
 |-----------|------|----------|-------------|
 | `stage_id` | int | Yes | Stage ID where the task should be moved |
 
-**Example Request**
-```json
-{
-  "stage_id": 26
-}
-```
+### Example Response
 
-**Example Response**
 ```json
 {
   "moveSubtask": {
@@ -708,7 +635,7 @@ Path Params:
     "source": "web",
     "source_id": null,
     "priority": "low",
-    "description": "<p>It will on a Kanban Page/Table view Page. </p>\n<ol>\n<li>Label</li>\n<li>Priority</li>\n<li>Due Date</li>\n<li> </li>\n</ol>",
+    "description": "<p>It will on a Kanban Page/Table view Page. </p>\n<ol>\n<li>Label</li>\n<li>Priority</li>\n<li>Due Date</li>\n<li> </li>\n</ol>",
     "lead_value": "0.00",
     "created_by": "1",
     "position": 0.25,
@@ -739,7 +666,7 @@ Path Params:
 }
 ```
 
-### Clone Subtask
+## Clone a Subtask
 
 Create a copy of an existing subtask.
 
@@ -748,20 +675,25 @@ Create a copy of an existing subtask.
 POST /wp-json/fluent-boards/v2/projects/{board_id}/tasks/{task_id}/clone-subtask
 ```
 
-Note: `{task_id}` in this route refers to the subtask ID you want to clone.
+**Note:** `{task_id}` in this route refers to the subtask ID you want to clone.
 
-Path Params:
-- `board_id`: The board ID.
-- `task_id`: The subtask ID to clone.
+### Example Request
 
-**Behavior**
+```bash
+curl -X POST "https://yourdomain.com/wp-json/fluent-boards/v2/projects/{board_id}/tasks/{task_id}/clone-subtask" \
+  -H "Authorization: Basic API_USERNAME:API_PASSWORD"
+```
+
+### Behavior
+
 - Title is suffixed with ` (cloned)`
 - Retains `started_at` and `due_at`
 - Keeps the same subtask group membership
 - Copies assignees and watchers
 - Places the clone between the original and the next subtask by position, or at the end if none exists
 
-**Example Response**
+### Example Response
+
 ```json
 {
   "subtask": {
@@ -809,17 +741,20 @@ Path Params:
 }
 ```
 
-## Features
+## Error Responses
 
-- **Group Organization**: Subtasks are organized in groups within parent tasks
-- **Position Management**: Subtasks have positions within their groups for ordering
-- **Assignee Support**: Subtasks can have assignees like regular tasks
-- **Status Tracking**: Subtasks can be marked as open or closed
-- **Conversion**: Tasks can be converted to subtasks and vice versa
-- **Cloning**: Subtasks can be cloned to create duplicates
-- **Parent Task Integration**: Parent tasks automatically track subtask counts and completion status
+See [Common Error Responses](/rest-api/shared/error-responses) for standard error formats.
 
-## Status Values
+### Common Subtask-Specific Errors
 
-- `open` - Active subtask
-- `closed` - Completed subtask
+- **404 Not Found** - Subtask or parent task not found
+- **403 Forbidden** - You don't have permission to access this subtask
+- **400 Bad Request** - Invalid subtask data or missing required fields
+
+## Next Steps
+
+- [Manage Tasks](/rest-api/tasks) - Work with board tasks
+- [Handle Stages](/rest-api/stages) - Manage board stages
+- [User Management](/rest-api/users) - Add/remove board members
+- [Labels](/rest-api/labels) - Organize tasks with labels
+

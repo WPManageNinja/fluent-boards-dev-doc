@@ -2,27 +2,6 @@
 
 The Stages API allows you to manage board stages and workflows in Fluent Boards. You can create, read, update, and delete stages, as well as manage their tasks and positions.
 
-## Stage Object
-
-A stage represents a column or phase in a board workflow. Stages extend the BoardTerm model and include position-based ordering with decimal precision for flexible positioning.
-
-### Properties
-
-| Property | Type | Description |
-|----------|------|-------------|
-| `id` | integer | Unique identifier for the stage |
-| `title` | string | Stage title (required) |
-| `board_id` | integer | ID of the board this stage belongs to |
-| `position` | float | Position within the board (decimal for flexible ordering) |
-| `type` | string | Stage type (defaults to 'stage') |
-| `settings` | object | Stage settings including default_task_status and is_template |
-| `archived_at` | string | Archive timestamp (null if not archived) |
-| `created_by` | integer | User ID who created the stage |
-| `created_at` | string | Creation timestamp |
-| `updated_at` | string | Last update timestamp |
-
-
-
 ## Create a Stage
 
 Create a new stage. The stage will be positioned at the end of the board by default, or at the specified position if provided.

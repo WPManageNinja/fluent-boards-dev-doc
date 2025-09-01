@@ -1,26 +1,27 @@
 # Folders
 
-Folders let you group boards. These endpoints are Pro-only and live under the admin prefix.
+The Folders API allows you to group and organize boards in Fluent Boards. These endpoints are Pro-only and live under the admin prefix.
 
-Base path for all endpoints below:
+## Base Endpoint
+
 ```
 /wp-json/fluent-boards/v2/admin/folders
 ```
 
-## Folder Object
-
-| Property | Type | Description |
-|----------|------|-------------|
-| `id` | integer | Folder ID |
-| `title` | string | Folder title |
-| `created_by` | integer | Creator user ID |
-| `boards_ids` | array[integer] | IDs of boards in this folder |
-
-Notes:
-- Model type is forced to `folder` and uses the `fbs_boards` table with a global scope.
-- `background` and `settings` are serialized internally; not returned by the API.
+```json
+{
+  "id": 11,
+  "title": "Lorem Ipsum",
+  "created_by": "1",
+  "boards_ids": [
+    3
+  ]
+}
+```
 
 ## List Folders
+
+Retrieve all folders in the system.
 
 **HTTP Request**
 ```
@@ -51,18 +52,14 @@ curl "https://yourdomain.com/wp-json/fluent-boards/v2/admin/folders" \
 }
 ```
 
-## Create Folder
+## Create a Folder
+
+Create a new folder to organize boards.
 
 **HTTP Request**
 ```
 POST /wp-json/fluent-boards/v2/admin/folders
 ```
-
-### Request Body
-
-| Field | Type | Required | Description |
-|------|------|----------|-------------|
-| `title` | string | Yes | Folder title (max 50 chars) |
 
 ### Example Request
 
@@ -72,6 +69,12 @@ curl -X POST "https://yourdomain.com/wp-json/fluent-boards/v2/admin/folders" \
   -H "Content-Type: application/x-www-form-urlencoded" \
   -d "title=Development"
 ```
+
+### Request Body
+
+| Field | Type | Required | Description |
+|------|------|----------|-------------|
+| `title` | string | Yes | Folder title (max 50 chars) |
 
 ### Example Response
 
@@ -87,18 +90,14 @@ curl -X POST "https://yourdomain.com/wp-json/fluent-boards/v2/admin/folders" \
 }
 ```
 
-## Update Folder
+## Update a Folder
+
+Update an existing folder's title.
 
 **HTTP Request**
 ```
 PUT /wp-json/fluent-boards/v2/admin/folders/{folder_id}
 ```
-
-### Request Body
-
-| Field | Type | Required | Description |
-|------|------|----------|-------------|
-| `title` | string | Yes | New folder title |
 
 ### Example Request
 
@@ -108,6 +107,12 @@ curl -X PUT "https://yourdomain.com/wp-json/fluent-boards/v2/admin/folders/{fold
   -H "Content-Type: application/x-www-form-urlencoded" \
   -d "title=Marketing"
 ```
+
+### Request Body
+
+| Field | Type | Required | Description |
+|------|------|----------|-------------|
+| `title` | string | Yes | New folder title |
 
 ### Example Response
 
@@ -123,7 +128,9 @@ curl -X PUT "https://yourdomain.com/wp-json/fluent-boards/v2/admin/folders/{fold
 }
 ```
 
-## Delete Folder
+## Delete a Folder
+
+Remove a folder from the system.
 
 **HTTP Request**
 ```
@@ -147,16 +154,12 @@ curl -X DELETE "https://yourdomain.com/wp-json/fluent-boards/v2/admin/folders/{f
 
 ## Add Boards to Folder
 
+Add one or more boards to a folder. This replaces any existing folder assignments.
+
 **HTTP Request**
 ```
 POST /wp-json/fluent-boards/v2/admin/folders/{folder_id}/add-board
 ```
-
-### Request Body
-
-| Field | Type | Required | Description |
-|------|------|----------|-------------|
-| `board_ids` | array[integer] | Yes | Board IDs to add; replaces existing folder assignment |
 
 ### Example Request
 
@@ -169,6 +172,12 @@ curl -X POST "https://yourdomain.com/wp-json/fluent-boards/v2/admin/folders/{fol
   }'
 ```
 
+### Request Body
+
+| Field | Type | Required | Description |
+|------|------|----------|-------------|
+| `board_ids` | array[integer] | Yes | Board IDs to add; replaces existing folder assignment |
+
 ### Example Response
 
 ```json
@@ -179,16 +188,12 @@ curl -X POST "https://yourdomain.com/wp-json/fluent-boards/v2/admin/folders/{fol
 
 ## Remove Board from Folder
 
+Remove a specific board from a folder.
+
 **HTTP Request**
 ```
 POST /wp-json/fluent-boards/v2/admin/folders/{folder_id}/remove-board
 ```
-
-### Request Body
-
-| Field | Type | Required | Description |
-|------|------|----------|-------------|
-| `board_id` | integer | Yes | Board ID to remove from folder |
 
 ### Example Request
 
@@ -199,6 +204,12 @@ curl -X POST "https://yourdomain.com/wp-json/fluent-boards/v2/admin/folders/{fol
   -d "board_id=7"
 ```
 
+### Request Body
+
+| Field | Type | Required | Description |
+|------|------|----------|-------------|
+| `board_id` | integer | Yes | Board ID to remove from folder |
+
 ### Example Response
 
 ```json
@@ -206,3 +217,20 @@ curl -X POST "https://yourdomain.com/wp-json/fluent-boards/v2/admin/folders/{fol
   "message": "Removed from folder successfully!"
 }
 ```
+
+## Error Responses
+
+See [Common Error Responses](/rest-api/shared/error-responses) for standard error formats.
+
+### Common Folder-Specific Errors
+
+- **404 Not Found** - Folder not found
+- **403 Forbidden** - You don't have permission to manage folders
+- **400 Bad Request** - Invalid folder data or missing required fields
+
+## Next Steps
+
+- [Manage Boards](/rest-api/boards) - Work with board management
+- [Handle Stages](/rest-api/stages) - Manage board stages
+- [User Management](/rest-api/users) - Add/remove board members
+- [Labels](/rest-api/labels) - Organize tasks with labels

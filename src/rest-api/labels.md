@@ -1,28 +1,6 @@
 # Labels
 
 The Labels API allows you to manage task labels in Fluent Boards. You can create, read, update, and delete labels, as well as assign them to tasks.
-
-## Label Object
-
-A label represents a tag or category that can be assigned to tasks.
-
-### Properties
-
-| Property | Type | Description |
-|----------|------|-------------|
-| `id` | integer | Unique identifier for the label |
-| `title` | string | Label title (required) |
-| `slug` | string | URL-friendly version of the title |
-| `color` | string | Label color (hex code) |
-| `bg_color` | string | Label background color (hex code) |
-| `board_id` | integer | ID of the project this label belongs to |
-| `type` | string | Always set to 'label' |
-| `position` | integer | Position/order of the label |
-| `settings` | object | Additional settings stored as serialized data |
-| `archived_at` | string | Timestamp when label was archived (null if active) |
-| `created_at` | string | Creation timestamp |
-| `updated_at` | string | Last update timestamp |
-
 ## List All Labels
 
 Retrieve all labels for a project.

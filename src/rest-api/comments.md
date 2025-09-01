@@ -2,42 +2,6 @@
 
 The Comments API allows you to manage comments on tasks in Fluent Boards. You can create, read, update, and delete comments, as well as handle threaded replies and file attachments.
 
-## Comment Object
-
-A comment represents a user's input on a task, which can include text content, file attachments, and threaded replies.
-
-### Properties
-
-| Property | Type | Description |
-|----------|------|-------------|
-| `id` | integer | Unique identifier for the comment |
-| `board_id` | integer | ID of the board this comment belongs to |
-| `task_id` | integer | ID of the task this comment is attached to |
-| `parent_id` | integer | ID of the parent comment (for threaded replies) |
-| `type` | string | Comment type (default: 'comment') |
-| `privacy` | string | Privacy setting (default: 'private') |
-| `status` | string | Comment status |
-| `author_name` | string | Name of the comment author |
-| `author_email` | string | Email of the comment author |
-| `author_ip` | string | IP address of the comment author |
-| `description` | string | The comment content |
-| `settings` | object | Additional settings including `raw_description` and `mentioned_id` |
-| `created_by` | integer | WordPress user ID who created the comment |
-| `created_at` | string | Creation timestamp |
-| `updated_at` | string | Last update timestamp |
-| `replies` | array | Array of reply comments |
-| `replies_count` | integer | Number of replies to this comment |
-| `avatar` | string | Generated avatar URL for the author |
-| `user` | object | WordPress user object with profile information |
-| `images` | array | Array of attached images |
-
-### Relationships
-
-- **User**: Belongs to one WordPress user (`created_by`)
-- **Task**: Belongs to one task (`task_id`)
-- **Replies**: Has many child comments (`parent_id`)
-- **Images**: Has many attached images (`CommentImage`)
-
 ## List Task Comments
 
 Retrieve all comments for a specific task.
@@ -64,26 +28,6 @@ curl "https://yourdomain.com/wp-json/fluent-boards/v2/projects/{board_id}/tasks/
 | `privacy` | string | Filter by privacy setting (e.g., 'private', 'public') |
 | `include_replies` | boolean | Include threaded replies (default: true) |
 | `include_images` | boolean | Include attached images (default: true) |
-
-### Pagination Response Structure
-
-The response includes pagination metadata:
-
-| Property | Type | Description |
-|----------|------|-------------|
-| `current_page` | integer | Current page number |
-| `data` | array | Array of comment objects |
-| `first_page_url` | string | URL for the first page |
-| `from` | integer | Starting record number |
-| `last_page` | integer | Last page number |
-| `last_page_url` | string | URL for the last page |
-| `links` | array | Pagination links array |
-| `next_page_url` | string | URL for the next page (null if no next page) |
-| `path` | string | Base URL for pagination |
-| `per_page` | integer | Number of records per page |
-| `prev_page_url` | string | URL for the previous page (null if no previous page) |
-| `to` | integer | Ending record number |
-| `total` | integer | Total number of records |
 
 ### Example Response
 
