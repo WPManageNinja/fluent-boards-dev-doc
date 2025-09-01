@@ -5,6 +5,7 @@ const hooksSidebar = require('./sidebars/hooks');
 const helpersSidebar = require('./sidebars/helpers');
 const modulesSidebar = require('./sidebars/modules');
 const extendRestApiSidebar = require('./sidebars/extendRestApiSidebar');
+const restApiSidebar = require('./sidebars/rest-api');
 
 const path = require('path');
 
@@ -136,6 +137,10 @@ module.exports = {
             {
                 text: 'Blog',
                 link: 'https://fluentboards.com/blog/',
+            },
+            {
+                text: 'REST API',
+                link: '/rest-api/',
             }
         ],
         sidebar: {
@@ -146,6 +151,7 @@ module.exports = {
             '/helpers/': helpersSidebar,
             '/modules/': modulesSidebar,
             '/extending-rest-api/': extendRestApiSidebar,
+            '/rest-api/': restApiSidebar,
 
         }
     },
