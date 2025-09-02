@@ -751,10 +751,4 @@ See [Common Error Responses](/rest-api/shared/error-responses) for standard erro
 - **403 Forbidden** - You don't have permission to access this subtask
 - **400 Bad Request** - Invalid subtask data or missing required fields
 
-## Next Steps
-
-- [Manage Tasks](/rest-api/tasks) - Work with board tasks
-- [Handle Stages](/rest-api/stages) - Manage board stages
-- [User Management](/rest-api/users) - Add/remove board members
-- [Labels](/rest-api/labels) - Organize tasks with labels
 

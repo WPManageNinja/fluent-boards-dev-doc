@@ -9,12 +9,6 @@ The Fluent Boards REST API provides programmatic access to your Fluent Boards da
 - **Manage Boards**: Create, read, update, and delete boards
 - **Handle Tasks**: Manage tasks, subtasks, and task assignments
 - **Control Stages**: Organize tasks with custom stages and workflows
-- **Access Analytics**: Retrieve performance data and reports
-- **Configure Integrations**: Set up webhooks and external connections
-- **Manage Users**: Handle board members, permissions, and roles
-- **Time Tracking**: Track time spent on tasks and generate reports
-- **File Management**: Handle task attachments and file uploads
-
 ## Base URL
 
 All API requests should be made to:
@@ -27,18 +21,6 @@ https://yourdomain.com/wp-json/fluent-boards/v2
 1. [Explore available endpoints](/rest-api/boards)
 2. [Make your first API call](/rest-api/boards#list-all-boards)
 
-## Available Resources
-
-### Resources
-- **[Boards](/rest-api/boards)** - Manage boards
-- **[Tasks](/rest-api/tasks)** - Handle tasks and task operations
-- **[Stages](/rest-api/stages)** - Manage project stages and workflows
-- **[Users & Members](/rest-api/users)** - Handle board members and permissions
-- **[Labels](/rest-api/labels)** - Organize tasks with labels
-- **[Comments](/rest-api/comments)** - Handle task comments and discussions
-- **[Subtasks](/rest-api/subtasks)** - Manage task subtasks and checklists
-- **[Custom Fields](/rest-api/custom-fields)** - Handle custom task data
-- **[Folders](/rest-api/folders)** - Organize boards into folders
 
 ## Response Format
 
@@ -94,7 +76,7 @@ While we don't provide official SDKs, the API works with any HTTP client library
 
 For support and assistance:
 
-- **Documentation Issues**: [Submit a GitHub issue](https://github.com/FluentBoards/fluent-boards-developers-docs/issues)
+- **Documentation Issues**: [Submit a GitHub issue](https://github.com/WPManageNinja/fluent-boards-dev-doc/issues)
 - **API Questions**: [Contact support](https://wpmanageninja.com/support-tickets/)
 - **Feature Requests/Suggestions**: [Community forum](https://community.wpmanageninja.com/portal/space/fluent-boards/)
 
