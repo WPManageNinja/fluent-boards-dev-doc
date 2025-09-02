@@ -373,10 +373,4 @@ See [Common Error Responses](/rest-api/shared/error-responses) for standard erro
 - **403 Forbidden** - You don't have permission to manage labels
 - **400 Bad Request** - Invalid label data or missing required fields
 
-
-## Next Steps
-
-- [Task Management](/rest-api/tasks) - Work with tasks and labels
-- [Board Management](/rest-api/boards) - Organize boards with labels
-- [Reports](/rest-api/reports) - Generate reports by label
-- [Webhooks](/rest-api/webhooks) - Set up notifications for label changes 
+ 

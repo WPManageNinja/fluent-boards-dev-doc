@@ -1,4 +1,4 @@
-# Comments API
+# Comments
 
 The Comments API allows you to manage comments on tasks in Fluent Boards. You can create, read, update, and delete comments, as well as handle threaded replies and file attachments.
 
@@ -650,10 +650,3 @@ See [Common Error Responses](/rest-api/shared/error-responses) for standard erro
 3. **Use threading appropriately** - Keep replies organized and relevant
 4. **Optimize images** - Compress images before uploading
 5. **Regular cleanup** - Remove outdated or irrelevant comments
-
-## Next Steps
-
-- [Task Management](/rest-api/tasks) - Work with tasks and comments
-- [File Attachments](/rest-api/attachments) - Handle file uploads
-- [User Management](/rest-api/users) - Manage team members
-- [Notifications](/rest-api/notifications) - Set up comment notifications 

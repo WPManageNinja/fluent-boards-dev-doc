@@ -220,35 +220,6 @@ curl "https://yourdomain.com/wp-json/fluent-boards/v2/projects" \
 }
 ```
 
-### Board Creation Process
-
-When a board is created, the following actions occur automatically:
-
-1. **Default Stages**: For `to-do` boards, default stages are created (To Do, In Progress, Done)
-2. **Default Label**: A default label is automatically created
-3. **Roadmap Stages**: For `roadmap` boards, custom stages can be provided via the `stages` parameter
-4. **CRM Integration**: If `crm_contact_id` is provided, the board is associated with the CRM contact
-5. **Folder Assignment**: If `folder_id` is provided (Pro feature), the board is added to the specified folder
-6. **Background**: A random background color is automatically assigned if not specified
-
-### Roadmap Board Example
-
-```json
-{
-  "board": {
-    "title": "Product Roadmap",
-    "description": "Product development roadmap",
-    "type": "roadmap"
-  },
-  "stages": [
-    "Planning",
-    "Development",
-    "Testing",
-    "Release"
-  ]
-}
-```
-
 ## Update a Board
 
 Update an existing board.
@@ -354,7 +325,7 @@ curl "https://yourdomain.com/wp-json/fluent-boards/v2/projects/{board_id}" \
 
 ## Archive a Board
 
-Archive a board (soft delete).
+Archive a board .
 
 **HTTP Request**
 ```
@@ -490,17 +461,6 @@ curl "https://yourdomain.com/wp-json/fluent-boards/v2/projects/{board_id}/duplic
   }
 }
 ```
-
-### Board Duplication Process
-
-When a board is duplicated, the following actions occur based on the provided parameters:
-
-1. **Board Creation**: A new board is created with the specified title
-2. **Stages Copy**: All stages from the source board are copied (required for task copying)
-3. **Labels Copy**: If `isWithLabels` is "yes", all labels from the source board are copied
-4. **Tasks Copy**: If `isWithTasks` is "yes", all tasks are copied with their relationships to stages and labels
-5. **Templates**: If `isWithTemplates` is "yes", template-related data is included in the duplication
-6. **Admin Permission**: Only admin users can duplicate boards
 
 ## Get Board Members
 
@@ -641,10 +601,3 @@ See [Common Error Responses](/rest-api/shared/error-responses) for standard erro
 - **404 Not Found** - Board not found
 - **403 Forbidden** - You don't have permission to access this board
 - **400 Bad Request** - Invalid board data or missing required fields
-
-## Next Steps
-
-- [Manage Tasks](/rest-api/tasks) - Work with board tasks
-- [Handle Stages](/rest-api/stages) - Manage board stages
-- [User Management](/rest-api/users) - Add/remove board members
-- [Labels](/rest-api/labels) - Organize tasks with labels 
