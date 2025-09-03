@@ -56,8 +56,8 @@ module.exports = {
      * Ref：https://v1.vuepress.vuejs.org/theme/default-theme-config.html
      */
     themeConfig: {
-        base: '/fluent-boards-dev-docs/',
-        repo: 'WPManageNinja/fluent-boards-dev-docs/',
+        base: '/fluent-boards-dev-doc/',
+        repo: 'WPManageNinja/fluent-boards-dev-doc/',
         docsBranch: 'master',
         docsDir: 'src',
         editLinks: true,
