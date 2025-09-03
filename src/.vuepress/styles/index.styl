@@ -190,6 +190,57 @@ div.docs-home
         max-width 740px
         margin 1rem auto 2rem
 
+      .hero-actions
+        display flex
+        flex-wrap wrap
+        justify-content center
+        gap .85rem
+        margin 1.75rem auto 1.25rem
+
+      .mini-note
+        margin-top 0
+        font-size .8rem
+        opacity .75
+
+      .btn
+        --btn-accent #673ab7
+        text-decoration none
+        background #f0e9ff
+        color #351a6e
+        padding .75rem 1.15rem
+        font-weight 600
+        line-height 1
+        border-radius 8px
+        display inline-flex
+        align-items center
+        border 1px solid #e1d5fb
+        font-size .85rem
+        transition all .18s ease
+        box-shadow 0 1px 2px rgba(0,0,0,.05)
+
+        &:hover
+          background #fff
+          border-color #cbb5f7
+          box-shadow 0 4px 14px -2px rgba(103,58,183,.22)
+          transform translateY(-2px)
+
+        &.btn-primary
+          background linear-gradient(135deg,#7549d8,#673ab7)
+          color #fff
+          border 1px solid #673ab7
+
+          &:hover
+            background linear-gradient(135deg,#8259de,#7644cc)
+
+        &.btn-outline
+          background transparent
+          border 1px solid #c3b3e7
+          color #673ab7
+
+          &:hover
+            background #f5efff
+            border-color #a280e0
+
     .home-content
       background-color #fff
       color #000
@@ -200,6 +251,10 @@ div.docs-home
       grid-template-columns 2fr 1.5fr
       gap 3rem
       align-items start
+      border-bottom 1px solid #f0eef5
+
+      &:nth-child(even)
+        background #faf8fc
 
       h2
         font-weight bold
@@ -210,6 +265,68 @@ div.docs-home
 
       ul
         margin 0
+
+    .home-feature-cards
+      max-width 1040px
+      margin -40px auto 40px
+      padding 0 1.5rem
+      display grid
+      grid-template-columns repeat(auto-fill,minmax(230px,1fr))
+      gap 1.25rem
+
+      .feature-card
+        background #ffffff
+        border 1px solid #eee
+        border-radius 14px
+        padding 1.2rem 1.15rem 1.35rem
+        position relative
+        overflow hidden
+        transition all .2s ease
+        box-shadow 0 2px 4px -1px rgba(0,0,0,.05)
+
+        &.wide
+          grid-column 1 / -1
+          display block
+          padding 1.5rem 1.75rem 1.75rem
+          background linear-gradient(135deg,#faf8fc,#ffffff)
+
+          .capabilities-list
+            margin .65rem 0 0
+            padding-left 1.05rem
+            font-size .82rem
+            line-height 1.4
+
+            li
+              margin .4rem 0
+              strong
+                color #673ab7
+
+        &:before
+          content ''
+          position absolute
+          inset 0
+          background linear-gradient(135deg,rgba(103,58,183,.08),rgba(255,255,255,0))
+          opacity .9
+          pointer-events none
+
+        &:hover
+          transform translateY(-4px)
+          box-shadow 0 8px 22px -6px rgba(103,58,183,.25)
+          border-color #d7c8f4
+
+        h3
+          margin .25rem 0 .5rem
+          font-size 1rem
+          font-weight 700
+
+        p
+          margin 0
+          font-size .8rem
+          line-height 1.35
+          color #3a2d53
+          a
+            color #673ab7
+            text-decoration underline
 
 /* Tablet */
 
@@ -226,11 +343,15 @@ div.docs-home
 
       h1
         font-size 40px
+      .btn
+        font-size .78rem
+        padding .65rem .9rem
 
     .home-content
       padding 64px 1.5rem
       grid-template-columns 2fr 1.5fr
       gap 2rem
+  border-bottom 1px solid #f0eef5
 
       h2
         font-size 28px
@@ -248,6 +369,255 @@ div.docs-home
       padding 32px 1.5rem
       grid-template-columns 1fr
       gap 1rem
+    .home-feature-cards
+      margin 10px auto 10px
+      grid-template-columns repeat(auto-fill,minmax(160px,1fr))
+      gap .85rem
+      .feature-card
+        padding 1rem .9rem 1.1rem
+        h3
+          font-size .9rem
+        p
+          font-size .72rem
+
+// Getting Started Enhancements
+
+.getting-started-cards
+  display grid
+  grid-template-columns repeat(auto-fill, minmax(230px, 1fr))
+  gap 1.25rem
+  margin 2rem 0 2.5rem
+
+  .gs-card
+    background #faf8fc
+    padding 1.25rem 1.15rem 1.35rem
+    border 1px solid #eee
+    border-radius 10px
+    position relative
+    transition all .18s ease
+    box-shadow 0 1px 2px rgba(0,0,0,.03)
+
+    &:hover
+      box-shadow 0 4px 14px -2px rgba(103,58,183,.18)
+      transform translateY(-2px)
+      border-color #d7c8f4
+      background #fff
+
+    h3
+      margin .15rem 0 .5rem
+      font-size 1rem
+      font-weight 700
+      line-height 1.35
+
+    p
+      margin 0
+      font-size .82rem
+      line-height 1.4
+
+    a
+      color #673ab7
+      text-decoration underline
+      font-weight 600
+
+// Community & Support badge links
+
+.community-links
+  margin 1.5rem 0 2.25rem
+  .resource-badges
+    list-style none
+    margin 0
+    padding 0
+    display flex
+    flex-wrap wrap
+    gap .65rem
+
+    li
+      margin 0
+      padding 0
+
+    .badge-link
+      --bg #f1f5f9
+      --fg #1e293b
+      display inline-flex
+      align-items center
+      gap .4rem
+      padding .6rem .95rem .65rem
+      font-size .78rem
+      font-weight 600
+      line-height 1
+      text-decoration none
+      border 1px solid rgba(0,0,0,.07)
+      border-radius 30px
+      background var(--bg)
+      color var(--fg)
+      position relative
+      transition .16s ease
+      box-shadow 0 1px 2px rgba(0,0,0,.06)
+
+      &:hover
+        transform translateY(-2px)
+        box-shadow 0 4px 12px -2px rgba(0,0,0,.15)
+        text-decoration none
+        filter brightness(1.05)
+
+      &.site
+        background #ede9fe
+        color #5b21b6
+      &.docs
+        background #ecfdf5
+        color #065f46
+      &.dev
+        background #e0f2fe
+        color #075985
+      &.blog
+        background #fff7ed
+        color #9a3412
+      &.community
+        background #fef2f2
+        color #991b1b
+      &.roadmap
+        background #f0fdfa
+        color #115e59
+      &.facebook
+        background #eff6ff
+        color #1d4ed8
+      &.support
+        background #fdf2f8
+        color #9d174d
+      &.feature
+        background #f5f3ff
+        color #6d28d9
+
+  .hint
+    font-size .75rem
+    opacity .75
+    margin .85rem 0 0
+
+// Capabilities Grid (What You Can Really Do)
+
+// Capabilities Showcase (new design)
+
+.capabilities-showcase
+  margin 1.75rem 0 1.5rem
+  display flex
+  flex-direction column
+  gap .9rem
+
+  .cap-row
+    display grid
+    grid-template-columns 52px 1fr
+    gap 1rem
+    padding 1rem 1.1rem 1.15rem
+    background #ffffff
+    border 1px solid #e9e3f6
+    border-radius 16px
+    position relative
+    overflow hidden
+    box-shadow 0 2px 4px -1px rgba(103,58,183,.08)
+    transition .25s cubic-bezier(.4,.2,.2,1)
+
+    &:before
+      content ''
+      position absolute
+      inset 0
+      background radial-gradient(circle at 12% 20%,rgba(103,58,183,.15),transparent 60%)
+      opacity .9
+      pointer-events none
+
+    &:hover
+      transform translateY(-4px)
+      border-color #d2c2ef
+      box-shadow 0 10px 24px -8px rgba(103,58,183,.28)
+
+    .cap-icon
+      width 52px
+      height 52px
+      border-radius 14px
+      background linear-gradient(135deg,#7549d8,#673ab7)
+      display flex
+      align-items center
+      justify-content center
+      font-size 1.65rem
+      color #fff
+      box-shadow 0 4px 10px -4px rgba(103,58,183,.55)
+
+    .cap-body
+      display flex
+      flex-direction column
+      gap .4rem
+
+      h3
+        margin 0
+        font-size .95rem
+        font-weight 700
+        letter-spacing .3px
+        color #3f2675
+
+      p
+        margin 0
+        font-size .72rem
+        line-height 1.4
+        color #402f5d
+
+      .badges
+        display flex
+        flex-wrap wrap
+        gap .4rem
+
+        code
+          background #f3eefc
+          color #5a3d92
+          padding .28rem .45rem .3rem
+          font-size .58rem
+          line-height 1
+          border-radius 6px
+          font-weight 600
+          border 1px solid #e2d6f5
+          letter-spacing .25px
+
+.capabilities-foot-note
+  font-size .68rem
+  margin .4rem 0 1.6rem
+  opacity .7
+  &.alt
+    text-align center
+
+@media (max-width: 640px)
+  .capabilities-showcase .cap-row
+    grid-template-columns 46px 1fr
+    padding .85rem .9rem .95rem
+    .cap-icon
+      width 46px
+      height 46px
+      font-size 1.35rem
+    .cap-body h3
+      font-size .85rem
+    .cap-body p
+      font-size .64rem
+    .cap-body .badges code
+      font-size .5rem
+
+  .community-links .resource-badges .badge-link
+    font-size .72rem
+    padding .55rem .85rem .6rem
+  .community-links .hint
+    font-size .7rem
+    margin .75rem 0 0
+
+@media (max-width: 600px)
+  .community-links .resource-badges
+    gap .5rem
+    .badge-link
+      font-size .66rem
+      padding .5rem .7rem .55rem
+@media (max-width: 640px)
+  .getting-started-cards
+    grid-template-columns 1fr 1fr
+
+@media (max-width: 500px)
+  .getting-started-cards
+    grid-template-columns 1fr
+
 
 
 table.nowrap
