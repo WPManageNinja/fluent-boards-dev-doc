@@ -107,7 +107,6 @@ pageClass: docs-home
       <li><a href="./rest-api/boards">Boards</a></li>
       <li><a href="./rest-api/tasks">Tasks</a></li>
       <li><a href="./rest-api/users">Users</a></li>
-      <li><a href="./rest-api/webhooks">Webhooks</a></li>
     </ul>
   </div>
 </section>

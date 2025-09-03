@@ -2,37 +2,9 @@
 
 The Users & Members API allows you to manage board members, permissions, and user roles in Fluent Boards. You can add, remove, and manage user permissions across projects.
 
-> Note: Endpoints labeled "Pro" require Fluent Boards Pro.
-
-## User Object
-
-A user represents a WordPress user who can be a member of one or more boards. The User model extends the WordPress users table and includes computed attributes and relationships for board management.
-
-### Properties
-
-| Property | Type | Description |
-|----------|------|-------------|
-| `ID` | integer | Unique identifier for the user (WordPress user ID) |
-| `user_login` | string | User's login username |
-| `user_email` | string | User's email address |
-| `display_name` | string | User's display name |
-| `user_nicename` | string | User's URL-friendly name |
-| `photo` | string | User's avatar URL (computed attribute) |
-| `user_registered` | string | User registration timestamp |
-| `created_at` | string | Creation timestamp |
-| `updated_at` | string | Last update timestamp |
-
-### Relationships
-
-- **tasks()** - Tasks assigned to the user
-- **watchingTasks()** - Tasks the user is watching
-- **highPriorityTasks()** - User's high priority tasks (limited to 3)
-- **overDueTasks()** - User's overdue tasks (limited to 5)
-- **upcomingTasks()** - User's upcoming tasks (limited to 3)
-- **upcomingWithoutDuedate()** - User's tasks without due dates (limited to 3)
-- **boards()** - Boards the user belongs to
-- **whichBoards()** - Boards where user is a member
-- **notifications()** - User's notifications
+::: warning Note
+Endpoints labeled "Pro" require Fluent Boards Pro.
+:::
 
 ## List All Users
 
@@ -49,8 +21,6 @@ GET /wp-json/fluent-boards/v2/fluent-boards-users
 curl "https://yourdomain.com/wp-json/fluent-boards/v2/fluent-boards-users" \
   -H "Authorization: Basic API_USERNAME:API_PASSWORD"
 ```
-
-
 
 
 
