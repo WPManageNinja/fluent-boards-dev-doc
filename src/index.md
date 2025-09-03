@@ -65,37 +65,6 @@ pageClass: docs-home
   </div>
 </section>
 
-<section id="home-rest-api" class="home-content">
-  <div>
-    <h2>REST API</h2>
-    <p>Access FluentBoards data programmatically with a robust and secure REST API. Build custom dashboards, automate workflows, or integrate with external services using familiar JSON endpoints.</p>
-  </div>
-  <div>
-    <ul>
-      <li><a href="./rest-api/">Overview</a></li>
-      <li><a href="./rest-api/boards">Boards</a></li>
-      <li><a href="./rest-api/tasks">Tasks</a></li>
-      <li><a href="./rest-api/users">Users</a></li>
-      <li><a href="./rest-api/webhooks">Webhooks</a></li>
-    </ul>
-  </div>
-</section>
-
-<section id="home-resources" class="home-content">
-  <div>
-    <h2>Resources</h2>
-    <p>Helpful places to go next. Learn concepts, browse user‑facing guides or follow release updates.</p>
-  </div>
-  <div>
-    <ul>
-      <li><a href="/getting-started/">Developer Getting Started</a></li>
-      <li><a href="https://fluentboards.com/" target="_blank" rel="noopener">Product Website ↗</a></li>
-      <li><a href="https://fluentboards.com/docs/" target="_blank" rel="noopener">User Documentation ↗</a></li>
-      <li><a href="https://fluentboards.com/blog/" target="_blank" rel="noopener">Blog & Release Notes ↗</a></li>
-    </ul>
-  </div>
-</section>
-
 <section id="home-internals" class="home-content">
   <div>
     <h2>Developer Hooks / Functions</h2>
@@ -123,6 +92,22 @@ pageClass: docs-home
       <li><a href="./modules/boards/">Boards</a></li>
       <li><a href="./modules/stages/">Stages</a></li>
       <li><a href="./modules/tasks/">Tasks</a></li>
+    </ul>
+  </div>
+</section>
+
+<section id="home-rest-api" class="home-content">
+  <div>
+    <h2>REST API</h2>
+    <p>Access FluentBoards data programmatically with a robust and secure REST API. Build custom dashboards, automate workflows, or integrate with external services using familiar JSON endpoints.</p>
+  </div>
+  <div>
+    <ul>
+      <li><a href="./rest-api/">Overview</a></li>
+      <li><a href="./rest-api/boards">Boards</a></li>
+      <li><a href="./rest-api/tasks">Tasks</a></li>
+      <li><a href="./rest-api/users">Users</a></li>
+      <li><a href="./rest-api/webhooks">Webhooks</a></li>
     </ul>
   </div>
 </section>
