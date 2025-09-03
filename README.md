@@ -62,7 +62,7 @@ The REST API documentation is organized into logical sections:
 
 #### Modules & Extensions
 - **[Modules](/modules/)** - Core module documentation
-- **[Extending REST API](/extending-rest-api/)** - Custom endpoint development
+ - **[Extending REST API](/rest-api/extend)** - Custom endpoint development
 - **[CLI Commands](/cli/)** - Command-line interface
 
 ## Quick Start
