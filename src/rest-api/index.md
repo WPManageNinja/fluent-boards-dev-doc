@@ -82,4 +82,4 @@ For support and assistance:
 
 ## What's Next?
 
-Ready to start building? Begin with [Boards](/rest-api/boards) to explore the available endpoints. 
+Ready to start building? Begin with [Authentication](/rest-api/authentication) to set up your API access. 
