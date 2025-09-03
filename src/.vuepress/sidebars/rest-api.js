@@ -11,6 +11,7 @@ module.exports = [
     collapsable: true,
     children: [
       'boards',
+      'users',
       'tasks',
       'stages',
       'labels',
