@@ -3,7 +3,8 @@ module.exports = [
     title: 'Getting Started',
     collapsable: true,
     children: [
-      ''
+      '',
+      'authentication'
     ]
   },
   {
