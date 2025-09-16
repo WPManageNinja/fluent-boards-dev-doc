@@ -69,11 +69,12 @@ The REST API documentation is organized into logical sections:
 
 ### 1. Set Up API Access
 
-First, create API credentials:
+First, create WordPress Application Passwords:
 
-1. Go to `Fluent Boards → Settings → Rest API`
-2. Click "Create New API Key"
-3. Save your username and application password
+1. Go to `Users → Profile` in WordPress admin
+2. Scroll to "Application Passwords" section
+3. Enter a name and click "Add New Application Password"
+4. Save your username and generated application password
 
 ### 2. Make Your First API Call
 
