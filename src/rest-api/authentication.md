@@ -1,39 +1,37 @@
 # Authentication
 
-FluentBoards uses WordPress Application Passwords for REST API authentication. You'll need to create application credentials to access the API securely.
+FluentBoards uses WordPress Application Passwords for REST API authentication. This is the standard WordPress authentication method that provides secure, non-interactive access to the REST API.
 
-## Creating API Credentials
+## Creating Application Passwords
 
-### Step 1: Access REST API Settings
+### Step 1: Access User Profile
 
-1. Navigate to `FluentBoards → Settings → Rest API`
-2. You'll see the REST API Access Management interface
+1. Log in to your WordPress admin dashboard
+2. Navigate to `Users → Profile` (or `Users → All Users` and click on your user)
+3. Scroll down to the "Application Passwords" section
 
-![REST API Settings](/assets/img/rest-api-settings.png)
+### Step 2: Create New Application Password
 
-### Step 2: Create New API Key
+1. In the "Application Passwords" section, enter a name for your application (e.g., "Fluent Boards API")
+2. Click "Add New Application Password"
 
-1. Click "Add New Key" button
-2. Fill in the required information:
-   - **Name of this key**: Enter a friendly name for identification
-   - **Associate Administrator**: Select a WordPress Administrator or FluentBoards Administrator
-3. Click "Create"
-
-![Add New API Key](/assets/img/add-new-api-key.png)
+![WordPress Application Passwords](/assets/img/wordpress-app-passwords.png)
 
 ### Step 3: Save Your Credentials
 
-After creating the key, you'll receive:
-- **API Username**: Your WordPress username
-- **API Password**: Your application password
+After creating the application password, WordPress will display:
+- **Username**: Your WordPress username
+- **Application Password**: A generated password (e.g., "oqYd hptb PnKC XHur CJbG 01UW")
 
-![API Credentials](/assets/img/api-credentials.png)
+![Generated Application Password](/assets/img/wordpress-generated-password.png)
 
 ::: warning Important
-Save these credentials immediately! The application password cannot be retrieved later.
+Save these credentials immediately! The application password cannot be retrieved later and will only be shown once.
 :::
 
-You can also download the credentials as a CSV file for safekeeping.
+::: tip Note
+Application passwords are different from your regular WordPress password and are specifically designed for API access. They can be easily revoked if needed.
+:::
 
 ## Authentication Methods
 
@@ -42,20 +40,21 @@ You can also download the credentials as a CSV file for safekeeping.
 Use HTTP Basic Authentication with your API credentials:
 
 ```bash
-curl "https://yourdomain.com/wp-json/fluent-boards/v2/boards" \
+curl "https://yourdomain.com/wp-json/fluent-boards/v2/projects" \
   -H "Authorization: Basic $(echo -n 'API_USERNAME:API_PASSWORD' | base64)"
 ```
 
-### URL Parameters (Not Recommended)
+### Cookie Authentication (Not Recommended for API)
 
-For testing only, you can pass credentials as URL parameters:
+For testing only, you can use cookie authentication, but this is not recommended for API access:
 
 ```bash
-curl "https://yourdomain.com/wp-json/fluent-boards/v2/boards?_wp_http_referer=API_USERNAME:API_PASSWORD"
+curl "https://yourdomain.com/wp-json/fluent-boards/v2/projects" \
+  -H "Cookie: wordpress_logged_in_xxx=your_cookie_value"
 ```
 
 ::: warning Security Notice
-Never use URL parameter authentication in production. Always use proper Authorization headers.
+Never use cookie authentication for API access in production. Always use Application Passwords with proper Authorization headers.
 :::
 
 ## Example API Call
@@ -63,7 +62,7 @@ Never use URL parameter authentication in production. Always use proper Authoriz
 Here's a complete example of making an authenticated API request:
 
 ```bash
-curl "https://yourdomain.com/wp-json/fluent-boards/v2/boards" \
+curl "https://yourdomain.com/wp-json/fluent-boards/v2/projects" \
   -H "Authorization: Basic API_USERNAME:API_PASSWORD" \
   -H "Content-Type: application/json"
 ```
@@ -97,7 +96,7 @@ curl "https://yourdomain.com/wp-json/fluent-boards/v2/boards" \
 <?php
 $username = 'your_api_username';
 $password = 'your_api_password';
-$url = 'https://yourdomain.com/wp-json/fluent-boards/v2/boards';
+$url = 'https://yourdomain.com/wp-json/fluent-boards/v2/projects';
 
 $ch = curl_init();
 curl_setopt($ch, CURLOPT_URL, $url);
@@ -128,7 +127,7 @@ const config = {
   }
 };
 
-axios.get('https://yourdomain.com/wp-json/fluent-boards/v2/boards', config)
+axios.get('https://yourdomain.com/wp-json/fluent-boards/v2/projects', config)
   .then(response => {
     console.log(response.data);
   })
@@ -145,7 +144,7 @@ from requests.auth import HTTPBasicAuth
 
 username = 'your_api_username'
 password = 'your_api_password'
-url = 'https://yourdomain.com/wp-json/fluent-boards/v2/boards'
+url = 'https://yourdomain.com/wp-json/fluent-boards/v2/projects'
 
 response = requests.get(
     url,
@@ -170,7 +169,7 @@ require 'base64'
 
 username = 'your_api_username'
 password = 'your_api_password'
-url = URI('https://yourdomain.com/wp-json/fluent-boards/v2/boards')
+url = URI('https://yourdomain.com/wp-json/fluent-boards/v2/projects')
 
 http = Net::HTTP.new(url.host, url.port)
 http.use_ssl = true
@@ -188,25 +187,26 @@ puts response.body
 To verify your credentials are working, make a simple API call:
 
 ```bash
-curl "https://yourdomain.com/wp-json/fluent-boards/v2/boards" \
+curl "https://yourdomain.com/wp-json/fluent-boards/v2/projects" \
   -H "Authorization: Basic API_USERNAME:API_PASSWORD"
 ```
 
-If successful, you'll receive a JSON response with your boards data.
+If successful, you'll receive a JSON response with your projects data.
 
 ## Troubleshooting
 
 ### Common Issues
 
 **401 Unauthorized Error**
-- Verify your username and password are correct
-- Ensure the user account has proper administrator permissions
-- Check that FluentBoards is properly installed and activated
+- Verify your username and application password are correct
+- Ensure the application password hasn't been revoked
+- Check that the user account has proper permissions
+- Verify that FluentBoards is properly installed and activated
 
 **403 Forbidden Error**  
-- The user account may lack necessary administrator permissions
-- Verify the account is a WordPress Administrator or FluentBoards Administrator
-- Check FluentBoards permission settings
+- The user account may lack necessary permissions
+- Verify the account has appropriate WordPress capabilities
+- Check if the user has access to FluentBoards features
 
 **404 Not Found Error**
 - Verify the API endpoint URL is correct
@@ -217,8 +217,8 @@ If successful, you'll receive a JSON response with your boards data.
 
 Your API user account needs these minimum permissions:
 - **WordPress Administrator role**: Full access to all endpoints
-- **FluentBoards Administrator**: Access to FluentBoards-specific endpoints
-- **Manage Options capability**: Required for administrative operations
+- **Appropriate capabilities**: Required for the specific operations you're performing
+- **FluentBoards access**: User must have access to FluentBoards features
 
 ## Security Best Practices
 
@@ -229,25 +229,33 @@ Your API user account needs these minimum permissions:
 5. **Secure Storage**: Never commit credentials to version control
 6. **Dedicated Accounts**: Use dedicated user accounts for API access, not your main admin account
 
-## Managing API Keys
+## Managing Application Passwords
 
-### View Existing Keys
+### View Existing Application Passwords
 
-In the REST API settings, you can see all existing API keys associated with users. Each key shows:
-- User information (ID, Name, Email)
-- Associated API keys
+In your WordPress user profile, you can see all existing application passwords:
+- Application name and creation date
+- Last used date (if available)
 - Management options
 
-### Delete API Keys
+### Revoke Application Passwords
 
-To remove an API key:
-1. Click the delete icon (×) on any API key tag
-2. Confirm the deletion in the confirmation dialog
-3. The key will be permanently removed
+To revoke an application password:
+1. Go to `Users → Profile` in WordPress admin
+2. Scroll to the "Application Passwords" section
+3. Click "Revoke" next to the application password you want to remove
+4. Confirm the revocation
 
 ::: warning Important
-Deleting an API key is permanent and cannot be undone. Any applications using that key will lose access immediately.
+Revoking an application password is permanent and cannot be undone. Any applications using that password will lose access immediately.
 :::
+
+### Best Practices for Application Passwords
+
+1. **Use descriptive names**: Name your application passwords clearly (e.g., "Mobile App", "Third-party Integration")
+2. **Regular rotation**: Periodically revoke and recreate application passwords
+3. **One per application**: Create separate application passwords for different applications
+4. **Monitor usage**: Check the "Last Used" information to identify unused passwords
 
 ## Next Steps
 
