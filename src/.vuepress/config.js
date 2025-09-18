@@ -4,7 +4,7 @@ const globalFunctionsSidebar = require('./sidebars/global-functions');
 const hooksSidebar = require('./sidebars/hooks');
 const helpersSidebar = require('./sidebars/helpers');
 const modulesSidebar = require('./sidebars/modules');
-const extendRestApiSidebar = require('./sidebars/extendRestApiSidebar');
+const restApiSidebar = require('./sidebars/rest-api');
 
 const path = require('path');
 
@@ -55,8 +55,8 @@ module.exports = {
      * Ref：https://v1.vuepress.vuejs.org/theme/default-theme-config.html
      */
     themeConfig: {
-        base: '/fluent-boards-dev-docs/',
-        repo: 'WPManageNinja/fluent-boards-dev-docs/',
+        base: '/fluent-boards-dev-doc/',
+        repo: 'WPManageNinja/fluent-boards-dev-doc/',
         docsBranch: 'master',
         docsDir: 'src',
         editLinks: true,
@@ -109,11 +109,7 @@ module.exports = {
                     {
                         text: 'Helpers Classes',
                         link: '/helpers/',
-                    },
-                    // {
-                    //     text: 'CLI',
-                    //     link: '/cli/',
-                    // }
+                    }
                 ],
             },
             {
@@ -134,9 +130,13 @@ module.exports = {
                 ],
             },
             {
+                text: 'REST API',
+                link: '/rest-api/',
+            },
+            {
                 text: 'Blog',
                 link: 'https://fluentboards.com/blog/',
-            }
+            },
         ],
         sidebar: {
 
@@ -145,7 +145,7 @@ module.exports = {
             '/hooks/': hooksSidebar,
             '/helpers/': helpersSidebar,
             '/modules/': modulesSidebar,
-            '/extending-rest-api/': extendRestApiSidebar,
+            '/rest-api/': restApiSidebar,
 
         }
     },
