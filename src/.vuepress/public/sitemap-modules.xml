@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="sitemap-stylesheet.xsl"?>
+<urlset xmlns="https://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>https://developers.fluentboards.com/modules/boards/</loc>
+    <lastmod>2025-09-19T11:27:12.368Z</lastmod>
+    <priority>0.80</priority>
+  </url>
+  <url>
+    <loc>https://developers.fluentboards.com/modules/</loc>
+    <lastmod>2025-09-19T11:27:12.368Z</lastmod>
+    <priority>0.80</priority>
+  </url>
+  <url>
+    <loc>https://developers.fluentboards.com/modules/navigation-modules/</loc>
+    <lastmod>2025-09-19T11:27:12.368Z</lastmod>
+    <priority>0.80</priority>
+  </url>
+  <url>
+    <loc>https://developers.fluentboards.com/modules/stages/</loc>
+    <lastmod>2025-09-19T11:27:12.368Z</lastmod>
+    <priority>0.80</priority>
+  </url>
+  <url>
+    <loc>https://developers.fluentboards.com/modules/tasks/</loc>
+    <lastmod>2025-09-19T11:27:12.368Z</lastmod>
+    <priority>0.80</priority>
+  </url>
+  <url>
+    <loc>https://developers.fluentboards.com/modules/trigger/</loc>
+    <lastmod>2025-09-19T11:27:12.368Z</lastmod>
+    <priority>0.80</priority>
+  </url>
+</urlset>

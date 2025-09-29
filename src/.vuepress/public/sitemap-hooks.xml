@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="sitemap-stylesheet.xsl"?>
+<urlset xmlns="https://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>https://developers.fluentboards.com/hooks/actions/</loc>
+    <lastmod>2025-09-19T11:27:12.368Z</lastmod>
+    <priority>0.80</priority>
+  </url>
+  <url>
+    <loc>https://developers.fluentboards.com/hooks/filters/_dashboard_filters/</loc>
+    <lastmod>2025-09-19T11:27:12.368Z</lastmod>
+    <priority>0.80</priority>
+  </url>
+  <url>
+    <loc>https://developers.fluentboards.com/hooks/filters/_frontend_filters/</loc>
+    <lastmod>2025-09-19T11:27:12.368Z</lastmod>
+    <priority>0.80</priority>
+  </url>
+  <url>
+    <loc>https://developers.fluentboards.com/hooks/filters/_general_filters/</loc>
+    <lastmod>2025-09-19T11:27:12.368Z</lastmod>
+    <priority>0.80</priority>
+  </url>
+  <url>
+    <loc>https://developers.fluentboards.com/hooks/filters/_other_filters/</loc>
+    <lastmod>2025-09-19T11:27:12.368Z</lastmod>
+    <priority>0.80</priority>
+  </url>
+  <url>
+    <loc>https://developers.fluentboards.com/hooks/filters/_webhook_filters/</loc>
+    <lastmod>2025-09-19T11:27:12.368Z</lastmod>
+    <priority>0.80</priority>
+  </url>
+  <url>
+    <loc>https://developers.fluentboards.com/hooks/filters/</loc>
+    <lastmod>2025-09-19T11:27:12.368Z</lastmod>
+    <priority>0.80</priority>
+  </url>
+</urlset>
