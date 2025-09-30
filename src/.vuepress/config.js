@@ -48,7 +48,7 @@ module.exports = {
             href: 'https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,300;0,500;0,700;1,300;1,500;1,700&display=auto'
         }],
         // Fluent Bot Chat Widget
-        ['script', {src: 'https://cdn.jsdelivr.net/gh/fluent-docai/fluent-bot-chat-widget-open/fluent-bot-chat-widget.umd.js', defer: ''}],
+        ['script', {src: 'https://cdn.jsdelivr.net/gh/fluent-docai/fluent-bot-chat-widget-open@latest/fluent-bot-chat-widget.umd.js', defer: ''}],
         ['script', {}, 'window.addEventListener("load",function(){if(window.FluentBotChatWidget){try{window.FluentBotChatWidget.injectWidget("3e0cd62f-1ad4-441c-b3c0-6ff61108e291");}catch(e){console.error("FluentBotChatWidget init failed",e);} } else {console.warn("FluentBotChatWidget not yet available");}});']
     ],
 

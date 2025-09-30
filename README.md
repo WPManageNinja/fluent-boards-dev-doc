@@ -27,7 +27,7 @@ Fluent Boards is a powerful self-hosted project management tool that provides a 
 
 ### Building the Documentation
 
-This documentation is built using VuePress. To build locally:
+This documentation is built using VuePress. To build locally please follow these steps:
 
 ```bash
 npm install
