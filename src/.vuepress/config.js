@@ -49,7 +49,7 @@ module.exports = {
         }],
         // Fluent Bot Chat Widget
         ['script', {src: 'https://cdn.jsdelivr.net/gh/fluent-docai/fluent-bot-chat-widget-open@latest/fluent-bot-chat-widget.umd.js', defer: ''}],
-        ['script', {}, 'window.addEventListener("load",function(){if(window.FluentBotChatWidget){try{window.FluentBotChatWidget.injectWidget("3e0cd62f-1ad4-441c-b3c0-6ff61108e291");}catch(e){console.error("FluentBotChatWidget init failed",e);} } else {console.warn("FluentBotChatWidget not yet available");}});']
+        ['script', {}, 'window.addEventListener("load",function(){if(window.FluentBotChatWidget){try{window.FluentBotChatWidget.injectWidget("7c0282bd-0ab9-4299-8532-2a870b347afb");}catch(e){console.error("FluentBotChatWidget init failed",e);} } else {console.warn("FluentBotChatWidget not yet available");}});']
     ],
 
     /**
