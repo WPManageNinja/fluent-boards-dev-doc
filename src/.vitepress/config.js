@@ -86,15 +86,18 @@ export default defineConfig({
                     { text: 'Action Hooks', link: '/hooks/actions/' },
                     { text: 'Filter Hooks', link: '/hooks/filters/' },
                     { text: 'Global Functions', link: '/global-functions/' },
-                    { text: 'Helpers Classes', link: '/helpers/' }
+                    { text: 'Helpers Classes', link: '/helpers/' },
+                    { text: 'WP-CLI Commands', link: '/cli/' }
                 ]
             },
             {
                 text: 'Modules',
                 items: [
+                    { text: 'Overview', link: '/modules/' },
                     { text: 'Boards', link: '/modules/boards' },
                     { text: 'Stages', link: '/modules/stages' },
-                    { text: 'Tasks', link: '/modules/tasks' }
+                    { text: 'Tasks', link: '/modules/tasks' },
+                    { text: 'Navigation', link: '/modules/navigation-modules' }
                 ]
             },
             { text: 'REST API', link: '/rest-api/' },

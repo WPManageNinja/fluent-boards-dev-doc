@@ -44,19 +44,6 @@ The `Str::kebab` method converts the given string to `kebab-case`:
     // foo-bar
 ```
 
-<a name="method-preg-replace-array"></a>
-### `preg_replace_array()`
-
-The `preg_replace_array` function replaces a given pattern in the string sequentially using an array:
-
-```php 
-    $string = 'The event will take place between :start and :end';
-
-    $replaced = preg_replace_array('/:[a-z_]+/', ['8:30', '9:00'], $string);
-
-    // The event will take place between 8:30 and 9:00
-```
-
 <a name="method-snake-case"></a>
 ### `Str::snake()`
 
@@ -186,17 +173,6 @@ You may also pass a third argument to change the string that will be appended to
     $truncated = Str::limit('The quick brown fox jumps over the lazy dog', 20, ' (...)');
 
     // The quick brown fox (...)
-```
-
-<a name="method-str-ordered-uuid"></a>
-### `Str::orderedUuid()`
-
-The `Str::orderedUuid` method generates a "timestamp first" UUID that may be efficiently stored in an indexed database column:
-
-```php 
-    use FluentBoards\Framework\Support\Str;
-
-    return (string) Str::orderedUuid();
 ```
 
 <a name="method-str-plural"></a>
@@ -355,8 +331,6 @@ The `Str::title` method converts the given string to `Title Case`:
     // A Nice Title Uses The Correct Case
 ```
 
-If the specified translation key does not exist, the `trans` function will return the given key. So, using the example above, the `trans` function would return `messages.welcome` if the translation key does not exist.
-
 <a name="method-str-uuid"></a>
 ### `Str::uuid()`
 
@@ -365,5 +339,7 @@ The `Str::uuid` method generates a UUID (version 4):
 ```php 
     use FluentBoards\Framework\Support\Str;
 
-    return (string) Str::uuid();
+    $uuid = Str::uuid();
+
+    // e.g. 'f47ac10b-58cc-4372-a567-0e02b2c3d479' (generated with wp_generate_uuid4())
 ```

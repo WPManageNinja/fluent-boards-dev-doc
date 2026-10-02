@@ -1,87 +1,117 @@
-# FluentCRM CLI
+# FluentBoards CLI
 
 <Badge type="tip" vertical="top" text="FluentBoards Core" /> <Badge type="warning" vertical="top" text="Advanced" />
 
-FluentCRM integrates with [WP-CLI](https://wp-cli.org/), enabling you to run certain FluentCRM tasks via the command line interface, without using a web browser.
-
-## What is WordPress CLI?
-
-WP-CLI is a command line interface for [WordPress](https://wordpress.org/). It offers an alternative to the WordPress admin bar. Using the command line makes it easier for developers, agencies and hosting providers to run actions with fewer clicks, run them remotely, and even perform complex scripts based on certain conditions.
-
-## What is FluentCRM CLI?
-
-FluentCRM CLI is a set of commands integrated into WP-CLI to allow developers to run certain FluentCRM tasks in a command line.
+FluentBoards registers a small set of [WP-CLI](https://wp-cli.org/) commands under the `fluent_boards` namespace. The class is `FluentBoards\App\Hooks\Cli\Commands` (`app/Hooks/Cli/Commands.php`). It is registered in `app/Hooks/actions.php` only when `WP_CLI` is defined. FluentBoards Pro adds no CLI commands.
 
 ## Syntax
 
-CLI commands syntax:
-
 ```bash
-wp fluent_crm <command> [--argument]
+wp fluent_boards <command> [--argument=<value>]
 ```
 
-## Available Commands
+List the available commands:
 
-Currently, the following FluentCRM commands are available:
-
-### `wp fluent_crm stats`
-It will return overall FluentCRM stats like emails, contacts, campaigns, automations
-
-### `wp fluent_crm sync_edd_customers`
-If you need to sync Easy Digital Downloads Customers and it's associate data with FluentCRM you can run this commands
-**Arguments**
-- `tags` comma separated tag ids that you want to attach by default contact
-- `lists` comma separated list ids you want to attach by default to the contact
-- `contact_status` default contact status of new contact default `subscribed`
-
-**Example**
 ```bash
-wp fluent_crm sync_edd_customers --tags=1,2,3 --lists=4,5 --contact_status=subscribed
+wp help fluent_boards
 ```
 
-### `wp fluent_crm sync_woo_customers`
-If you need to sync WooCommerce Customers and it's associate data with FluentCRM you can run this commands
-**Arguments**
-- `tags` comma separated tag ids that you want to attach by default contact
-- `lists` comma separated list ids you want to attach by default to the contact
-- `contact_status` default contact status of new contact default `subscribed`
+## Commands
 
-**Example**
+| Command | Purpose | Requires |
+|---|---|---|
+| [`crm_role_assign`](#crm-role-assign) | Add the WordPress users behind FluentCRM contacts with a tag as members of a board | FluentCRM, FluentBoards Pro |
+| [`create_random_tasks`](#create-random-tasks) | Bulk-insert placeholder tasks into a board, for load testing or demo data | — |
+
+### crm_role_assign
+
+Adds FluentCRM contacts that have a selected tag **and** a linked WordPress user as members of a board. Each member is added with the default member settings and notification preferences. Users who are already members are skipped.
+
 ```bash
-wp fluent_crm sync_woo_customers --tags=1,2,3 --lists=4,5 --contact_status=subscribed
+wp fluent_boards crm_role_assign
 ```
 
-### `wp fluent_crm activate_license`
-Activate FluentCRM Pro license key via command line
+The command takes no arguments and runs interactively. It reads from STDIN:
 
-**Arguments**
-- `key` Your FluentCRM Pro License Key
+1. It lists all boards (`ID : Title`) and asks for a board ID.
+2. It lists all FluentCRM tags (`ID : Title`) and asks for a tag ID.
+3. It prints a table (`UserID`, `Email`, `Name`) of the contacts that will be added.
+4. It asks for confirmation. Type `yes` to proceed. Any other input cancels.
 
-**Example**
-```bash
-wp fluent_crm activate_license --key=YOUR_LICENSE_KEY
+It exits with an error when FluentCRM is not active ("FluentCRM is not installed"), when FluentBoards Pro is not active, or when the board or tag ID is invalid.
+
+**Example session**
+
+```text
+$ wp fluent_boards crm_role_assign
+You are about to add Members to your Project Boards from FluentCRM Tags
+Please select the Project Board you want to add Members to:
+12 : Client Onboarding
+14 : Website Redesign
+
+Enter the ID of the board you want to add members to:
+12
+3 : Customers
+5 : VIP
+
+Enter the Tag ID by which the contacts will be added as the member of the select board:
+5
+Following contacts will be added to the board as members:
++--------+-------------------+-------------+
+| UserID | Email             | Name        |
++--------+-------------------+-------------+
+| 21     | jane@example.com  | Jane Doe    |
++--------+-------------------+-------------+
+Do you want to proceed? (yes/no)
+yes
+Success: Operation Completed. 1 contacts added to the board
 ```
 
-### `wp fluent_crm license_status`
-See FluentCRM Pro License Status
+::: danger Known issue in version 2.1.0
+The relation rows are created with the ID of the **last board in the list** (the loop variable `$board`), not the board you selected. Only the duplicate check uses the selected board. Until this is fixed, check the board membership after you run the command. If you are on a version with the bug, add members through the app or the [REST API](/rest-api/) instead.
+:::
 
-**Example**
+Because the command reads STDIN, it cannot run unattended. Piping the answers in works:
+
 ```bash
-wp fluent_crm license_status
+printf "12\n5\nyes\n" | wp fluent_boards crm_role_assign
 ```
 
-### `wp fluent_crm license_status`
-See FluentCRM Pro License Status
+### create_random_tasks
 
-**Example**
+Bulk-inserts tasks titled `Task Random 1`, `Task Random 2`, … into a board. Each task goes into a random stage of that board.
+
 ```bash
-wp fluent_crm license_status
+wp fluent_boards create_random_tasks [--board_id=<board_id>] [--count=<count>]
 ```
 
-## Help
+**Options**
 
-For information about an individual command, use the following format:
+| Option | Default | Description |
+|---|---|---|
+| `--board_id=<board_id>` | First board found | The board to fill |
+| `--count=<count>` | `10` | Number of tasks to create |
+
+**Examples**
 
 ```bash
-wp help fluent_crm <command>
+# 10 tasks in the first board
+wp fluent_boards create_random_tasks
+
+# 1,000 tasks in board 85
+wp fluent_boards create_random_tasks --board_id=85 --count=1000
+```
+
+It shows a progress bar and ends with `Success: <count> tasks created successfully for board ID: <id>`. It exits with an error if the board does not exist or has no stages.
+
+::: warning Development use only
+The tasks are written with a single bulk `INSERT` (`Task::insert()`). Model events do not run, so `fluent_boards/task_created` does not fire, no activity is logged, no notifications are sent, and `position`, `slug` and `settings` are left at their database defaults. Do not run it on a production site.
+:::
+
+## Running commands as a user
+
+WP-CLI runs without a logged-in user by default. The two commands above do not check permissions. If your own CLI code calls the [PHP API](/global-functions/#php-api-classes) (`FluentBoardsApi()`), set a user first, because those methods check the current user's board permissions:
+
+```bash
+wp --user=admin eval 'print_r( FluentBoardsApi("boards")->getBoards()->pluck("title") );'
 ```

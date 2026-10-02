@@ -1,158 +1,112 @@
 # Comment Model
 
-| DB Table Name | {wp_db_prefix}_fbs_comment                                            |
-|---------------|-----------------------------------------------------------------------|
+| DB Table Name | `{wp_db_prefix}fbs_comments` |
+|---------------|------------------------------|
 | Schema        | [Check Schema](/database/#fbs-comments-table) |
-| Source File   | fluent-boards/app/Models/Comment.php                                    |
-| Name Space    | FluentBoards\App\Models                                               |
-| Class         | FluentBoards\App\Models\Comment                                         |
+| Source File   | fluent-boards/app/Models/Comment.php |
+| Name Space    | FluentBoards\App\Models |
+| Class         | FluentBoards\App\Models\Comment |
+
+::: tip Global eager loads
+The model registers two global scopes, `images` and `replies`, that always eager-load those relations. Remove them with `Comment::withoutGlobalScopes(['images', 'replies'])` when you do not need them.
+:::
 
 ## Attributes
-<table class="nowrap">
-   <thead>
-      <tr>
-         <th>Attribute</th>
-         <td>Data Type</td>
-         <td>Comment</td>
-      </tr>
-   </thead>
-   <tbody>
-      <tr>
-        <th>id</th>
-        <td>INT UNSIGNED <i>Auto Increment</i></td>
-        <td>Primary key of the comment</td>
-      </tr>
-      <tr>
-        <th>board_id</th>
-        <td>INT UNSIGNED</td>
-        <td>ID of the associated board</td>
-      </tr>
-      <tr>
-        <th>task_id</th>
-        <td>INT UNSIGNED</td>
-        <td>ID of the associated task</td>
-      </tr>
-      <tr>
-        <th>parent_id</th>
-        <td>BIGINT UNSIGNED <i>NULL</i></td>
-        <td>ID of the parent comment if it's a reply</td>
-      </tr>
-      <tr>
-        <th>type</th>
-        <td>VARCHAR(50) <i>DEFAULT 'comment'</i></td>
-        <td>Type of the entry (comment, note, reply)</td>
-      </tr>
-      <tr>
-        <th>privacy</th>
-        <td>VARCHAR(50) <i>DEFAULT 'public'</i></td>
-        <td>Privacy level of the comment (public, private)</td>
-      </tr>
-      <tr>
-        <th>status</th>
-        <td>VARCHAR(50) <i>DEFAULT 'published'</i></td>
-        <td>Status of the comment (published, draft, spam)</td>
-      </tr>
-      <tr>
-        <th>author_name</th>
-        <td>VARCHAR(192) <i>DEFAULT ''</i></td>
-        <td>Name of the comment author</td>
-      </tr>
-      <tr>
-        <th>author_email</th>
-        <td>VARCHAR(192) <i>DEFAULT ''</i></td>
-        <td>Email of the comment author</td>
-      </tr>
-      <tr>
-        <th>author_ip</th>
-        <td>VARCHAR(50) <i>DEFAULT ''</i></td>
-        <td>IP address of the comment author</td>
-      </tr>
-      <tr>
-        <th>description</th>
-        <td>TEXT <i>NULL</i></td>
-        <td>Content of the comment</td>
-      </tr>
-      <tr>
-        <th>created_by</th>
-        <td>BIGINT UNSIGNED <i>NULL</i></td>
-        <td>ID of the user who created the comment</td>
-      </tr>
-      <tr>
-        <th>created_at</th>
-        <td>TIMESTAMP <i>NULL</i></td>
-        <td>Timestamp when the comment was created</td>
-      </tr>
-      <tr>
-        <th>updated_at</th>
-        <td>TIMESTAMP <i>NULL</i></td>
-        <td>Timestamp when the comment was last updated</td>
-      </tr>
-    </tbody>
-</table>
+
+| Attribute | Data Type | Comment |
+|---|---|---|
+| id | INT UNSIGNED | Primary key |
+| board_id | INT UNSIGNED | Board ID |
+| task_id | INT UNSIGNED | Task ID |
+| parent_id | BIGINT UNSIGNED NULL | Parent comment for replies. Values below 1 are saved as NULL |
+| type | VARCHAR(50) NULL | `comment` (default), `note` or `reply` |
+| privacy | VARCHAR(50) NULL | `public` or `private`. The model sets `private` when empty |
+| status | VARCHAR(50) NULL | `published` (default), `draft` or `spam` |
+| author_name | VARCHAR(192) NULL | Filled from the WP user on create |
+| author_email | VARCHAR(192) NULL | Filled from the WP user on create |
+| author_ip | VARCHAR(50) NULL | Author IP |
+| description | TEXT NULL | Comment body (HTML) |
+| created_by | BIGINT UNSIGNED NULL | Author user ID. Defaults to the current user |
+| settings | TEXT NULL | Serialized; returned as an array |
+| created_at | TIMESTAMP NULL | |
+| updated_at | TIMESTAMP NULL | |
+
+Appended attributes:
+
+| Attribute | Comment |
+|---|---|
+| avatar | Avatar URL for the author, from `fluent_boards_user_avatar()` |
+
+### Model events
+
+- **creating:** fills `created_by`, `type`, `privacy`, `author_email` and `author_name`.
+- **created / deleted:** increments / decrements the task's `comments_count` for `type = 'comment'`.
+- **deleting:** deletes the comment's images and their files.
 
 ## Usage
-Please check <a href="/database/models/">Model Basic</a> for Common methods.
 
-### Accessing Attributes
+Please check [Model Basic](/database/models/) for common methods.
 
-```php 
+```php
+$comment = FluentBoards\App\Models\Comment::create([
+    'board_id'    => 1,
+    'task_id'     => 42,
+    'description' => '<p>Looks good to me.</p>',
+]);
+```
 
-$comment = FluentBoards\App\Models\Comment::find(1);
+## Scopes
 
-$comment->id; // returns id
-$comment->author_name; // returns author_name
-.......
+### byTask($taskId)
 
+```php
+$comments = FluentBoards\App\Models\Comment::byTask(42)->whereNull('parent_id')->get();
+```
+
+### privacy($privacy)
+
+```php
+$public = FluentBoards\App\Models\Comment::byTask(42)->privacy('public')->get();
+```
+
+### type($type)
+
+```php
+$notes = FluentBoards\App\Models\Comment::byTask(42)->type('note')->get();
 ```
 
 ## Relations
-This model has the following relationships that you can use
-
-### user
-Access the user who created the comment
-
-- return `FluentBoards\App\Models\User` Model Collection
-
-#### Example:
-```php 
-$user = $comment->user;
-```
 
 ### task
-Access the associated task of the comment
 
-- return `FluentBoards\App\Models\Task` Model Collection
+- Returns `FluentBoards\App\Models\Task`
 
-#### Example:
-```php 
-$task = $comment->task;
-```
+### user
+
+The author (`created_by`).
+
+- Returns `FluentBoards\App\Models\User`
 
 ### replies
-Access the replies to the comment
 
-- return `FluentBoards\App\Models\Comment` Model Collection
+Comments whose `parent_id` is this comment.
 
-#### Example:
-```php 
+- Returns a collection of `FluentBoards\App\Models\Comment`
+
+```php
 $replies = $comment->replies;
 ```
 
-### parentComment
-Access the parent comment if it exists
-
-- return `FluentBoards\App\Models\Comment` Model Collection
-
-#### Example:
-```php 
-$parent = $comment->parentComment;
-```
 ### images
-Access images associated with the comment
 
-- return `FluentBoards\App\Models\CommentImage` Model Collection
+Images attached to the comment (`fbs_attachments`, `object_type = 'comment_image'`).
 
-#### Example:
-```php 
-$images = $comment->images;
-```
+- Returns a collection of `FluentBoards\App\Models\CommentImage`
+
+### parentComment
+
+::: warning
+Despite its name, this relation is defined as `hasOne(Comment::class, 'parent_id', 'id')`, so it returns the first **reply** to this comment, not its parent. To get the parent, use `Comment::find($comment->parent_id)`.
+:::
+
+- Returns `FluentBoards\App\Models\Comment` or `null`

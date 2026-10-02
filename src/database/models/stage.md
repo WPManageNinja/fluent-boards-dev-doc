@@ -1,111 +1,89 @@
 # Stage Model
 
-| DB Table Name | {wp_db_prefix}_fbs_board_terms                                              |
-|---------------|-----------------------------------------------------------------------------|
+| DB Table Name | `{wp_db_prefix}fbs_board_terms` (rows with `type = 'stage'`) |
+|---------------|-------------------------------------------------------------|
 | Schema        | [Check Schema](/database/#fbs-board-terms-table) |
-| Source File   | fluent-boards/app/Models/Stage.php                                          |
-| Name Space    | FluentBoards\App\Models                                                     |
-| Class         | FluentBoards\App\Models\Stage                                               |
+| Source File   | fluent-boards/app/Models/Stage.php |
+| Name Space    | FluentBoards\App\Models |
+| Class         | FluentBoards\App\Models\Stage |
+| Extends       | [BoardTerm](/database/models/board-term) |
+
+Stages are the columns of a board. The model adds a global scope `type = 'stage'`.
+
+On create, the model sets `type` to `stage` and, when `settings` is empty, sets it to `['default_task_status' => 'open', 'is_template' => false]`.
 
 ## Attributes
-<table class="nowrap">
-   <thead>
-      <tr>
-         <th>Attribute</th>
-         <td>Data Type</td>
-         <td>Comment</td>
-      </tr>
-   </thead>
-   <tbody>
-     <tr>
-        <th>id</th>
-        <td>INT UNSIGNED <i>Auto Increment</i></td>
-        <td>Primary key of the term</td>
-     </tr>
-     <tr>
-        <th>board_id</th>
-        <td>INT UNSIGNED</td>
-        <td>ID of the board associated with the term</td>
-     </tr>
-     <tr>
-        <th>title</th>
-        <td>VARCHAR(100) <i>NULL</i></td>
-        <td>Title of the stage or label. In case of a label, the title can be null with only a color.</td>
-     </tr>
-     <tr>
-        <th>slug</th>
-        <td>VARCHAR(100) <i>NULL</i></td>
-        <td>Slug of the stage or label</td>
-     </tr>
-     <tr>
-        <th>type</th>
-        <td>VARCHAR(50) NOT NULL DEFAULT 'stage'</td>
-        <td>Type of the term: 'stage' or 'label'</td>
-     </tr>
-     <tr>
-        <th>position</th>
-        <td>DECIMAL(10,2) NOT NULL DEFAULT '1'</td>
-        <td>Position of the stage or label. 1 = first, 2 = second, etc.</td>
-     </tr>
-     <tr>
-        <th>color</th>
-        <td>VARCHAR(50) <i>NULL</i></td>
-        <td>Text color of the stage or label</td>
-     </tr>
-     <tr>
-        <th>bg_color</th>
-        <td>VARCHAR(50) <i>NULL</i></td>
-        <td>Background color of the stage or label</td>
-     </tr>
-     <tr>
-        <th>settings</th>
-        <td>TEXT <i>NULL</i>
-        </td><td>Serialized settings for the term</td>
-     </tr>
-     <tr>
-        <th>archived_at</th>
-        <td>TIMESTAMP <i>NULL</i>
-        </td><td>Timestamp when the term was archived</td>
-     </tr>
-     <tr>
-        <th>created_at</th>
-        <td>TIMESTAMP <i>NULL</i></td>
-        <td>Timestamp when the term was created</td>
-     </tr>
-     <tr>
-        <th>updated_at</th>
-        <td>TIMESTAMP <i>NULL</i></td>
-        <td>Timestamp when the term was last updated</td>
-     </tr>
-</tbody>
-</table>
+
+Same columns as [BoardTerm](/database/models/board-term#attributes).
+
+| Attribute | Data Type | Comment |
+|---|---|---|
+| id | INT UNSIGNED | Primary key |
+| board_id | INT UNSIGNED | Board ID |
+| title | VARCHAR(100) NULL | Stage title |
+| slug | VARCHAR(100) NULL | Stage slug |
+| type | VARCHAR(50) | Always `stage` |
+| position | DECIMAL(10,2) | Column order on the board |
+| color | VARCHAR(50) NULL | Text color |
+| bg_color | VARCHAR(50) NULL | Background color |
+| settings | TEXT NULL | Array with `default_task_status` (`open` / `closed`) and `is_template` |
+| archived_at | TIMESTAMP NULL | Archive time |
+| created_at | TIMESTAMP NULL | |
+| updated_at | TIMESTAMP NULL | |
 
 ## Usage
-Please check <a href="/database/models/">Model Basic</a> for Common methods.
 
-### Accessing Attributes
+Please check [Model Basic](/database/models/) for common methods.
 
-```php 
-
-$stage = FluentBoards\App\Models\Stage::find(1);
-
-$stage->id; // returns id
-$stage->title; // returns title
-.......
+```php
+$stages = FluentBoards\App\Models\Stage::where('board_id', 1)
+    ->whereNull('archived_at')
+    ->orderBy('position', 'ASC')
+    ->get();
 ```
 
+## Relations
+
+### tasks
+
+All tasks in the stage (`stage_id`).
+
+- Returns a collection of `FluentBoards\App\Models\Task`
+
+```php
+$openTasks = $stage->tasks()->where('status', 'open')->whereNull('archived_at')->get();
+```
+
+### board
+
+Inherited from BoardTerm.
+
+- Returns `FluentBoards\App\Models\Board`
+
 ## Methods
-Along with Global Model methods, this model has few helper methods.
+
+### defaultTaskStatus()
+
+Returns `'open'` or `'closed'`: the status that tasks get when they are moved into this stage. Returns `'open'` when the stage has no settings.
+
+```php
+$status = $stage->defaultTaskStatus();
+```
 
 ### moveToNewPosition($newIndex)
 
-Move the stage to a new position within the board. This method repositions the stage to the specified index within the board. If the new position is already taken, it reindexes the positions of all stages and retries the move operation.
+Moves the stage to a 1-based column index on its board, re-indexing positions when they get too close.
 
-- Parameters
-  - $newIndex `numeric`
-- Returns `array` updated stage
+- Returns `Stage`
 
-#### Usage
-```php 
-$stage->moveToNewPosition($position);
+```php
+$stage->moveToNewPosition(2);
+```
+
+### Stage::reIndexStagesPositions($stage) <Badge text="static" />
+
+Renumbers the positions (1, 2, 3, ...) of all non-archived stages on the board. `$stage` is an array with a `board_id` key.
+
+```php
+FluentBoards\App\Models\Stage::reIndexStagesPositions(['board_id' => 1]);
 ```

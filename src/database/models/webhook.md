@@ -1,61 +1,89 @@
 # Webhook Model
 
-| DB Table Name | Inherits from the `Meta` model {wp_db_prefix}_fbs_metas |
-|---------------|---------------------------------------------------------|
-| Source File   | fluent-boards/app/Models/Webhook.php                    |
-| Name Space    | FluentBoards\App\Models                               |
-| Class         | FluentBoards\App\Models\Webhook                       |
+| DB Table Name | `{wp_db_prefix}fbs_metas` (rows with `object_type = 'webhook'`) |
+|---------------|----------------------------------------------------------------|
+| Schema        | [Check Schema](/database/#fbs-metas-table) |
+| Source File   | fluent-boards/app/Models/Webhook.php |
+| Name Space    | FluentBoards\App\Models |
+| Class         | FluentBoards\App\Models\Webhook |
+| Extends       | [Meta](/database/models/meta) |
+
+An incoming webhook. Each webhook is a `fbs_metas` row; the model adds a global scope `object_type = 'webhook'`. Outgoing webhooks are stored with `object_type = 'outgoing_webhook'` and do not use this model.
 
 ## Attributes
-* object_id: The ID of the object associated with the webhook.
-* object_type: The type of the object, which is always 'webhook' for this model.
-* key: A unique identifier for the webhook, generated using wp_generate_uuid4().
-* value: Stores the data associated with the webhook, including the URL.
 
+| Attribute | Data Type | Comment |
+|---|---|---|
+| id | INT UNSIGNED | Primary key |
+| object_id | INT UNSIGNED NULL | Not used |
+| object_type | VARCHAR(100) | Always `webhook` |
+| key | VARCHAR(100) | Unique hash generated with `wp_generate_uuid4()` |
+| value | LONGTEXT | Array with the webhook settings (`name`, `board`, `stage`, `url`) |
+| created_at | TIMESTAMP NULL | |
+| updated_at | TIMESTAMP NULL | |
+
+Fillable: `object_id`, `object_type`, `key`, `value`.
+
+## Usage
+
+Please check [Model Basic](/database/models/) for common methods.
+
+```php
+use FluentBoards\App\Models\Webhook;
+
+$webhooks = Webhook::orderBy('id', 'DESC')->get();
+
+foreach ($webhooks as $webhook) {
+    echo $webhook->value['url'];
+}
+```
 
 ## Methods
-Along with Global Model methods, this model has few helper methods.
 
+### store($data)
 
-### getFields
-This method returns an array of fields that are mappable in tasks.
+Creates a webhook. Generates `key` and adds the receiving `url` (`site_url('?fbs=1&route=task&hash={key}')`) to the stored value.
 
-#### Example:
-```php 
+- Parameters
+    - `$data` `array`: webhook settings, `name`, `board` (board ID) and `stage` (stage ID)
+- Returns `Webhook`
+
+```php
+$webhook = (new Webhook())->store([
+    'name'     => 'Leads form',
+    'board'    => 1,
+    'stage'    => 3,
+]);
+
+$endpoint = $webhook->value['url'];
+```
+
+### saveChanges($data)
+
+Merges `$data` into `value` (ignoring `id` and `url`) and saves.
+
+- Parameters
+    - `$data` `array`
+- Returns `Webhook`
+
+```php
+$webhook->saveChanges(['name' => 'Renamed webhook']);
+```
+
+### getFields()
+
+Returns the task fields that an incoming payload can map to, built from `Task::mappableFields()`.
+
+- Returns `array` with a `fields` list of `['key' => ..., 'field' => ...]`
+
+```php
 $fields = $webhook->getFields();
 ```
 
+### getSchema()
 
-### getSchema
-Returns a schema array for the webhook, which includes the `name` and `url`.
+Returns the default webhook shape: `['name' => '', 'url' => '']`.
 
-#### Example:
-```php 
+```php
 $schema = $webhook->getSchema();
 ```
-
-### store($data)
-Creates a new webhook record with the provided data. The URL is auto-generated using the site URL and a unique hash.
-
-- Parameters
-    - $key `$data`
-- Returns `array` of the newly created webhook.
-
-#### Example:
-```php 
-$newWebhook = Webhook::store($data);
-```
-
-### saveChanges($newData)
-Updates the webhook's `value` field with new data, excluding certain keys like `id` and `url`, and then saves the changes.
-
-- Parameters
-    - $newData `array`
-- Returns `void` // No return value
-
-#### Example:
-```php 
-$webhook->saveChanges($newData);
-```
-```
-

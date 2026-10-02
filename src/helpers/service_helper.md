@@ -1,342 +1,226 @@
 # FluentBoards Core Helper Class
 
 - Class with Namespace: `\FluentBoards\App\Services\Helper`
+- File: `app/Services/Helper.php`
 - Method Types: `static`
 
-# Methods
+```php
+use FluentBoards\App\Services\Helper;
+```
+
+The core uses these methods internally. They are public, so add-ons can call them too. They do **not** check permissions. Check access yourself, for example with `PermissionManager::userHasBoardPermission($boardId, 'GET')`, before you expose data to a user.
+
+[[toc]]
+
+## Strings and URLs
 
 ### Helper::snake_case($string)
-Converts a given string to snake_case.
+Converts a camelCase or StudlyCase string to snake_case by inserting `_` before each capital letter and lower-casing the result. Spaces are not converted.
 
-**Parameters**
-- `$string` (string): The string to convert.
-
-**Return**
-- `string` (string): The snake_case version of the input string.
-
-**Example**
 ```php
-$snakeCase = Helper::snake_case('Hello World');
-// Output: hello_world
+Helper::snake_case('dueDateChanged'); // 'due_date_changed'
 ```
 
 ### Helper::slugify($text, $id = '', $length = 20)
-Generates a URL-friendly slug from a given text, optionally prepended with an ID and limited to a specified length.
+Truncates `$text` to `$length` characters, slugifies it with `Str::slug()`, and optionally prefixes `$id-`.
 
-**Parameters**
-- `text` (string): The text to convert.
-- `id` (string, optional): An optional ID to prepend.
-- `length` (int, optional): The maximum length of the slug (default is 20).
-
-
-**Return**
-- (string): The generated slug.
-
-**Example**
 ```php
-$slug = Helper::slugify('Hello World', '12345', 10);
-// Output: 12345-hello-w
+Helper::slugify('Hello World', '12345', 10); // '12345-hello-worl'
 ```
 
-### Helper::createActivity($data)
-Creates an activity log entry in the database.
+### Helper::getTaskUrl($taskId, $boardId)
+Returns the app URL of a task, or `''` if either ID is empty. The URL is built from [`fluent_boards_page_url()`](/global-functions/#fluent-boards-page-url).
 
-**Parameters**
-- `$data` (array): The activity data to save.
-
-**Return**
-- (Activity): The created activity.
-
-**Example**
 ```php
-$activity_data = ['action' => 'Task Created', 'details' => 'Task ID 123 created.'];
-$activity = Helper::createActivity($activity_data);
-// Output: An instance of the Activity model with the created data.
+Helper::getTaskUrl(15, 3);
+// 'https://example.com/wp-admin/admin.php?page=fluent-boards#/boards/3/tasks/15'
 ```
+
+### Helper::getTaskUrlByTask($task)
+Same as `getTaskUrl()`, but reads `id` and `board_id` from a task object.
+
+```php
+$url = Helper::getTaskUrlByTask($task);
+```
+
+### Helper::getBoardUrl($boardId)
+Returns the app URL of a board, for example `…admin.php?page=fluent-boards#/boards/3`, or `''` for an empty ID.
+
+### Helper::obfuscateEmail($email)
+Masks an email address for display to users who should not see it. Invalid emails are returned unchanged.
+
+```php
+Helper::obfuscateEmail('johndoe@example.com'); // 'joh****@****le.com'
+```
+
+## Boards and stages
+
+### Helper::getBoards()
+Returns all boards ordered by `created_at`, **without** an access check. The `Board` global scope still applies, so only `to-do` and `roadmap` boards are returned.
+
+```php
+$boards = Helper::getBoards(); // Collection of Board
+```
+
+### Helper::getStage($stageId)
+Returns a `Stage` model. It uses `findOrFail()`, so a missing ID throws an exception.
+
+### Helper::getBoardByStageId($stageId)
+Returns the `Board` that a stage belongs to. It throws if the stage does not exist.
 
 ### Helper::getFormattedStagesByBoardId($boardId)
-Get the formatted stages for a board.
+Despite its name, this returns the **raw** stage collection of the board (`$board->stages()->get()`). Returns `[]` for an empty ID and throws if the board does not exist.
 
-**Parameters**
-- `$boardId` (int): The ID of the board.
+### Helper::getStagesByBoardId($boardId)
+Returns the board's stages formatted for select inputs with [`formateStage()`](#helper-formatestage-stages).
 
-**Return**
-- (array): An associative array of formatted stages.
-
-**Example**
 ```php
-$formatted_stages = Helper::getFormattedStagesByBoardId(1);
-// Output: [
-//     ['id' => '1', 'title' => 'Board A - Stage 1'],
-//     ['id' => '2', 'title' => 'Board A - Stage 2'],
+Helper::getStagesByBoardId(1);
+// [
+//     ['id' => '4', 'title' => 'Board A - Open'],
+//     ['id' => '5', 'title' => 'Board A - In Progress'],
 // ]
 ```
 
-### Helper::getStagesByBoardId($boardId)
-Get the stages for a board.
-
-**Parameters**
-- `$boardId` (int): The ID of the board.
-
-**Return**
-- (array): An associative array of stages.
-
-**Example**
-```php
-$stages = Helper::getStagesByBoardId(1);
-// Output: An array of stage objects related to the board with ID 1.
-```
-
 ### Helper::formateStage($stages)
-Format the stages for display.
+Maps stage models to `['id' => (string) $stage->id, 'title' => "{$board->title} - {$stage->title}"]`. Each stage must have a loadable `board` relation.
 
-**Parameters**
-- `$stages` (array): An array of stages.
+### Helper::getStagesByBoardGroup()
+Returns every board with its stages, grouped for grouped select inputs (the FluentCRM "Create Task" automation action uses it). It does not check access.
 
-**Return**
-- (array): An associative array of formatted stages.
-
-**Example**
 ```php
-$stages = [
-    (object) ['id' => 1, 'board' => (object) ['title' => 'Board A'], 'title' => 'Stage 1'],
-    (object) ['id' => 2, 'board' => (object) ['title' => 'Board A'], 'title' => 'Stage 2'],
-];
-$formatted_stages = Helper::formateStage($stages);
-// Output: [
-//     ['id' => '1', 'title' => 'Board A - Stage 1'],
-//     ['id' => '2', 'title' => 'Board A - Stage 2'],
+// [
+//     ['title' => 'Board A', 'slug' => 'aaa_1', 'options' => [ ['id' => '4', 'title' => 'Board A - Open'], ... ]],
+//     ...
 // ]
 ```
 
 ### Helper::getIdTitleArray($data)
-Get an associative array of IDs and titles from a collection.
+Maps a collection of objects that have `id` and `title` to a list of `['id' => …, 'title' => …]` arrays.
 
-**Parameters**
-- `$data` (Collection): The collection to extract IDs and titles from.
-
-**Return**
-- (array): An associative array of IDs and titles.
-
-**Example**
 ```php
-$collection = collect([
-    (object) ['id' => 1, 'title' => 'Item 1'],
-    (object) ['id' => 2, 'title' => 'Item 2'],
-]);
-$id_title_array = Helper::getIdTitleArray($collection);
-// Output: [1 => 'Item 1', 2 => 'Item 2']
+Helper::getIdTitleArray($contact->tags);
+// [ ['id' => 1, 'title' => 'VIP'], ['id' => 2, 'title' => 'Lead'] ]
 ```
 
-### Helper::getTaskUrl($taskId, $boardId)
-The `Helper::getTaskUrl($taskId, $boardId)` method generates the URL for a specific task within a board.
-
-**Parameters**
-- `$taskId` (int): The ID of the task.
-- `$boardId` (int): The ID of the board.
-
-**Return**
-- (string): The URL of the task.
-
-**Example**
-```php
-$taskId = 15;
-$boardId = 3;
-$taskUrl = Helper::getTaskUrl($taskId, $boardId);
-
-// Output: 'https://example.com/boards/3/tasks/15'
-```
-
-### Helper::getTaskUrlByTask($task)
-The `Helper::getTaskUrlByTask($task)` method generates the URL for a task object.
-
-**Parameters**
-- `$task` (Task): The task object.
-
-**Return**
-- (string): The URL of the task.
-
-**Example**
-```php
-$task = (object) ['id' => 15, 'board_id' => 3];
-$taskUrl = Helper::getTaskUrlByTask($task);
-
-// Output: 'https://example.com/boards/3/tasks/15'
-```
-
-### Helper::getBoardUrl($boardId)
-The `Helper::getBoardUrl($boardId)` method generates the URL for a specific board.
-
-**Parameters**
-- `$boardId` (int): The ID of the board.
-
-**Return**
-- (string): The URL of the board.
-
-**Example**
-```php
-$boardId = 3;
-$boardUrl = Helper::getBoardUrl($boardId);
-
-// Output: 'https://example.com/boards/3'
-```
-
-### Helper::crm_contact($id)
-The `Helper::crm_contact($id)` method retrieves the CRM contact details for a given ID.
-
-**Parameters**
-- `$id` (int): The ID of the CRM contact.
-
-**Return**
-- (array): The contact details.
-
-**Example**
-```php
-$contactId = 100;
-$contactDetails = Helper::crm_contact($contactId);
-
-// Output: 
-/*
-[
-    'id' => 100,
-    'email' => 'contact@example.com',
-    'first_name' => 'John',
-    'last_name' => 'Doe',
-    ...
-]
-*/
-```
-
-### Helper::getStagesByBoardGroup()
-The `Helper::getStagesByBoardGroup()` method retrieves the stages for a board group.
-
-**Return**
-- (array): An associative array of stages.
-
-**Example**
-```php
-$stageGroups = Helper::getStagesByBoardGroup();
-
-// Output: 
-/*
-[
-    [
-        'title' => 'Board A',
-        'slug' => 'aaa_1',
-        'options' => [ ...stages... ]
-    ],
-    [
-        'title' => 'Board B',
-        'slug' => 'aaa_2',
-        'options' => [ ...stages... ]
-    ],
-    ...
-]
-*/
-```
-
-### Helper::getBoards()
-The `Helper::getBoards()` method retrieves all boards.
-
-**Return**
-- (array): An array of boards.
-
-**Example**
-```php
-$boards = Helper::getBoards();
-
-// Output: A collection of Board objects ordered by creation date.
-```
-
-### Helper::getStage($stageId)
-The `Helper::getStage($stageId)` method retrieves a stage by its ID.
-
-**Parameters**
-- `$stageId` (int): The ID of the stage.
-
-**Return**
-- (Stage): The stage object.
-
-**Example**
-```php
-$stageId = 5;
-$stage = Helper::getStage($stageId);
-
-// Output: A Stage object corresponding to the given stage ID.
-```
-
-### Helper::getBoardByStageId($stageId)
-The `Helper::getBoardByStageId($stageId)` method retrieves the board associated with a stage.
-
-**Parameters**
-- `$stageId` (int): The ID of the stage.
-
-**Return**
-- (Board): The board object.
-
-**Example**
-```php
-$stageId = 7;
-$board = Helper::getBoardByStageId($stageId);
-
-// Output: The Board object associated with the given stage ID.
-```
+## Tasks
 
 ### Helper::getPriorityOptions()
-The `Helper::getPriorityOptions()` method retrieves the priority options.
+Returns the built-in priority options.
 
-**Return**
-- (array): An array of priority options.
-
-**Example**
 ```php
-$priorityOptions = Helper::getPriorityOptions();
+// [
+//     ['id' => '',       'title' => 'No priority'],
+//     ['id' => 'urgent', 'title' => 'Urgent'],
+//     ['id' => 'high',   'title' => 'High'],
+//     ['id' => 'medium', 'title' => 'Medium'],
+//     ['id' => 'low',    'title' => 'Low'],
+// ]
+```
 
-// Output: 
-/*
-[
-    ['id' => 'low', 'title' => 'Low'],
-    ['id' => 'medium', 'title' => 'Medium'],
-    ['id' => 'high', 'title' => 'High'],
-]
-*/
+This list is static. To add priorities, use the `fluent_boards/task_priorities` filter (see [Filters](/hooks/filters/)).
+
+### Helper::taskReminderTypes()
+Returns the allowed task reminder types as `key => label`. Filter: `fluent_boards/task_reminder_types`.
+
+```php
+// [
+//     '30_minutes_before' => '30 minutes before',
+//     '1_hour_before'     => '1 hour before',
+//     '2_hours_before'    => '2 hours before',
+//     '1_day_before'      => '1 day before',
+//     '2_days_before'     => '2 days before',
+//     '1_week_before'     => '1 week before',
+// ]
 ```
 
 ### Helper::dueDateConversion($due_time, $unit)
-The `Helper::dueDateConversion($due_time, $unit)` method converts a due date to a specific unit.
+Returns `now + $due_time $unit` as `Y-m-d H:i:s`, relative to the site's `current_time('mysql')`. Returns `null` when `$due_time` is `0` or less. `$unit` is any `strtotime()` unit, such as `'hours'`, `'days'` or `'weeks'`.
 
-**Parameters**
-- $due_time (int): The amount of time until the due date.
-- $unit (string): The unit of time (e.g., 'days', 'hours').
-
-**Return**
-- (string): The formatted due date.
-
-**Example**
 ```php
-$due_time = 3;
-$unit = 'days';
-$dueDate = Helper::dueDateConversion($due_time, $unit);
-
-// Output: '2024-09-01 00:00:00' (based on the current date)
+Helper::dueDateConversion(3, 'days'); // e.g. '2026-10-05 14:30:00'
 ```
+
+### Helper::normalizeDateValue($value)
+Normalizes a nullable date value. It returns `null` for `null`, booleans, empty strings, `'none'`, `'null'`, zero dates (`0000-00-00…`), years before 1900, and strings `strtotime()` cannot parse. Any other value is returned unchanged.
+
+### Helper::normalizeDates($data, $dateKeys = [])
+Runs `normalizeDateValue()` on each key in `$dateKeys` that exists in `$data`, and returns the array.
+
+```php
+$data = Helper::normalizeDates($data, ['due_at', 'started_at', 'remind_at']);
+```
+
+### Helper::createActivity($data)
+Creates a row in `fbs_activities` and returns the `Activity` model. When `$data['settings']['custom_field_id']` is set, the column, old value, new value and description are packed into `description` as JSON.
+
+```php
+use FluentBoards\App\Services\Constant;
+
+Helper::createActivity([
+    'object_type' => Constant::ACTIVITY_TASK, // 'task_activity' (or ACTIVITY_BOARD)
+    'object_id'   => $task->id,
+    'action'      => 'updated',
+    'column'      => 'priority',
+    'old_value'   => 'low',
+    'new_value'   => 'high',
+    'description' => '',
+]);
+```
+
+### Helper::translateActivities($activities)
+Translates the `action` and `column` of each activity in place. It keeps the raw values in `action_key` and `column_key`. Returns nothing.
+
+### Helper::crm_contact($id)
+Returns a FluentCRM contact as an array, including `id`, `email`, `first_name`, `last_name`, `full_name`, `avatar`, `photo`, `status`, `contact_type`, `last_activity`, `life_time_value`, `total_points`, `user_id`, `created_at`, `tags` and `lists`. `tags` and `lists` are in [`getIdTitleArray()`](#helper-getidtitlearray-data) format.
+
+Requires FluentCRM. Returns `''` when FluentCRM is not active, and `null` for an empty ID or an unknown contact.
+
+## Users
 
 ### Helper::searchWordPressUsers($searchQuery, $limit = 20)
-The `Helper::searchWordPressUsers($searchQuery, $limit = 20)` method searches for WordPress users by login, email, nicename, first name, or last name.
+Searches WordPress users by login, email and nicename (`WP_User_Query` wildcard search), and by the `first_name`/`last_name` meta. The two result sets are merged and de-duplicated.
 
-**Parameters**
-- $searchQuery (string): The search term.
-- $limit (int, optional): The maximum number of results to return. Defaults to 20.
-
-**Return**
-- (array): An array of user objects.
-
-**Example**
 ```php
-$searchQuery = 'John';
-$users = Helper::searchWordPressUsers($searchQuery, 10);
-
-// Output: A list of user objects matching the search query.
+$users = Helper::searchWordPressUsers('john', 10); // WP_User[]
 ```
 
-This documentation focuses on the functional aspects of each method, providing examples to demonstrate how they can be used in practice.
+### Helper::sanitizeUserCollections($users)
+Prepares a user collection for output. It sets a `role` attribute (`Admin`, `Viewer` or `Member`) from each user's board pivot settings. If the current user cannot `list_users`, it also hides `user_email`, `user_nicename`, `user_registered`, `user_url` and `user_status`.
+
+### Helper::sanitizeUsersArray($users, $boardId = null, $isBoardManager = null)
+For users who cannot `list_users` and are not managers of `$boardId`, it obfuscates `email` / `user_email` with `obfuscateEmail()`. The current user's own entry is left unchanged. Pass `$isBoardManager` when you have already resolved it, to skip the permission lookup.
+
+## Input sanitizers
+
+These methods run a sanitizing callback on each known key that has a non-empty, non-array value. **Unknown keys are kept unchanged**, so they are not whitelists. Validate the keys yourself.
+
+| Method | Keys and callbacks |
+|---|---|
+| `sanitizeTask($data)` | `title`, `type`, `stage`, `priority`, `source`, `source_id`, dates… (`sanitize_text_field`); `board_id`, `parent_id`, `crm_contact_id`, `assignees`, `position`… (`intval`); `lead_value` (`doubleval`); `description` (`fluent_boards_sanitize_description`) |
+| `sanitizeTaskForWebHook($data)` | Same as `sanitizeTask()` without `assignees`. It also keeps only `settings.author` (`name`, `email`, `photo`, each sanitized) and drops any other `settings`. Used by `FluentBoardsApi('tasks')->create()` and incoming webhooks. |
+| `sanitizeBoard($data)` | `title`, `type`, `currency`, `color`, `id` (text); `board_id`, `parent_id`, `crm_contact_id`, `created_by`, `is_auth_require` (`intval`); `description` (`fluent_boards_sanitize_description`); `image_url` (`sanitize_url`); `is_image`, `reset` (`rest_sanitize_boolean`) |
+| `sanitizeStage($data)` | `title`, `slug`, `type`, `status` (text) |
+| `sanitizeLabel($data)` | `bg_color`, `color`, `label` (text); `color_preset` (`sanitize_key`); `boardId`, `task_id`, `meta_value` (`intval`) |
+| `sanitizeComment($data)` | `description` (`wp_kses_post`); `created_by`, `task_id` (`intval`); `type` (text) |
+| `sanitizeSubtask($data)` | Text, date and int fields of a subtask, including `group_id`, `add_to_top` (boolean). It also keeps at most **one** assignee and casts `labels` to ints. |
+| `sanitizeTaskMeta($data)` | `title` (text), `url` (`sanitize_url`) |
+| `sanitizeTaskAttachment($data)` | `title` (text), `url` (`sanitize_url`) |
+| `sanitizeTaskRepeatData($data)` | Repeat-task settings: `repeat_type`, `selected_month`, `time`, `time_zone`, `next_repeat_date`, `repeat_in_month_type` (text); `create_new`, `repeat_in`, `repeat_when_complete`, `selected_stage`, `board_id` (`intval`) |
+
+```php
+$clean = Helper::sanitizeTask([
+    'title'    => '<b>Launch</b>',
+    'board_id' => '12',
+]);
+// ['title' => 'Launch', 'board_id' => 12]
+```
+
+## Views
+
+### Helper::loadView($template, $data)
+Renders a PHP template from the plugin's `app/Views/` directory and returns the output as a string. Dots in `$template` map to directory separators, and the keys of `$data` become variables in the template. Templates can only be loaded from the core `app/Views` directory.
+
+```php
+$html = Helper::loadView('emails.comment2', $data); // app/Views/emails/comment2.php
+```

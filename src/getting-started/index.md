@@ -15,11 +15,11 @@ FluentBoards is a developer powerhouse. Think of these as capability lanes you c
 		<div class="cap-icon">🧭</div>
 		<div class="cap-body">
 			<h3>Custom Menus & UI Surfaces</h3>
-			<p>Add global navigation items, per‑board menu drawers, modal panels or extra task tabs without touching core.</p>
+			<p>Add global navigation items, per‑board menu drawers and modal panels without touching core.</p>
 			<div class="badges">
 				<code>fluent_boards/menu_items</code>
 				<code>fluent_boards/board_menu_items</code>
-				<code>fluent_boards/task_tabs</code>
+				<code>fluent_boards/in_menu_actions</code>
 			</div>
 		</div>
 	</div>
@@ -53,8 +53,8 @@ FluentBoards is a developer powerhouse. Think of these as capability lanes you c
 			<h3>Headless / External Apps</h3>
 			<p>Build dashboards, reporting layers or mobile apps over REST & Webhooks. Perfect for multi‑site orchestration.</p>
 			<div class="badges">
-				<code>GET /boards</code>
-				<code>POST /tasks</code>
+				<code>GET /projects</code>
+				<code>POST /projects/{board_id}/tasks</code>
 				<code>webhooks</code>
 			</div>
 		</div>
@@ -63,7 +63,7 @@ FluentBoards is a developer powerhouse. Think of these as capability lanes you c
 		<div class="cap-icon">🎨</div>
 		<div class="cap-body">
 			<h3>Branding & UX Polish</h3>
-			<p>Adjust email header/footer, add priorities, reorder tabs, change logos, tailor copy & micro‑interactions.</p>
+			<p>Adjust email header/footer, rename or add priorities, change logos and icons, tailor copy & micro‑interactions.</p>
 			<div class="badges">
 				<code>fluent_boards/email_header</code>
 				<code>fluent_boards/task_priorities</code>
@@ -116,9 +116,11 @@ The FluentBoards Developer Docs are the powerhouse for customization and extensi
 | Component | Recommended | Minimum |
 |-----------|-------------|---------|
 | PHP       | 8.1+        | 7.4     |
-| WordPress | 6.4+        | 5.9     |
+| WordPress | 6.4+        | 5.0     |
 | MySQL     | 5.7+ / MariaDB 10.3+ | 5.6 |
 | Web Server| Nginx / Apache (mod_rewrite) | * |
+
+The minimums come from the plugin's `readme.txt` (`Requires at least: 5.0`, `Requires PHP: 7.4`). FluentBoards Pro also requires the core plugin, at least the version set in `FLUENT_BOARDS_CORE_MIN_VERSION` (2.1.0 for Pro 2.1.0).
 
 Ensure `WP_DEBUG` is enabled on development sites for better error visibility.
 
@@ -159,46 +161,65 @@ Drop that file in its own directory under `wp-content/plugins/fluentboards-dev-s
 
 FluentBoards comes in different versions:
 
-**FluentBoards Core** is a free WordPress plugin.  A Board serves as a centralized hub for organizing workflow-related information. Whether you’re initiating a new project, planning, or managing ongoing tasks, the board provides a comprehensive overview of your team’s progress..
+**FluentBoards Core** is a free WordPress plugin.  A Board serves as a centralized hub for organizing workflow-related information. Whether you’re initiating a new project, planning, or managing ongoing tasks, the board provides a comprehensive overview of your team’s progress.
 
-**FluentBoards Pro** is a paid version that adds a number of advanced features and options not found in the free version. It includes additional features such as: adding attachments to tasks, subtasks, custom fields, and more.
+**FluentBoards Pro** is a paid add-on (it needs the core plugin) that adds:
+
+- **Subtasks and subtask groups**, task **attachments** (files and links, chunked uploads) and **custom fields**
+- **Task dependencies** (predecessors/successors) and **recurring tasks**
+- **Board and task templates**
+- **Board roles** (manager, member, viewer), FluentBoards managers/admins, and **email invitations**
+- **Stage defaults**: default assignees and watchers per stage
+- **Imports and exports**: Trello, Asana, FluentBoards JSON and CSV import, plus board export
+- **Time tracking** (timers and manual entries, stored in `fbs_time_tracks`)
+- **Cloud storage** for attachments: Amazon S3, Cloudflare R2, DigitalOcean Spaces, Backblaze
+- **Outgoing webhooks** delivery
+- **Frontend portal** and a single-board shortcode
+- Extra **MCP abilities**, and a FluentCRM automation action that creates a board from a template
 
 ## Core Entities (Glossary)
 
 | Entity | Description | Key Attributes |
 |--------|-------------|----------------|
-| Board  | Top level container for workflow | id, title, statuses, visibility |
-| Stage  | A column / pipeline step within a board | id, board_id, position |
-| Task   | Work item that moves across stages | id, board_id, stage_id, assignees, status |
-| Label  | Color coded tag for grouping tasks | id, name, color |
-| Comment| Discussion entry on a task | id, task_id, user_id, content |
-| Webhook| Outbound event trigger | id, event, url |
+| Board  | Top level container for workflow (`fbs_boards`, type `to-do` or `roadmap`) | id, title, description, type, background, settings, created_by, archived_at |
+| Stage  | A column / pipeline step within a board (`fbs_board_terms`, type `stage`) | id, board_id, title, position, bg_color, settings (default task status) |
+| Task   | Work item that moves across stages (`fbs_tasks`). Subtasks are tasks with `parent_id`. | id, board_id, stage_id, parent_id, title, status (`open`/`closed`), priority, due_at, assignees (relation) |
+| Label  | Color coded tag for grouping tasks (`fbs_board_terms`, type `label`) | id, board_id, title, color, bg_color |
+| Comment| Discussion entry on a task (`fbs_comments`) | id, task_id, board_id, parent_id, description, created_by |
+| Webhook| Incoming webhook configuration, stored as a meta row (`fbs_metas`, object_type `webhook`) | id, key, value (settings) |
+| Relation | Junction rows linking users, assignees, labels, watchers to boards/tasks (`fbs_relations`) | object_id, object_type, foreign_id, settings |
 
 Understanding these first reduces debugging time later.
 
 ## Directory Structure
 
-```yaml
+Layout of the released core plugin (`fluent-boards/`):
+
+```text
 ├── app
-│   ├── Api         # contains PHP API Utility classes
-│   └── Functions   # contains global functions
-│   └── Hooks       # actions and filters handlers
-│   └── Http        # REST API routes, controllers, policies
-│   └── Models      # Database Molders
-│   └── Services    # Module Services
-│   └── views       # php view files
-│   └── App.php
+│   ├── Api            # PHP API classes behind FluentBoardsApi()
+│   ├── Functions      # Global functions (helpers.php)
+│   ├── Hooks          # Action/filter registration, handlers, CLI commands
+│   ├── Http           # REST routes, controllers, policies, requests
+│   ├── Models         # Database models
+│   ├── Modules        # Optional modules (MCP)
+│   ├── Services       # Business logic (TaskService, BoardService, Helper, …)
+│   ├── Views          # PHP view templates (admin shell, emails, frontend)
+│   ├── App.php
+│   └── Vite.php       # Asset loader (dev server or built manifest)
 │
-├── assets          # contains css,js, media files
-├── boot            # [internal] contains plugin boot files
-├── config          # [internal] contains plugin framework top level config
-├── database        # [internal] Database migration files
-├── includes        # [internal] Old Framework deprecated classes
-├── language        # [internal] Language Files
-├── vendor          # [internal] Core Framework Files
+├── assets             # Compiled CSS, JS, images
+├── boot               # [internal] Plugin bootstrap files
+├── config             # [internal] Framework config (slug, REST namespace, hook prefix)
+├── database           # [internal] Migrations (DBMigrator, Migrations/)
+├── language           # [internal] Translation files
+├── vendor             # [internal] WPFluent framework, Action Scheduler
 │
-└── fluent-boards.php  # Plugin entry File
+├── fluent-boards.php  # Plugin entry file
+└── readme.txt
 ```
+
+The development repository also contains `resources/` (Vue 3 source), `dev/`, `app/ComposerScript.php`, and build tooling. These are not shipped in the release zip.
 
 
 ## Development Environment (Short List)
@@ -225,7 +246,6 @@ Keep custom code in a separate plugin so updates never overwrite your work.
 		<li><a class="badge-link blog" href="https://fluentboards.com/blog/" target="_blank" rel="noopener">📰 Blog & Releases</a></li>
 		<li><a class="badge-link community" href="https://community.wpmanageninja.com/portal/space/fluent-boards/" target="_blank" rel="noopener">👥 Community Portal</a></li>
 		<li><a class="badge-link roadmap" href="https://community.wpmanageninja.com/road-maps/fluent-boards/" target="_blank" rel="noopener">🧭 Official Roadmap</a></li>
-		<li><a class="badge-link facebook" href="https://www.facebook.com/groups/fluentcrm" target="_blank" rel="noopener">💬 Facebook Group</a></li>
 		<li><a class="badge-link support" href="https://wpmanageninja.com/support-tickets/" target="_blank" rel="noopener">🆘 Technical Support</a></li>
 		<li><a class="badge-link feature" href="https://community.wpmanageninja.com/road-maps/fluent-boards/" target="_blank" rel="noopener">💡 Feature Requests</a></li>
 	</ul>
@@ -244,7 +264,7 @@ Small wording fixes, examples, and missing hook docs are welcome. Use the "Edit 
 
 ## REST API Authentication
 
-By default endpoints are namespaced under: `/wp-json/fluent-boards/v1/`.
+All endpoints are namespaced under `/wp-json/fluent-boards/v2/`. Boards are called "projects" in the routes.
 
 Use one of:
 
@@ -256,7 +276,7 @@ Example (Application Password) request:
 
 ```bash
 curl -u user:app_password \
-	https://example.com/wp-json/fluent-boards/v1/boards
+	https://example.com/wp-json/fluent-boards/v2/projects
 ```
 
 ## Create a Task (Examples)
@@ -266,30 +286,38 @@ curl -u user:app_password \
 curl -u user:app_password \
 	-H 'Content-Type: application/json' \
 	-d '{
-				"board_id": 12,
-				"stage_id": 45,
-				"title": "Research API Endpoints",
-				"description": "Collect requirements and draft spec"
+				"task": {
+					"board_id": 12,
+					"stage_id": 45,
+					"title": "Research API Endpoints",
+					"description": "Collect requirements and draft spec"
+				}
 			}' \
-	https://example.com/wp-json/fluent-boards/v1/tasks
+	https://example.com/wp-json/fluent-boards/v2/projects/12/tasks
 ```
 
-### Via PHP (Inside Your Add‑On)
-```php
-use FluentBoards\App\Models\Task;
+The task fields are wrapped in a `task` object. See the [REST API](/rest-api/) reference for all fields.
 
-$task = Task::create([
-		'board_id'    => 12,
-		'stage_id'    => 45,
-		'title'       => 'Research API Endpoints',
-		'description' => 'Collect requirements and draft spec',
-		'created_by'  => get_current_user_id(),
+### Via PHP (Inside Your Add‑On)
+
+Use the PHP API. It checks the current user's permission on the board, validates the stage, and handles assignees and labels:
+
+```php
+$task = FluentBoardsApi('tasks')->create([
+	'board_id'    => 12,
+	'stage_id'    => 45,
+	'title'       => 'Research API Endpoints',
+	'description' => 'Collect requirements and draft spec',
+	'assignees'   => [],
+	'labels'      => [],
 ]);
 ```
 
+`FluentBoards\App\Models\Task::create([...])` also works, but it skips the permission check and the assignee/label handling. See the [Tasks API](/global-functions/tasks-api-function).
+
 ## Debug Tips
 
-- Enable query log: define `FB_DEBUG_SQL` true (if available) or use standard WP `SAVEQUERIES`.
+- Log queries with the standard WordPress `SAVEQUERIES` constant, or use a plugin such as Query Monitor.
 - Use the browser network panel to inspect REST payloads your own UI triggers.
 - Log hook payloads: `error_log(print_r($task->toArray(), true));`
 

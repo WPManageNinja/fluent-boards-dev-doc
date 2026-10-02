@@ -1,143 +1,84 @@
 # Activity Model
 
-| DB Table Name | {wp_db_prefix}_fbs_Activity                                            |
-|---------------|-----------------------------------------------------------------------|
+| DB Table Name | `{wp_db_prefix}fbs_activities` |
+|---------------|--------------------------------|
 | Schema        | [Check Schema](/database/#fbs-activities-table) |
-| Source File   | fluent-boards/app/Models/Activity.php                                    |
-| Name Space    | FluentBoards\App\Models                                               |
-| Class         | FluentBoards\App\Models\Activity                                         |
+| Source File   | fluent-boards/app/Models/Activity.php |
+| Name Space    | FluentBoards\App\Models |
+| Class         | FluentBoards\App\Models\Activity |
+
+The activity log for boards and tasks. `object_type` is `task_activity` (`object_id` = task ID) or `board_activity` (`object_id` = board ID).
+
+On create, the model sets `created_by` to the current user when empty, and sets `created_at` / `updated_at` with `current_time('mysql')`.
 
 ## Attributes
-<table class="nowrap">
-   <thead>
-      <tr>
-         <th>Attribute</th>
-         <td>Data Type</td>
-         <td>Activity</td>
-      </tr>
-   </thead>
-    <tbody>
-      <tr>
-        <th>id</th>
-        <td>INT UNSIGNED <i>Auto Increment</i></td>
-        <td>Primary key of the activity log</td>
-      </tr>
-      <tr>
-        <th>object_id</th>
-        <td>INT UNSIGNED</td>
-        <td>ID of the associated object (e.g., Task ID)</td>
-      </tr>
-      <tr>
-        <th>object_type</th>
-        <td>VARCHAR(100)</td>
-        <td>Type of the object (e.g., Task, Comment, Board)</td>
-      </tr>
-      <tr>
-        <th>action</th>
-        <td>VARCHAR(50)</td>
-        <td>Action performed (e.g., create, update, delete)</td>
-      </tr>
-      <tr>
-        <th>column</th>
-        <td>VARCHAR(50) <i>NULL</i></td>
-        <td>The specific column that was changed (if applicable)</td>
-      </tr>
-      <tr>
-        <th>old_value</th>
-        <td>VARCHAR(50) <i>NULL</i></td>
-        <td>The old value before the change</td>
-      </tr>
-      <tr>
-        <th>new_value</th>
-        <td>VARCHAR(50) <i>NULL</i></td>
-        <td>The new value after the change</td>
-      </tr>
-      <tr>
-        <th>description</th>
-        <td>LONGTEXT <i>NULL</i></td>
-        <td>Description of the activity or change</td>
-      </tr>
-      <tr>
-        <th>created_by</th>
-        <td>BIGINT UNSIGNED <i>NULL</i></td>
-        <td>ID of the user who performed the action</td>
-      </tr>
-      <tr>
-        <th>settings</th>
-        <td>TEXT <i>NULL</i></td>
-        <td>Serialized array for additional settings or metadata</td>
-      </tr>
-      <tr>
-        <th>created_at</th>
-        <td>TIMESTAMP <i>NULL</i></td>
-        <td>Timestamp when the activity was created</td>
-      </tr>
-      <tr>
-        <th>updated_at</th>
-        <td>TIMESTAMP <i>NULL</i></td>
-        <td>Timestamp when the activity was last updated</td>
-      </tr>
-    </tbody>
-</table>
+
+| Attribute | Data Type | Comment |
+|---|---|---|
+| id | INT UNSIGNED | Primary key |
+| object_id | INT UNSIGNED | Task or board ID |
+| object_type | VARCHAR(100) | `task_activity` or `board_activity` |
+| action | VARCHAR(50) | For example `created`, `updated`, `added`, `changed`, `removed`, `deleted` |
+| column | VARCHAR(50) NULL | Changed field |
+| old_value | VARCHAR(50) NULL | Value before the change |
+| new_value | VARCHAR(50) NULL | Value after the change |
+| description | LONGTEXT NULL | Description |
+| created_by | BIGINT UNSIGNED NULL | User who made the change |
+| settings | TEXT NULL | Serialized; returned as an array |
+| created_at | TIMESTAMP NULL | |
+| updated_at | TIMESTAMP NULL | |
+
+::: tip Custom field activities
+`old_value` and `new_value` are limited to 50 characters. For custom field changes the full payload is stored as JSON in `description`, and `settings.custom_field_activity_payload` is set. In that case the `column`, `old_value`, `new_value` and `description` accessors return the values from the JSON payload, so you can read them as usual.
+:::
 
 ## Usage
-Please check <a href="/database/models/">Model Basic</a> for Common methods.
 
-### Accessing Attributes
+Please check [Model Basic](/database/models/) for common methods.
 
-```php 
-
-$activity = FluentBoards\App\Models\Activity::find(1);
-
-$activity->id; // returns id
-$activity->action; // returns action
-.......
-
+```php
+FluentBoards\App\Models\Activity::create([
+    'object_id'   => $task->id,
+    'object_type' => 'task_activity',
+    'action'      => 'changed',
+    'column'      => 'priority',
+    'old_value'   => 'low',
+    'new_value'   => 'high',
+]);
 ```
 
 ## Scopes
 
-This model has the following scopes that you can use
+### type($objectType)
 
-### type()
-Filter activities by object type
+Filter by `object_type`.
 
-#### Usage:
-
-```php 
-$activities = FluentBoards\App\Models\Activity::type('task')->get();
+```php
+$taskActivities = FluentBoards\App\Models\Activity::type('task_activity')
+    ->where('object_id', 42)
+    ->orderBy('id', 'DESC')
+    ->get();
 ```
 
 ## Relations
-This model has the following relationships that you can use
 
-### board
-Access the board associated with the activity
-
-- return `FluentBoards\App\Models\Board` Model Collection
-
-#### Example:
-```php 
-$board = $activity->board;
-```
+The `board` and `task` relations both join on `object_id` without checking `object_type`. Use the one that matches the row's `object_type`.
 
 ### task
-Access the task associated with the activity
 
-- return `FluentBoards\App\Models\Task` Model Collection
+- Returns `FluentBoards\App\Models\Task`
 
-#### Example:
-```php 
-$task = $activity->task;
-```
+### board
+
+- Returns `FluentBoards\App\Models\Board`
 
 ### user
-Access the user who created the activity
 
-- return `FluentBoards\App\Models\User` Model Collection
+The user who made the change (`created_by`).
 
-#### Example:
-```php 
-$user = $activity->user;
+- Returns `FluentBoards\App\Models\User`
+
+```php
+$activity = FluentBoards\App\Models\Activity::with('user')->find(1);
+echo $activity->user->display_name;
 ```
-

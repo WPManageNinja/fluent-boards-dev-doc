@@ -26,7 +26,7 @@ pageClass: docs-home
     <h3>What You Can Do</h3>
     <p class="capabilities-intro">FluentBoards is fully extensible. A few high‑impact things you can implement quickly:</p>
     <ul class="capabilities-list">
-      <li><strong>Push custom menus</strong> – inject board or global menu items (<a href="/hooks/filters/#fluent_boardsboard_menu_items">board_menu_items</a>, <a href="/hooks/filters/#fluent_boardsmenu_items">menu_items</a>).</li>
+      <li><strong>Push custom menus</strong> – inject board or global menu items (<a href="/hooks/filters/ui#fluent_boards_board_menu_items">board_menu_items</a>, <a href="/hooks/filters/ui#fluent_boards_menu_items">menu_items</a>).</li>
       <li><strong>Alter data with filter hooks</strong> – validate / transform before create or update (<a href="/hooks/filters/">filter hooks</a>).</li>
       <li><strong>Process events via actions</strong> – react to task, stage, label, comment lifecycle (<a href="/hooks/actions/">action hooks</a>).</li>
       <li><strong>Build external apps</strong> – use REST API + webhooks to power dashboards, automations, or mobile apps (<a href="/rest-api/">REST API</a>).</li>
