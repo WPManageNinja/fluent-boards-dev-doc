@@ -38,6 +38,14 @@ npm run preview   # serve the built site
 
 A broken internal link fails `npm run build`, so run it before opening a PR.
 
+### Deployment (Cloudflare Pages)
+
+| Setting | Value |
+|---|---|
+| Build command | `npm run build` |
+| Build output directory | `src/.vitepress/dist` |
+| Node version | 18 or newer (`.nvmrc` pins 22). Do not set `NODE_VERSION` to 16 — VitePress fails on Node 16. |
+
 ### Layout
 
 - `src/` — Markdown pages (`src/index.md` is the home page)

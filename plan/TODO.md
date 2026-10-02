@@ -37,7 +37,8 @@ Writers follow `rest-style-guide.md`. Inventories: `inventory-rest-api.md`, `inv
 - [x] Final report in progress.md; plugin-code bugs in plugin-code-findings.md
 
 ## Follow-ups (owner decisions, not done)
-- [ ] Push branch / open PR; bump submodule pointer in fluent-boards
-- [ ] Update hosting: output dir `src/.vitepress/dist`, trailing-slash redirects, sitemap URL, Algolia recrawl
-- [ ] Triage `plugin-code-findings.md` (start with S items)
+- [x] PR #24 merged; PR #25 (Node pin) open
+- [ ] Bump dev-docs submodule pointer in fluent-boards
+- [ ] Cloudflare maintainer: apply `cloudflare-pages-build.md` (Node, output dir), then sitemap URL + Algolia recrawl
+- [ ] Triage `fluent-boards/docs/reports/docs-sync-code-findings.md` (start with S items)
 - [ ] Optional: OpenAPI try-it playground like FluentCRM
