@@ -12,11 +12,11 @@ Writers follow `rest-style-guide.md`. Inventories: `inventory-rest-api.md`, `inv
 - [x] Hooks: 90 actions + 50 filters; 27 correct, 10 wrong, 1 stale, 104 missing; 5 FluentCRM partials
 - [x] Data layer: 13 tables, 22 models (9 undocumented), 19 global functions (12 undocumented), CLI/modules/getting-started are FluentCRM or wrong
 
-## Phase 3 — REST API sync (1 agent still running)
+## Phase 3 — REST API sync ✅ (commit 9460465)
 - [x] boards.md, activities.md, public-boards.md (new)
 - [x] tasks.md (+dependencies, recurring), subtasks.md, comments.md, attachments.md, dashboard.md (new)
 - [x] stages, labels, custom-fields, templates, folders, time-tracking, roadmaps, notifications
-- [ ] users, permissions (Managers & Roles), webhooks, reports, ai (new), import-export, cloud-storage, admin, settings (delete), index, authentication, extend
+- [x] users, permissions (Managers & Roles), webhooks, reports, ai (new), import-export, cloud-storage, admin, settings (delete), index, authentication, extend
 - [x] Sidebar: regrouped (Boards/Tasks/People/Platform), added ai, dashboard, public-boards; settings dropped
 
 ## Phase 4 — Hooks sync ✅ (commit 8cd8e91)
@@ -28,10 +28,16 @@ Writers follow `rest-style-guide.md`. Inventories: `inventory-rest-api.md`, `inv
 - [x] global functions + FluentBoardsApi methods; helpers; CLI rewrite; modules rewrite; getting started fixes
 - [x] Sidebar/nav: new model pages, CLI in nav, Modules overview + Navigation
 
-## Phase 6 — Final pass
-- [ ] Integrate: sidebars/nav, build green, dead links
-- [ ] Home page accuracy (links, capabilities)
-- [ ] Cross-check sample of pages against code (spot audit)
-- [ ] Browser check light/dark + mobile
-- [ ] README, plugin CLAUDE.md note on dev-docs build
-- [ ] Final report in progress.md; list plugin-code bugs found
+## Phase 6 — Final pass ✅
+- [x] Integrate: sidebars/nav, build green, dead links (+ raw-HTML link/anchor checker: 0 bad)
+- [x] Home page accuracy (links, capabilities)
+- [x] Cross-check pages against code (audit-1: 73 claims, 2 fixed; audit-2: 77 claims, 10 fixed)
+- [x] Browser check light/dark + mobile
+- [x] README (VitePress); plugin CLAUDE.md/AGENTS.md don't mention dev-docs build → no change
+- [x] Final report in progress.md; plugin-code bugs in plugin-code-findings.md
+
+## Follow-ups (owner decisions, not done)
+- [ ] Push branch / open PR; bump submodule pointer in fluent-boards
+- [ ] Update hosting: output dir `src/.vitepress/dist`, trailing-slash redirects, sitemap URL, Algolia recrawl
+- [ ] Triage `plugin-code-findings.md` (start with S items)
+- [ ] Optional: OpenAPI try-it playground like FluentCRM

@@ -221,7 +221,7 @@ curl "https://yourdomain.com/wp-json/fluent-boards/v2/projects" \
     "currency": "USD",
     "background": {
       "id": "solid_4",
-      "color": "#5f27cd",
+      "color": "#D7543D",
       "is_image": false,
       "image_url": null
     },
@@ -758,7 +758,7 @@ curl "https://yourdomain.com/wp-json/fluent-boards/v2/projects/9" \
     "type": "to-do",
     "background": {
       "id": "solid_4",
-      "color": "#5f27cd",
+      "color": "#D7543D",
       "is_image": false,
       "image_url": null
     }
@@ -943,7 +943,7 @@ curl "https://yourdomain.com/wp-json/fluent-boards/v2/projects/9/duplicate-board
     "type": "to-do",
     "background": {
       "id": "solid_4",
-      "color": "#5f27cd",
+      "color": "#D7543D",
       "is_image": false,
       "image_url": null
     },

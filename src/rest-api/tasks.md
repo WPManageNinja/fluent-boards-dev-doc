@@ -759,7 +759,7 @@ PUT /wp-json/fluent-boards/v2/projects/{board_id}/tasks/{task_id}/pin
 
 | Parameter | Type | Required | Description |
 |---|---|---|---|
-| `pinned` | boolean | Yes | `true` / `"1"` to pin, `false` / `"0"` to unpin |
+| `pinned` | boolean | No | `true` / `"1"` to pin, `false` / `"0"` to unpin. Not validated: omitting it is treated as `false` and unpins the task |
 
 **Example Request**
 

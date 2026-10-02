@@ -47,3 +47,26 @@ Newest entries at the bottom. Original plan: `vitepress-migration-and-sync.md` (
 - Build green with dead-link checks.
 - Plugin-code issues are collected in `plugin-code-findings.md` (≈70 items, several security-relevant — see the
   S entries, especially the fluent-roadmap unauthenticated comment delete).
+
+## Iteration 4 — 2026-10-02 — Phase 3 committed (9460465), audits running
+
+- REST writer D done: users, Managers & Roles, webhooks, reports, AI (new), import/export, cloud storage, admin,
+  index, authentication, extend, shared partials; `settings.md` deleted (content in admin.md).
+- Build green; raw-HTML link + anchor checker (scratch script over `dist/`) reports 0 broken links.
+- Browser: hooks blocks expand with markdown rendered; dark mode + 375px mobile, no horizontal overflow.
+- Two independent auditors verifying sampled claims against code (`audit-1.md`, `audit-2.md`), fixing confirmed errors.
+- `plugin-code-findings.md` now ~90 items.
+
+## Iteration 5 — 2026-10-02 — Audits done, final pass — COMPLETE
+
+- audit-1 (hooks, data layer, REST A–C): 73 claims incl. full scripted sweeps — all 191 in-scope endpoints match
+  routes, 472 internal links/anchors resolve, all 140 hooks have call sites with matching accepted-args,
+  every documented model/global/helper method exists. 2 errors fixed (board color example, repeat_task meta table).
+- audit-2 (REST D pages): 77 claims, 10 fixed (status codes, payload text, report shapes, import behavior,
+  storage error text, slug constant, policy-name collision warning in extend.md).
+- Final: `npm run build` green (dead-link check on), raw-HTML link checker 0 broken.
+
+### Final state
+- Branch `vitepress-migration` in `WPManageNinja/fluent-boards-dev-doc` (not pushed; parent plugin submodule pointer not bumped).
+- Coverage: 265/265 live REST routes; 140/140 public hooks; 13/13 tables; 22/22 models; all global functions + PHP API methods.
+- Open for owners: deployment notes (Iteration 1), `plugin-code-findings.md` (~90 code issues, several security-relevant).

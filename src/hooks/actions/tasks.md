@@ -750,7 +750,7 @@ Fires from the recurring-task scheduler for each recurring task whose next run t
 
 **Parameters**
 - `$taskId` `int`: the source task ID
-- `$metaId` `int`: the ID of the recurrence meta row (`fbs_task_meta`)
+- `$metaId` `int`: the ID of the recurrence meta row (`fbs_metas`, `object_type = 'repeat_task'`)
 
 **Usage**
 ```php
