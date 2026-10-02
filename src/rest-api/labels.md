@@ -1,16 +1,60 @@
 # Labels
 
-The Labels API allows you to manage task labels in Fluent Boards. You can create, read, update, and delete labels, as well as assign them to tasks.
-## List All Labels
+Labels are colored tags that belong to a board and can be attached to tasks. The Labels API lets you manage a board's labels and add or remove them on tasks. Plugin source: free.
 
-Retrieve all labels for a project.
+All endpoints use `SingleBoardPolicy`: the user must be a member of the board, and board viewers can only call `GET` endpoints.
 
-**HTTP Request**
-```
+## Endpoints
+
+| Method | Endpoint | Description |
+|---|---|---|
+| GET | `/projects/{board_id}/labels` | List board labels |
+| POST | `/projects/{board_id}/labels` | Create a label |
+| PUT | `/projects/{board_id}/labels/{label_id}` | Update a label |
+| DELETE | `/projects/{board_id}/labels/{label_id}` | Delete a label |
+| GET | `/projects/{board_id}/labels/used-in-tasks` | List labels used by at least one task |
+| GET | `/projects/{board_id}/tasks/{task_id}/labels` | List a task's labels |
+| POST | `/projects/{board_id}/labels/task` | Add a label to a task |
+| DELETE | `/projects/{board_id}/tasks/{task_id}/labels/{label_id}` | Remove a label from a task |
+
+## Label Object
+
+Labels are stored in the `fbs_board_terms` table with `type = "label"`.
+
+| Field | Type | Description |
+|---|---|---|
+| `id` | integer | Label ID |
+| `board_id` | integer | Board the label belongs to |
+| `title` | string | Label text (may be empty) |
+| `slug` | string | Slug |
+| `type` | string | Always `label` |
+| `color` | string\|null | Text color (hex) |
+| `bg_color` | string\|null | Background color (hex) |
+| `settings` | object\|null | `color_preset` holds the preset ID when the label uses a theme-aware preset |
+| `archived_at` | string\|null | Archive timestamp |
+| `created_at` | string | Creation timestamp |
+| `updated_at` | string | Last update timestamp |
+
+### Color presets
+
+Instead of raw colors you can pass a `color_preset` ID. The preset sets `bg_color` and `color` to its light-mode values and is stored in `settings.color_preset`, so the UI can switch colors in dark mode. Preset IDs combine a color (`green`, `yellow`, `orange`, `red`, `purple`, `blue`, `sky`, `lime`, `pink`, `gray`) with a tone (`soft`, `bold`, `strong`), for example `green-soft`, `red-bold` or `blue-strong`. An unknown preset ID returns `400` with `Invalid label color preset`.
+
+## List Labels
+
+Retrieve all labels of a board, oldest first.
+
+```http
 GET /wp-json/fluent-boards/v2/projects/{board_id}/labels
 ```
 
-### Example Response
+**Example Request**
+
+```bash
+curl "https://yourdomain.com/wp-json/fluent-boards/v2/projects/3/labels" \
+  -u "USERNAME:APPLICATION_PASSWORD"
+```
+
+**Example Response**
 
 ```json
 {
@@ -30,29 +74,17 @@ GET /wp-json/fluent-boards/v2/projects/{board_id}/labels
       "updated_at": "2024-12-24T08:43:51+00:00"
     },
     {
-      "id": 34,
-      "board_id": "3",
-      "title": "",
-      "slug": "",
-      "type": "label",
-      "position": "0.00",
-      "color": null,
-      "bg_color": "#D7BDE2",
-      "settings": null,
-      "archived_at": null,
-      "created_at": "2024-12-24T08:43:51+00:00",
-      "updated_at": "2024-12-24T08:43:51+00:00"
-    },
-    {
       "id": 35,
       "board_id": "3",
-      "title": "improvement",
-      "slug": "",
+      "title": "Green",
+      "slug": "green",
       "type": "label",
       "position": "0.00",
-      "color": null,
-      "bg_color": "#AED6F1",
-      "settings": null,
+      "color": "#1B2533",
+      "bg_color": "#70C392",
+      "settings": {
+        "color_preset": "green-bold"
+      },
       "archived_at": null,
       "created_at": "2024-12-24T08:43:51+00:00",
       "updated_at": "2024-12-24T08:43:51+00:00"
@@ -63,31 +95,36 @@ GET /wp-json/fluent-boards/v2/projects/{board_id}/labels
 
 ## Create a Label
 
-Create a new label for a project.
+Create a new label on a board.
 
-**HTTP Request**
-```
+```http
 POST /wp-json/fluent-boards/v2/projects/{board_id}/labels
 ```
 
-### Request Body
+**Parameters**
 
 | Parameter | Type | Required | Description |
-|-----------|------|----------|-------------|
+|---|---|---|---|
 | `label` | string | No | Label title |
-| `color` | string | Yes | Label color (hex code) |
-| `bg_color` | string | Yes | Label background color (hex code) |
+| `bg_color` | string | Yes, unless `color_preset` is set | Background color (hex) |
+| `color` | string | Yes, unless `color_preset` is set | Text color (hex) |
+| `color_preset` | string | No | Preset ID (see [Color presets](#color-presets)). Overrides `bg_color` and `color` |
 
-### Example Request Data
-```
-{
-  "label": "Documentation",
-  "color": "#2196F3",
-  "bg_color": "#0000FF"
-}
+**Example Request**
+
+```bash
+curl "https://yourdomain.com/wp-json/fluent-boards/v2/projects/3/labels" \
+  -X POST \
+  -u "USERNAME:APPLICATION_PASSWORD" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "label": "Documentation",
+    "color": "#FFFFFF",
+    "bg_color": "#2196F3"
+  }'
 ```
 
-### Example Response
+**Example Response**
 
 ```json
 {
@@ -95,8 +132,8 @@ POST /wp-json/fluent-boards/v2/projects/{board_id}/labels
   "label": {
     "board_id": "3",
     "title": "Documentation",
-    "bg_color": "#0000FF",
-    "color": "#2196F3",
+    "bg_color": "#2196F3",
+    "color": "#FFFFFF",
     "type": "label",
     "updated_at": "2025-08-07T06:12:24+00:00",
     "created_at": "2025-08-07T06:12:24+00:00",
@@ -107,32 +144,36 @@ POST /wp-json/fluent-boards/v2/projects/{board_id}/labels
 
 ## Update a Label
 
-Update an existing label.
+Update a label. Only the fields you send are changed.
 
-**HTTP Request**
-```
+```http
 PUT /wp-json/fluent-boards/v2/projects/{board_id}/labels/{label_id}
 ```
 
-### Request Body
+**Parameters**
 
 | Parameter | Type | Required | Description |
-|-----------|------|----------|-------------|
+|---|---|---|---|
 | `label` | string | No | Label title |
-| `color` | string | No | Label color (hex code) |
-| `bg_color` | string | Yes | Label background color (hex code) |
+| `bg_color` | string | No | Background color (hex). Required when `color_preset` is `""` |
+| `color` | string | No | Text color (hex). Required when `color_preset` is `""` |
+| `color_preset` | string | No | Preset ID to apply. Send an empty string to drop the preset and use custom colors |
 
-### Example Request Data
+**Example Request**
 
+```bash
+curl "https://yourdomain.com/wp-json/fluent-boards/v2/projects/5/labels/62" \
+  -X PUT \
+  -u "USERNAME:APPLICATION_PASSWORD" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "label": "Critical Bug",
+    "color": "#FFFFFF",
+    "bg_color": "#D32F2F"
+  }'
 ```
-{
-  "label": "Critical Bug",
-  "color": "#D32F2F",
-  "bg_color": "#D32F2F"
-}
-```
 
-### Example Response
+**Example Response**
 
 ```json
 {
@@ -156,14 +197,21 @@ PUT /wp-json/fluent-boards/v2/projects/{board_id}/labels/{label_id}
 
 ## Delete a Label
 
-Delete a label.
+Delete a label from the board. The label is removed from every task first.
 
-**HTTP Request**
-```
+```http
 DELETE /wp-json/fluent-boards/v2/projects/{board_id}/labels/{label_id}
 ```
 
-### Example Response
+**Example Request**
+
+```bash
+curl "https://yourdomain.com/wp-json/fluent-boards/v2/projects/5/labels/62" \
+  -X DELETE \
+  -u "USERNAME:APPLICATION_PASSWORD"
+```
+
+**Example Response**
 
 ```json
 {
@@ -172,16 +220,22 @@ DELETE /wp-json/fluent-boards/v2/projects/{board_id}/labels/{label_id}
 }
 ```
 
-## Get Labels Used in Tasks
+## List Labels Used in Tasks
 
-Retrieve labels that are currently assigned to tasks.
+Retrieve the board labels that are attached to at least one task.
 
-**HTTP Request**
-```
+```http
 GET /wp-json/fluent-boards/v2/projects/{board_id}/labels/used-in-tasks
 ```
 
-### Example Response
+**Example Request**
+
+```bash
+curl "https://yourdomain.com/wp-json/fluent-boards/v2/projects/3/labels/used-in-tasks" \
+  -u "USERNAME:APPLICATION_PASSWORD"
+```
+
+**Example Response**
 
 ```json
 {
@@ -195,20 +249,6 @@ GET /wp-json/fluent-boards/v2/projects/{board_id}/labels/used-in-tasks
       "position": "0.00",
       "color": null,
       "bg_color": "#E6B0AA",
-      "settings": null,
-      "archived_at": null,
-      "created_at": "2024-12-24T08:43:51+00:00",
-      "updated_at": "2024-12-24T08:43:51+00:00"
-    },
-    {
-      "id": 35,
-      "board_id": "3",
-      "title": "improvement",
-      "slug": "",
-      "type": "label",
-      "position": "0.00",
-      "color": null,
-      "bg_color": "#AED6F1",
       "settings": null,
       "archived_at": null,
       "created_at": "2024-12-24T08:43:51+00:00",
@@ -232,16 +272,22 @@ GET /wp-json/fluent-boards/v2/projects/{board_id}/labels/used-in-tasks
 }
 ```
 
-## Get Task Labels
+## List Task Labels
 
-Retrieve all labels assigned to a specific task.
+Retrieve the labels attached to a task. The task must belong to the board.
 
-**HTTP Request**
-```
+```http
 GET /wp-json/fluent-boards/v2/projects/{board_id}/tasks/{task_id}/labels
 ```
 
-### Example Response
+**Example Request**
+
+```bash
+curl "https://yourdomain.com/wp-json/fluent-boards/v2/projects/3/tasks/149/labels" \
+  -u "USERNAME:APPLICATION_PASSWORD"
+```
+
+**Example Response**
 
 ```json
 {
@@ -266,58 +312,40 @@ GET /wp-json/fluent-boards/v2/projects/{board_id}/tasks/{task_id}/labels
         "created_at": "2024-12-24T08:43:53+00:00",
         "updated_at": "2024-12-24T08:43:53+00:00"
       }
-    },
-    {
-      "id": 35,
-      "board_id": "3",
-      "title": "improvement",
-      "slug": "",
-      "type": "label",
-      "position": "0.00",
-      "color": null,
-      "bg_color": "#AED6F1",
-      "settings": null,
-      "archived_at": null,
-      "created_at": "2024-12-24T08:43:51+00:00",
-      "updated_at": "2024-12-24T08:43:51+00:00",
-      "pivot": {
-        "object_id": "149",
-        "foreign_id": "35",
-        "settings": null,
-        "created_at": "2024-12-24T08:43:53+00:00",
-        "updated_at": "2024-12-24T08:43:53+00:00"
-      }
     }
   ]
 }
 ```
 
-## Assign Labels to Task
+## Add a Label to a Task
 
-Assign one or more labels to a task.
+Attach an existing board label to a task. The task and the label must both belong to the board. Adding a label that is already attached does nothing.
 
-**HTTP Request**
-```
+```http
 POST /wp-json/fluent-boards/v2/projects/{board_id}/labels/task
 ```
 
-### Request Body
+**Parameters**
 
 | Parameter | Type | Required | Description |
-|-----------|------|----------|-------------|
-| `taskId` | integer | Yes | The ID of the task |
-| `labelId` | integer | Yes | The ID of the label to assign |
+|---|---|---|---|
+| `taskId` | integer | Yes | Task ID |
+| `labelId` | integer | Yes | Label ID |
 
-### Example Request Data
+**Example Request**
 
+```bash
+curl "https://yourdomain.com/wp-json/fluent-boards/v2/projects/3/labels/task" \
+  -X POST \
+  -u "USERNAME:APPLICATION_PASSWORD" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "taskId": 149,
+    "labelId": 33
+  }'
 ```
-{
-  "taskId": 149,
-  "labelId": 33
-}
-```
 
-### Example Response
+**Example Response**
 
 ```json
 {
@@ -346,16 +374,23 @@ POST /wp-json/fluent-boards/v2/projects/{board_id}/labels/task
 }
 ```
 
-## Remove Label from Task
+## Remove a Label from a Task
 
-Remove a specific label from a task.
+Detach a label from a task. The label itself is kept on the board.
 
-**HTTP Request**
-```
+```http
 DELETE /wp-json/fluent-boards/v2/projects/{board_id}/tasks/{task_id}/labels/{label_id}
 ```
 
-### Example Response
+**Example Request**
+
+```bash
+curl "https://yourdomain.com/wp-json/fluent-boards/v2/projects/3/tasks/149/labels/33" \
+  -X DELETE \
+  -u "USERNAME:APPLICATION_PASSWORD"
+```
+
+**Example Response**
 
 ```json
 {
@@ -365,12 +400,6 @@ DELETE /wp-json/fluent-boards/v2/projects/{board_id}/tasks/{task_id}/labels/{lab
 
 ## Error Responses
 
+Label endpoints return `400` with `Label not found` when the label does not belong to `{board_id}`, and with a task-not-found message when the task is on another board.
+
 See [Common Error Responses](/rest-api/shared/error-responses) for standard error formats.
-
-### Common Label-Specific Errors
-
-- **404 Not Found** - Label not found
-- **403 Forbidden** - You don't have permission to manage labels
-- **400 Bad Request** - Invalid label data or missing required fields
-
- 

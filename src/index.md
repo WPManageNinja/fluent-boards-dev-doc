@@ -77,6 +77,7 @@ pageClass: docs-home
       <li><a href="/hooks/filters/">Filter Hooks</a></li>
       <li><a href="/global-functions/">Global Functions</a></li>
       <li><a href="/helpers/">Helper Classes</a></li>
+      <li><a href="/cli/">WP-CLI Commands</a></li>
     </ul>
   </div>
 </section>
@@ -107,7 +108,11 @@ pageClass: docs-home
       <li><a href="/rest-api/">Overview</a></li>
       <li><a href="/rest-api/boards">Boards</a></li>
       <li><a href="/rest-api/tasks">Tasks</a></li>
-      <li><a href="/rest-api/users">Users</a></li>
+      <li><a href="/rest-api/subtasks">Subtasks</a></li>
+      <li><a href="/rest-api/comments">Comments</a></li>
+      <li><a href="/rest-api/attachments">Attachments</a></li>
+      <li><a href="/rest-api/users">Users &amp; Members</a></li>
+      <li><a href="/rest-api/webhooks">Webhooks</a></li>
     </ul>
   </div>
 </section>

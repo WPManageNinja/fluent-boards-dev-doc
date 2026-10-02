@@ -35,3 +35,15 @@ Newest entries at the bottom. Original plan: `vitepress-migration-and-sync.md` (
     `ajax_options_task_assignees` filter unreachable.
 - Dispatched 7 writer agents with disjoint file ownership (REST ×4, hooks, DB/models, functions/helpers/CLI/modules/getting-started).
   Shared rules in `rest-style-guide.md`. I own `.vitepress/**`, builds and commits.
+
+## Iteration 3 — 2026-10-02 — Phases 4 + 5 committed, Phase 3 mostly done
+
+- Hooks (8cd8e91): 140 public hooks across actions/{boards,tasks,comments,app} and filters/{data,ui,integrations};
+  one more wrong entry found beyond the inventory (`comment_updated` arg 2 is old text).
+- Data layer (a9c90ca): 13 tables, 22 models (8 new pages), 19 global functions, 28 PHP API methods, CLI and
+  modules rewritten; `getInstance()` removed; Str::orderedUuid / preg_replace_array removed.
+- REST: 3 of 4 writers done (boards/activities/public-boards; tasks/subtasks/comments/attachments/dashboard;
+  stages/labels/custom-fields/templates/folders/time-tracking/roadmaps/notifications). Waiting on users/admin/misc.
+- Build green with dead-link checks.
+- Plugin-code issues are collected in `plugin-code-findings.md` (≈70 items, several security-relevant — see the
+  S entries, especially the fluent-roadmap unauthenticated comment delete).

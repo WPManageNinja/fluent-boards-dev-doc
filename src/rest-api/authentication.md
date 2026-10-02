@@ -37,20 +37,32 @@ Application passwords are different from your regular WordPress password and are
 
 ### Basic Authentication (Recommended)
 
-Use HTTP Basic Authentication with your API credentials:
+Use HTTP Basic Authentication with your WordPress username and the Application Password. With curl, `-u` builds the header for you:
 
 ```bash
 curl "https://yourdomain.com/wp-json/fluent-boards/v2/projects" \
-  -H "Authorization: Basic $(echo -n 'API_USERNAME:API_PASSWORD' | base64)"
+  -u "USERNAME:APPLICATION_PASSWORD"
 ```
+
+If you set the header yourself, the `username:password` pair must be base64-encoded:
+
+```bash
+curl "https://yourdomain.com/wp-json/fluent-boards/v2/projects" \
+  -H "Authorization: Basic $(echo -n 'USERNAME:APPLICATION_PASSWORD' | base64)"
+```
+
+::: tip
+Application Passwords only work over HTTPS (or on a local site where WordPress allows them). The spaces WordPress shows in the generated password are optional.
+:::
 
 ### Cookie Authentication (Not Recommended for API)
 
-For testing only, you can use cookie authentication, but this is not recommended for API access:
+Requests from a logged-in browser session (like the FluentBoards admin app) authenticate with the WordPress login cookie plus a REST nonce in the `X-WP-Nonce` header (`wp_create_nonce('wp_rest')`). Without the nonce, WordPress treats the request as logged out:
 
 ```bash
 curl "https://yourdomain.com/wp-json/fluent-boards/v2/projects" \
-  -H "Cookie: wordpress_logged_in_xxx=your_cookie_value"
+  -H "Cookie: wordpress_logged_in_xxx=your_cookie_value" \
+  -H "X-WP-Nonce: your_rest_nonce"
 ```
 
 ::: warning Security Notice
@@ -62,31 +74,42 @@ Never use cookie authentication for API access in production. Always use Applica
 Here's a complete example of making an authenticated API request:
 
 ```bash
-curl "https://yourdomain.com/wp-json/fluent-boards/v2/projects" \
-  -H "Authorization: Basic API_USERNAME:API_PASSWORD" \
-  -H "Content-Type: application/json"
+curl "https://yourdomain.com/wp-json/fluent-boards/v2/projects?per_page=10" \
+  -u "USERNAME:APPLICATION_PASSWORD"
 ```
 
 ### Response
 
 ```json
 {
-  "data": [
-    {
-      "id": 1,
-      "title": "Project Alpha",
-      "description": "Main project board",
-      "status": "active",
-      "created_at": "2024-01-15T10:30:00Z",
-      "updated_at": "2024-01-15T10:30:00Z"
-    }
-  ],
-  "message": "Success",
-  "total": 1,
-  "current_page": 1,
-  "per_page": 15
+  "boards": {
+    "current_page": 1,
+    "data": [
+      {
+        "id": 1,
+        "title": "Project Alpha",
+        "description": "Main project board",
+        "type": "to-do",
+        "archived_at": null,
+        "is_pinned": false,
+        "completed_tasks_count": 4,
+        "created_at": "2024-01-15T10:30:00+00:00",
+        "updated_at": "2024-01-15T10:30:00+00:00"
+      }
+    ],
+    "per_page": 10,
+    "total": 1,
+    "last_page": 1
+  },
+  "board_counts": {
+    "all": 1,
+    "pinned": 0,
+    "archived": 0
+  }
 }
 ```
+
+The board list is shortened. See [List Boards](/rest-api/boards) for the full response.
 
 ## Programming Language Examples
 
@@ -94,8 +117,8 @@ curl "https://yourdomain.com/wp-json/fluent-boards/v2/projects" \
 
 ```php
 <?php
-$username = 'your_api_username';
-$password = 'your_api_password';
+$username = 'your_username';
+$password = 'your_application_password';
 $url = 'https://yourdomain.com/wp-json/fluent-boards/v2/projects';
 
 $ch = curl_init();
@@ -118,7 +141,7 @@ $data = json_decode($response, true);
 ```javascript
 const axios = require('axios');
 
-const apiCredentials = Buffer.from('API_USERNAME:API_PASSWORD').toString('base64');
+const apiCredentials = Buffer.from('USERNAME:APPLICATION_PASSWORD').toString('base64');
 
 const config = {
   headers: {
@@ -142,8 +165,8 @@ axios.get('https://yourdomain.com/wp-json/fluent-boards/v2/projects', config)
 import requests
 from requests.auth import HTTPBasicAuth
 
-username = 'your_api_username'
-password = 'your_api_password'
+username = 'your_username'
+password = 'your_application_password'
 url = 'https://yourdomain.com/wp-json/fluent-boards/v2/projects'
 
 response = requests.get(
@@ -167,8 +190,8 @@ require 'net/http'
 require 'uri'
 require 'base64'
 
-username = 'your_api_username'
-password = 'your_api_password'
+username = 'your_username'
+password = 'your_application_password'
 url = URI('https://yourdomain.com/wp-json/fluent-boards/v2/projects')
 
 http = Net::HTTP.new(url.host, url.port)
@@ -188,10 +211,10 @@ To verify your credentials are working, make a simple API call:
 
 ```bash
 curl "https://yourdomain.com/wp-json/fluent-boards/v2/projects" \
-  -H "Authorization: Basic API_USERNAME:API_PASSWORD"
+  -u "USERNAME:APPLICATION_PASSWORD"
 ```
 
-If successful, you'll receive a JSON response with your projects data.
+If successful, you'll receive a JSON response with your boards. A `401` response (for example `incorrect_password` or `rest_forbidden`) means WordPress did not accept the credentials.
 
 ## Troubleshooting
 
@@ -215,10 +238,13 @@ If successful, you'll receive a JSON response with your projects data.
 
 ### Permission Requirements
 
-Your API user account needs these minimum permissions:
-- **WordPress Administrator role**: Full access to all endpoints
-- **Appropriate capabilities**: Required for the specific operations you're performing
-- **FluentBoards access**: User must have access to FluentBoards features
+The API applies the same permissions as the FluentBoards app:
+
+- **WordPress administrators** (`manage_options`) and **FluentBoards admins** can use every endpoint, including admin settings, webhooks and imports.
+- **Board managers, members and viewers** can only reach the boards they belong to. Viewers are read-only; some actions (deleting tasks, managing members, board settings) need the board manager role.
+- A logged-in user who is not on any board can only use a few user-level endpoints.
+
+See [Managers & Roles](/rest-api/permissions#permission-model) for the full role model.
 
 ## Security Best Practices
 

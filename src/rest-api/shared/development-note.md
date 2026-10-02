@@ -1,23 +1,11 @@
-> **Note:** This documentation is under development. The API endpoints and features described here are subject to change as the Fluent Boards platform evolves.
+# Development Note
 
-## Overview
+> **Note:** The REST API follows the FluentBoards plugin code. Endpoints, parameters and response keys can change between plugin releases, so check the changelog when you upgrade.
 
-This API provides endpoints for managing [RESOURCE_NAME] in Fluent Boards.
-
-## Base Endpoint
+Every endpoint lives under the base URL:
 
 ```
-/fluent-boards/v2/[RESOURCE_PATH]
+https://yourdomain.com/wp-json/fluent-boards/v2
 ```
 
-## Available Endpoints
-
-[ENDPOINT_LIST]
-
-## Features
-
-[FEATURE_LIST]
-
----
-
-*This documentation will be expanded with detailed examples and complete API reference.* 
+See the [REST API overview](/rest-api/) for the list of resources and [Common Error Responses](/rest-api/shared/error-responses) for error formats.

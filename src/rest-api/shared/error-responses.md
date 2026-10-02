@@ -1,97 +1,109 @@
 # Common Error Responses
 
-All Fluent Boards API endpoints may return the following standard error responses:
+Fluent Boards API errors use standard HTTP status codes. The body depends on where the request failed. There is no single error envelope.
 
-## 400 Bad Request
+## Permission check failed (401 / 403)
 
-```json
-{
-  "code": "rest_invalid_param",
-  "message": "Invalid parameter: title is required",
-  "data": {
-    "status": 400
-  }
-}
-```
-
-## 401 Unauthorized
-
-```json
-{
-  "code": "rest_unauthorized",
-  "message": "Authentication required",
-  "data": {
-    "status": 401
-  }
-}
-```
-
-## 403 Forbidden
+Every route has a permission policy. When it denies the request, WordPress answers with its standard error. The status is `401` when the request is not authenticated and `403` when the user is logged in but not allowed.
 
 ```json
 {
   "code": "rest_forbidden",
-  "message": "You don't have permission to access this resource",
+  "message": "Sorry, you are not allowed to do that.",
   "data": {
     "status": 403
   }
 }
 ```
 
-## 404 Not Found
+Wrong Application Password credentials are rejected by WordPress before the policy runs, for example:
 
 ```json
 {
-  "code": "rest_not_found",
-  "message": "Resource not found",
+  "code": "incorrect_password",
+  "message": "The provided password is an invalid application password.",
+  "data": {
+    "status": 401
+  }
+}
+```
+
+## Validation error (422)
+
+When request validation fails, the body maps each field to the failed rule and its message:
+
+```json
+{
+  "title": {
+    "required": "The title field is required."
+  }
+}
+```
+
+## Endpoint errors (4xx)
+
+Most controllers return a JSON object with a `message`, and sometimes extra keys:
+
+```json
+{
+  "message": "Task not found."
+}
+```
+
+A few endpoints send the message as a plain JSON string instead:
+
+```json
+"Name, board and stage are required"
+```
+
+The status is whatever the endpoint sets (`400`, `403`, `404`, `409`, `422`). When an endpoint asks for a status below 400, the framework sends `422` instead.
+
+## Record not found (404)
+
+When a requested record does not exist, the framework returns:
+
+```json
+{
+  "message": "No query results for model [FluentBoards\\App\\Models\\Board] 999"
+}
+```
+
+## Unhandled exception (500)
+
+An uncaught exception returns the exception message, with the exception code as the status (or `500`):
+
+```json
+{
+  "code": "plugin_exception",
+  "data": {},
+  "message": "Something went wrong"
+}
+```
+
+With `WP_DEBUG` on, `data` contains the `file` and `line` of the exception.
+
+## Unknown route (404)
+
+A path or method that does not exist returns the WordPress REST error:
+
+```json
+{
+  "code": "rest_no_route",
+  "message": "No route was found matching the URL and request method.",
   "data": {
     "status": 404
   }
 }
 ```
 
-## 422 Validation Error
+## Status codes
 
-```json
-{
-  "code": "rest_invalid_param",
-  "message": "Validation failed",
-  "data": {
-    "status": 422,
-    "params": {
-      "title": "Title is required"
-    }
-  }
-}
-```
-
-## 500 Internal Server Error
-
-```json
-{
-  "code": "rest_server_error",
-  "message": "Internal server error",
-  "data": {
-    "status": 500
-  }
-}
-```
-
-## Error Response Format
-
-All error responses follow this structure:
-
-| Field | Type | Description |
-|-------|------|-------------|
-| `code` | string | Error code identifier |
-| `message` | string | Human-readable error message |
-| `data.status` | integer | HTTP status code |
-| `data.params` | object | Validation errors (422 only) |
-
-## Common Error Codes
-
-- `rest_invalid_param` - Invalid or missing parameters
-- `rest_unauthorized` - Authentication required
-- `rest_forbidden` - Insufficient permissions
-- `rest_not_found` - Resource not found
-- `rest_server_error` - Internal server error 
+| Code | Meaning |
+|------|---------|
+| 400 | Bad request or failed operation |
+| 401 | Not authenticated, or invalid credentials |
+| 403 | Authenticated but not allowed |
+| 404 | Route or record not found |
+| 409 | Conflict (for example, user already a board member) |
+| 422 | Validation or business-rule error |
+| 500 | Unhandled server error |
