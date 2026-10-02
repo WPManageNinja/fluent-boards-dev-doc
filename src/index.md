@@ -1,10 +1,11 @@
 ---
 title: Developer Docs
-tagline: Resources and tutorials for FluentBoards developer
+description: Resources and tutorials for FluentBoards developers
+layout: page
 sidebar: false
 prev: false
 next: false
-editLink: true
+editLink: false
 pageClass: docs-home
 ---
 
@@ -57,10 +58,10 @@ pageClass: docs-home
   </div>
   <div>
     <ul>
-      <li><a href="./database/">Database Schema</a></li>
-      <li><a href="./database/models/">Database Model Basics</a></li>
-      <li><a href="./database/models/task">Task Model</a></li>
-      <li><a href="./database/models/board">Board Model</a></li>
+      <li><a href="/database/">Database Schema</a></li>
+      <li><a href="/database/models/">Database Model Basics</a></li>
+      <li><a href="/database/models/task">Task Model</a></li>
+      <li><a href="/database/models/board">Board Model</a></li>
     </ul>
   </div>
 </section>
@@ -72,10 +73,10 @@ pageClass: docs-home
   </div>
   <div>
     <ul>
-      <li><a href="./hooks/actions/">Action Hooks</a></li>
-      <li><a href="./hooks/filters/">Filter Hooks</a></li>
-      <li><a href="./global-functions/">Global Functions</a></li>
-      <li><a href="./helpers/">Helper Classes</a></li>
+      <li><a href="/hooks/actions/">Action Hooks</a></li>
+      <li><a href="/hooks/filters/">Filter Hooks</a></li>
+      <li><a href="/global-functions/">Global Functions</a></li>
+      <li><a href="/helpers/">Helper Classes</a></li>
     </ul>
   </div>
 </section>
@@ -88,10 +89,10 @@ pageClass: docs-home
 </div>
   <div>
     <ul>
-      <li><a href="./modules/">Boards</a></li>
-      <li><a href="./modules/boards/">Boards</a></li>
-      <li><a href="./modules/stages/">Stages</a></li>
-      <li><a href="./modules/tasks/">Tasks</a></li>
+      <li><a href="/modules/">Overview</a></li>
+      <li><a href="/modules/boards">Boards</a></li>
+      <li><a href="/modules/stages">Stages</a></li>
+      <li><a href="/modules/tasks">Tasks</a></li>
     </ul>
   </div>
 </section>
@@ -103,10 +104,10 @@ pageClass: docs-home
   </div>
   <div>
     <ul>
-      <li><a href="./rest-api/">Overview</a></li>
-      <li><a href="./rest-api/boards">Boards</a></li>
-      <li><a href="./rest-api/tasks">Tasks</a></li>
-      <li><a href="./rest-api/users">Users</a></li>
+      <li><a href="/rest-api/">Overview</a></li>
+      <li><a href="/rest-api/boards">Boards</a></li>
+      <li><a href="/rest-api/tasks">Tasks</a></li>
+      <li><a href="/rest-api/users">Users</a></li>
     </ul>
   </div>
 </section>

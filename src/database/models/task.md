@@ -2,7 +2,7 @@
 
 | DB Table Name | {wp_db_prefix}_fbs_tasks                                            |
 |---------------|---------------------------------------------------------------------|
-| Schema        | <a :href="$withBase('/database/#fbs-tasks-table')">Check Schema</a> |
+| Schema        | [Check Schema](/database/#fbs-tasks-table) |
 | Source File   | fluent-boards/app/Models/Task.php                                   |
 | Name Space    | FluentBoards\App\Models                                             |
 | Class         | FluentBoards\App\Models\Task                                        |

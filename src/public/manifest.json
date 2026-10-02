@@ -1,9 +1,9 @@
 {
-  "name": "FluentCRM Developers",
-  "short_name": "fluentcrm-developers",
-  "description": "Resources and tutorials for FluentCRM developers",
+  "name": "FluentBoards Developers",
+  "short_name": "fluentboards-developers",
+  "description": "Resources and tutorials for FluentBoards developers",
   "lang": "en-US",
-  "start_url": "https://developers.fluentcrm.com/",
+  "start_url": "https://developers.fluentboards.com/",
   "background_color": "#ffffff",
   "theme_color": "#673ab7",
   "display": "standalone",

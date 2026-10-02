@@ -2,7 +2,7 @@
 
 | DB Table Name | {wp_db_prefix}_fbs_board_terms                                              |
 |---------------|-----------------------------------------------------------------------------|
-| Schema        | <a :href="$withBase('/database/#fbs-board-terms-table')">Check Schema</a> |
+| Schema        | [Check Schema](/database/#fbs-board-terms-table) |
 | Source File   | fluent-boards/app/Models/Stage.php                                          |
 | Name Space    | FluentBoards\App\Models                                                     |
 | Class         | FluentBoards\App\Models\Stage                                               |

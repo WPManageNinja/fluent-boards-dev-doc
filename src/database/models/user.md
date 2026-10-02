@@ -2,7 +2,7 @@
 
 | DB Table Name | {wp_db_prefix}_users                                            |
 |---------------|-----------------------------------------------------------------|
-| Schema        | <a :href="$withBase('/database/#users-table')">Check Schema</a> |
+| Schema        | [Check Schema](/database/#users-table) |
 | Source File   | fluent-boards/app/Models/User.php                               |
 | Name Space    | FluentBoards\App\Models                                          |
 | Class         | FluentBoards\App\Models\User                                     |

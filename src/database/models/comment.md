@@ -2,7 +2,7 @@
 
 | DB Table Name | {wp_db_prefix}_fbs_comment                                            |
 |---------------|-----------------------------------------------------------------------|
-| Schema        | <a :href="$withBase('/database/#fbs-comments-table')">Check Schema</a> |
+| Schema        | [Check Schema](/database/#fbs-comments-table) |
 | Source File   | fluent-boards/app/Models/Comment.php                                    |
 | Name Space    | FluentBoards\App\Models                                               |
 | Class         | FluentBoards\App\Models\Comment                                         |

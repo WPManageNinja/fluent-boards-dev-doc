@@ -2,7 +2,7 @@
 
 | DB Table Name | {wp_db_prefix}_fbs_teams                                            |
 |---------------|---------------------------------------------------------------------|
-| Schema        | <a :href="$withBase('/database/#fbs-teams-table')">Check Schema</a> |
+| Schema        | [Check Schema](/database/#fbs-teams-table) |
 | Source File   | fluent-boards/app/Models/Team.php                                   |
 | Name Space    | FluentBoards\App\Models                                              |
 | Class         | FluentBoards\App\Models\Team                                         |

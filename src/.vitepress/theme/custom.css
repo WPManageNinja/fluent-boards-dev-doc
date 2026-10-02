@@ -1,0 +1,452 @@
+/* FluentBoards developer docs — custom styles (ported from the VuePress stylus theme) */
+
+:root {
+    --fb-accent: #673ab7;
+    --fb-accent-strong: #3f2675;
+    --fb-surface: #ffffff;
+    --fb-surface-soft: #faf8fc;
+    --fb-border: #eee;
+    --fb-border-accent: #d7c8f4;
+    --fb-text: #1f1830;
+    --fb-text-muted: #3a2d53;
+    --fb-chip-bg: #f3eefc;
+    --fb-chip-fg: #5a3d92;
+}
+
+.dark {
+    --fb-accent: #a98bf0;
+    --fb-accent-strong: #d2c2ff;
+    --fb-surface: var(--vp-c-bg-soft);
+    --fb-surface-soft: var(--vp-c-bg-alt);
+    --fb-border: var(--vp-c-divider);
+    --fb-border-accent: #5b4a86;
+    --fb-text: var(--vp-c-text-1);
+    --fb-text-muted: var(--vp-c-text-2);
+    --fb-chip-bg: rgba(169, 139, 240, 0.14);
+    --fb-chip-fg: #d2c2ff;
+}
+
+/* ---------- Home page (layout: page, pageClass: docs-home) ---------- */
+
+.docs-home .VPPage {
+    padding: 0;
+}
+
+.docs-home a {
+    color: var(--fb-accent);
+}
+
+#home-hero {
+    background-color: var(--fb-surface-soft);
+    color: var(--fb-text);
+    text-align: center;
+    padding: 80px 1.5rem 100px;
+}
+
+#home-hero h1 {
+    font-weight: 700;
+    font-size: 48px;
+    line-height: 1.1;
+    margin: 0;
+}
+
+#home-hero p {
+    font-size: 18px;
+    line-height: 1.5;
+    max-width: 740px;
+    margin: 1rem auto 2rem;
+    color: var(--fb-text-muted);
+}
+
+#home-hero .hero-actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: .85rem;
+    margin: 1.75rem auto 1.25rem;
+}
+
+#home-hero .mini-note {
+    margin-top: 0;
+    font-size: .8rem;
+    opacity: .75;
+}
+
+#home-hero .btn {
+    text-decoration: none;
+    background: var(--fb-chip-bg);
+    color: var(--fb-chip-fg);
+    padding: .75rem 1.15rem;
+    font-weight: 600;
+    line-height: 1;
+    border-radius: 8px;
+    display: inline-flex;
+    align-items: center;
+    border: 1px solid var(--fb-border-accent);
+    font-size: .85rem;
+    transition: all .18s ease;
+}
+
+#home-hero .btn:hover {
+    border-color: #cbb5f7;
+    box-shadow: 0 4px 14px -2px rgba(103, 58, 183, .22);
+    transform: translateY(-2px);
+}
+
+#home-hero .btn.btn-primary {
+    background: linear-gradient(135deg, #7549d8, #673ab7);
+    color: #fff;
+    border-color: #673ab7;
+}
+
+#home-hero .btn.btn-outline {
+    background: transparent;
+}
+
+.home-feature-cards {
+    max-width: 1040px;
+    margin: -50px auto 40px;
+    padding: 0 1.5rem;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+    gap: 1.25rem;
+}
+
+.home-feature-cards .feature-card {
+    background: var(--fb-surface);
+    border: 1px solid var(--fb-border);
+    border-radius: 14px;
+    padding: 1.2rem 1.15rem 1.35rem;
+    transition: all .2s ease;
+    box-shadow: 0 2px 4px -1px rgba(0, 0, 0, .05);
+}
+
+.home-feature-cards .feature-card.wide {
+    grid-column: 1 / -1;
+    padding: 1.5rem 1.75rem 1.75rem;
+}
+
+.home-feature-cards .feature-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 22px -6px rgba(103, 58, 183, .25);
+    border-color: var(--fb-border-accent);
+}
+
+.home-feature-cards h3 {
+    margin: .25rem 0 .5rem;
+    font-size: 1rem;
+    font-weight: 700;
+}
+
+.home-feature-cards p {
+    margin: 0;
+    font-size: .85rem;
+    line-height: 1.45;
+    color: var(--fb-text-muted);
+}
+
+.home-feature-cards .capabilities-list {
+    margin: .65rem 0 .65rem;
+    padding-left: 1.1rem;
+    list-style: disc;
+    font-size: .85rem;
+    line-height: 1.45;
+}
+
+.home-feature-cards .capabilities-list li {
+    margin: .4rem 0;
+}
+
+.home-feature-cards .capabilities-list strong {
+    color: var(--fb-accent);
+}
+
+.home-content {
+    color: var(--fb-text);
+    max-width: 900px;
+    padding: 64px 1.5rem;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 2fr 1.5fr;
+    gap: 3rem;
+    align-items: start;
+    border-bottom: 1px solid var(--fb-border);
+}
+
+.home-content:last-child {
+    border-bottom: 0;
+}
+
+.home-content h2 {
+    font-weight: 700;
+    font-size: 32px;
+    line-height: 1.15;
+    margin: 0 0 .75rem;
+}
+
+.home-content p {
+    color: var(--fb-text-muted);
+    line-height: 1.6;
+}
+
+.home-content ul {
+    margin: 0;
+    padding-left: 1.1rem;
+    list-style: disc;
+    line-height: 2;
+}
+
+@media (max-width: 720px) {
+    #home-hero {
+        padding: 56px 1.25rem 90px;
+    }
+
+    #home-hero h1 {
+        font-size: 34px;
+    }
+
+    .home-content {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+        padding: 40px 1.25rem;
+    }
+
+    .home-content h2 {
+        font-size: 26px;
+    }
+}
+
+/* ---------- Getting started cards ---------- */
+
+.getting-started-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 1.25rem;
+    margin: 2rem 0 2.5rem;
+}
+
+.getting-started-cards .gs-card {
+    background: var(--fb-surface-soft);
+    padding: 1.25rem 1.15rem 1.35rem;
+    border: 1px solid var(--fb-border);
+    border-radius: 10px;
+    transition: all .18s ease;
+}
+
+.getting-started-cards .gs-card:hover {
+    box-shadow: 0 4px 14px -2px rgba(103, 58, 183, .18);
+    transform: translateY(-2px);
+    border-color: var(--fb-border-accent);
+}
+
+.vp-doc .getting-started-cards h3 {
+    margin: .15rem 0 .5rem;
+    padding: 0;
+    border: 0;
+    font-size: 1rem;
+    line-height: 1.35;
+}
+
+.vp-doc .getting-started-cards p {
+    margin: 0;
+    font-size: .85rem;
+    line-height: 1.45;
+}
+
+/* ---------- Community badge links ---------- */
+
+.community-links {
+    margin: 1.5rem 0 2.25rem;
+}
+
+.vp-doc .community-links .resource-badges {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: .65rem;
+}
+
+.vp-doc .community-links .resource-badges li {
+    margin: 0;
+}
+
+.vp-doc .community-links .badge-link {
+    display: inline-flex;
+    align-items: center;
+    gap: .4rem;
+    padding: .6rem .95rem;
+    font-size: .8rem;
+    font-weight: 600;
+    line-height: 1;
+    text-decoration: none;
+    border: 1px solid rgba(0, 0, 0, .07);
+    border-radius: 30px;
+    background: #f1f5f9;
+    color: #1e293b;
+    transition: .16s ease;
+}
+
+.vp-doc .community-links .badge-link:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px -2px rgba(0, 0, 0, .15);
+}
+
+.vp-doc .badge-link.site { background: #ede9fe; color: #5b21b6; }
+.vp-doc .badge-link.docs { background: #ecfdf5; color: #065f46; }
+.vp-doc .badge-link.dev { background: #e0f2fe; color: #075985; }
+.vp-doc .badge-link.blog { background: #fff7ed; color: #9a3412; }
+.vp-doc .badge-link.community { background: #fef2f2; color: #991b1b; }
+.vp-doc .badge-link.roadmap { background: #f0fdfa; color: #115e59; }
+.vp-doc .badge-link.facebook { background: #eff6ff; color: #1d4ed8; }
+.vp-doc .badge-link.support { background: #fdf2f8; color: #9d174d; }
+.vp-doc .badge-link.feature { background: #f5f3ff; color: #6d28d9; }
+
+.community-links .hint {
+    font-size: .8rem;
+    opacity: .75;
+}
+
+/* ---------- Capabilities showcase (getting started) ---------- */
+
+.capabilities-showcase {
+    margin: 1.75rem 0 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: .9rem;
+}
+
+.capabilities-showcase .cap-row {
+    display: grid;
+    grid-template-columns: 52px 1fr;
+    gap: 1rem;
+    padding: 1rem 1.1rem 1.15rem;
+    background: var(--fb-surface);
+    border: 1px solid var(--fb-border);
+    border-radius: 16px;
+    transition: .25s cubic-bezier(.4, .2, .2, 1);
+}
+
+.capabilities-showcase .cap-row:hover {
+    transform: translateY(-3px);
+    border-color: var(--fb-border-accent);
+    box-shadow: 0 10px 24px -8px rgba(103, 58, 183, .28);
+}
+
+.capabilities-showcase .cap-icon {
+    width: 52px;
+    height: 52px;
+    border-radius: 14px;
+    background: linear-gradient(135deg, #7549d8, #673ab7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.65rem;
+    color: #fff;
+}
+
+.capabilities-showcase .cap-body {
+    display: flex;
+    flex-direction: column;
+    gap: .4rem;
+}
+
+.vp-doc .capabilities-showcase .cap-body h3 {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    font-size: .95rem;
+    color: var(--fb-accent-strong);
+}
+
+.vp-doc .capabilities-showcase .cap-body p {
+    margin: 0;
+    font-size: .85rem;
+    line-height: 1.45;
+}
+
+.capabilities-showcase .badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .4rem;
+}
+
+.vp-doc .capabilities-showcase .badges code {
+    background: var(--fb-chip-bg);
+    color: var(--fb-chip-fg);
+    font-size: .7rem;
+}
+
+.capabilities-foot-note {
+    font-size: .8rem;
+    opacity: .7;
+}
+
+.capabilities-foot-note.alt {
+    text-align: center;
+}
+
+/* ---------- Tables ---------- */
+
+.vp-doc table.nowrap {
+    display: table;
+    width: 100%;
+    text-align: left;
+}
+
+.vp-doc table.nowrap thead th {
+    background: #673ab7;
+    color: #fff;
+}
+
+/* ---------- Misc content helpers ---------- */
+
+.listed_internals ul li {
+    margin-bottom: 10px;
+}
+
+/* ---------- Hook explain blocks (ExplainBlock component) ---------- */
+
+.hook_explain {
+    border: 1px solid var(--vp-c-divider);
+    border-radius: 8px;
+    margin: 0 0 16px;
+    overflow: hidden;
+}
+
+.vp-doc .hook_explain .explain_header {
+    position: relative;
+    margin: 0;
+    padding: 10px 44px 10px 15px;
+    background: var(--vp-c-bg-soft);
+    cursor: pointer;
+    font-size: 17px;
+    font-weight: 600;
+    border: 0;
+    word-break: break-word;
+}
+
+.hook_explain .hook_dir {
+    position: absolute;
+    right: 14px;
+    top: 50%;
+    transform: translateY(-50%) rotate(-90deg);
+    transition: transform .15s ease;
+    display: flex;
+    color: var(--vp-c-text-2);
+}
+
+.hook_explain .hook_dir.is_open {
+    transform: translateY(-50%);
+}
+
+.hook_explain .hook_dir svg {
+    width: 20px;
+    height: 20px;
+}
+
+.hook_explain .hook_body {
+    padding: 4px 20px 8px;
+    border-top: 1px solid var(--vp-c-divider);
+}

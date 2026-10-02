@@ -2,7 +2,7 @@
 
 | DB Table Name | {wp_db_prefix}_fbs_Activity                                            |
 |---------------|-----------------------------------------------------------------------|
-| Schema        | <a :href="$withBase('/database/#fbs-activities-table')">Check Schema</a> |
+| Schema        | [Check Schema](/database/#fbs-activities-table) |
 | Source File   | fluent-boards/app/Models/Activity.php                                    |
 | Name Space    | FluentBoards\App\Models                                               |
 | Class         | FluentBoards\App\Models\Activity                                         |

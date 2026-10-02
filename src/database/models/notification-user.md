@@ -2,7 +2,7 @@
 
 | DB Table Name | {wp_db_prefix}_fbs_NotificationUsers                                             |
 |---------------|----------------------------------------------------------------------------------|
-| Schema        | <a :href="$withBase('/database/#fbs-notification-users-table')">Check Schema</a> |
+| Schema        | [Check Schema](/database/#fbs-notification-users-table) |
 | Source File   | fluent-boards/app/Models/NotificationUser.php                                    |
 | Name Space    | FluentBoards\App\Models                                               |
 | Class         | FluentBoards\App\Models\NotificationUser                              |
