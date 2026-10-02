@@ -1,143 +1,123 @@
 # Time Tracking
 
-The Time Tracking API allows you to manage time tracking for tasks in Fluent Boards. You can commit manual time entries, update or delete tracks, and generate time reports.
+The Time Tracking API lets you log work time on tasks, set a time estimate, edit or delete logs, and pull timesheet reports. Plugin source: Pro (Time Tracking module).
+
+::: tip Pro
+All endpoints on this page need Fluent Boards Pro with the **Time Tracking** module turned on. When the module is off, the write endpoints (log, estimate, update, delete) return `403` with `Time tracking is disabled`.
+:::
+
+Task-level endpoints use `SingleBoardPolicy`: the user must be a member of the board, and board viewers can only call `GET` endpoints. The task must belong to `{board_id}`.
+
+## Endpoints
+
+| Method | Endpoint | Description |
+|---|---|---|
+| GET | `/projects/{board_id}/tasks/{task_id}/time-tracks` | List a task's time logs and estimate |
+| POST | `/projects/{board_id}/tasks/{task_id}/time-tracks` | Log time manually |
+| POST | `/projects/{board_id}/tasks/{task_id}/time-tracks/estimated-time` | Set the task's time estimate |
+| PUT | `/projects/{board_id}/tasks/{task_id}/time-tracks/commit/{track_id}` | Update a time log |
+| DELETE | `/projects/{board_id}/tasks/{task_id}/time-tracks/{track_id}` | Delete a time log |
+| GET | `/projects/timesheet/by-tasks` | Timesheet grouped by task |
+| GET | `/projects/timesheet/by-users` | Timesheet grouped by user |
 
 ## Time Track Object
 
-A time track represents a time tracking session for a task.
-
-### Properties
+Time logs are stored in the `fbs_time_tracks` table.
 
 | Property | Type | Description |
-|----------|------|-------------|
-| `id` | integer | Unique identifier for the time track |
-| `task_id` | integer | ID of the task being tracked |
-| `board_id` | integer | ID of the board/project |
-| `user_id` | integer | ID of the user tracking time |
-| `started_at` | string | Start time of the tracking session |
-| `completed_at` | string | End time of the tracking session |
-| `status` | string | Status of the time track (active, paused, completed) |
-| `working_minutes` | integer | Worked minutes (system-calculated or committed) |
+|---|---|---|
+| `id` | integer | Time track ID |
+| `task_id` | integer | Task the time was logged on |
+| `board_id` | integer | Board of the task |
+| `user_id` | integer | User who logged the time |
+| `started_at` | string | Start time (defaults to the creation time) |
+| `completed_at` | string | Date the work was done. Timesheets group logs by this date |
+| `status` | string | `commited` for logged entries |
+| `working_minutes` | integer | Worked minutes (same as `billable_minutes` for manual logs) |
 | `billable_minutes` | integer | Billable minutes |
-| `is_manual` | integer | 1 if manually committed; 0 if auto-tracked |
-| `message` | string | Description/notes of the work |
+| `is_manual` | integer | `1` for manual logs |
+| `message` | string | Work notes (HTML allowed, passed through `wp_kses_post`) |
 | `created_at` | string | Creation timestamp |
 | `updated_at` | string | Last update timestamp |
 
-### Status Values
+## List Time Tracks for a Task <Badge type="tip" text="Pro" />
 
-- `active` - Currently tracking time
-- `paused` - Time tracking is paused
-- `completed` - Time tracking session completed
-- `commited` - Time entry manually committed
+Retrieve every time log of a task (newest first, each with its `user`) and the task's time estimate.
 
-## Get Time Tracks for a Task
-
-Retrieve all time tracks for a specific task.
-
-**HTTP Request**
-```
+```http
 GET /wp-json/fluent-boards/v2/projects/{board_id}/tasks/{task_id}/time-tracks
 ```
 
-### Example Request
+**Example Request**
 
 ```bash
-curl "https://yourdomain.com/wp-json/fluent-boards/v2/projects/1/tasks/1/time-tracks" \
-  -H "Authorization: Basic API_USERNAME:API_PASSWORD"
+curl "https://yourdomain.com/wp-json/fluent-boards/v2/projects/7/tasks/272/time-tracks" \
+  -u "USERNAME:APPLICATION_PASSWORD"
 ```
 
-### Example Response
+**Example Response**
+
+`estimated_minutes` is `0` when no estimate is set.
 
 ```json
 {
   "tracks": [
     {
-      "id": 1,
-      "task_id": 1,
-      "board_id": 1,
-      "user_id": 1,
-      "started_at": "2025-08-06 10:00:00",
-      "completed_at": "2025-08-06 12:00:00",
-      "status": "completed",
-      "working_minutes": 120,
-      "billable_minutes": 0,
-      "is_manual": 0,
-      "message": "Design work on homepage",
-      "created_at": "2025-08-06 10:00:00",
-      "updated_at": "2025-08-06 12:00:00",
-      "user": {
-        "ID": 1,
-        "display_name": "John Doe",
-        "user_email": "john@example.com"
-      }
-    },
-    {
       "id": 2,
-      "task_id": 1,
-      "board_id": 1,
       "user_id": 1,
-      "started_at": "2025-08-06 14:00:00",
-      "completed_at": null,
-      "status": "active",
-      "working_minutes": 0,
-      "billable_minutes": 0,
-      "is_manual": 0,
-      "message": "Continued design work",
-      "created_at": "2025-08-06 14:00:00",
-      "updated_at": "2025-08-06 14:00:00",
+      "board_id": 7,
+      "task_id": 272,
+      "started_at": "2025-08-08 08:57:05",
+      "completed_at": "2025-08-08 00:00:00",
+      "status": "commited",
+      "working_minutes": 60,
+      "billable_minutes": 60,
+      "is_manual": 1,
+      "message": "Design work on homepage",
+      "created_at": "2025-08-08T08:57:05+00:00",
+      "updated_at": "2025-08-08T08:57:05+00:00",
       "user": {
         "ID": 1,
         "display_name": "John Doe",
-        "user_email": "john@example.com"
+        "photo": "https://secure.gravatar.com/avatar/...?s=128&d=mm&r=g"
       }
     }
   ],
-  "estimated_minutes": 60
+  "estimated_minutes": 120
 }
 ```
 
+## Log Time Manually <Badge type="tip" text="Pro" />
 
+Create a time log for the current user on a task.
 
-## Commit Time Tracking (Manual Entry)
-
-Create a manual time track entry.
-
-**HTTP Request**
-```
+```http
 POST /wp-json/fluent-boards/v2/projects/{board_id}/tasks/{task_id}/time-tracks
 ```
 
-### Parameters
-
-| Parameter | Type | Description |
-|-----------|------|-------------|
-| `board_id` | integer | The ID of the project |
-| `task_id` | integer | The ID of the task |
-
-### Request Body
+**Parameters**
 
 | Parameter | Type | Required | Description |
-|-----------|------|----------|-------------|
-| `billable_minutes` | integer | Yes | Total billable minutes |
-| `message` | string | No | Description/notes |
-| `completed_at` | string | No | End time (YYYY-MM-DD HH:MM:SS; timezone suffix allowed) |
-| `started_at` | string | No | Start time (YYYY-MM-DD HH:MM:SS) |
+|---|---|---|---|
+| `billable_minutes` | integer | Yes | Minutes worked, at least `1`. Saved as both billable and working minutes |
+| `message` | string | No | Work notes |
+| `completed_at` | string | No | Date of the work, any format PHP can parse (a JavaScript `Date.toString()` suffix such as ` (Coordinated Universal Time)` is stripped). Defaults to now |
 
-### Example Request
+**Example Request**
 
 ```bash
-curl -X POST "https://yourdomain.com/wp-json/fluent-boards/v2/projects/{board_id}/tasks/{task_id}/time-tracks" \
-  -H "Authorization: Basic API_USERNAME:API_PASSWORD" \
+curl "https://yourdomain.com/wp-json/fluent-boards/v2/projects/7/tasks/272/time-tracks" \
+  -X POST \
+  -u "USERNAME:APPLICATION_PASSWORD" \
   -H "Content-Type: application/json" \
   -d '{
     "billable_minutes": 60,
-    "message": "Lorem ipsum",
+    "message": "Design work on homepage",
     "completed_at": "2025-08-08"
   }'
 ```
 
-### Example Response
+**Example Response**
 
 ```json
 {
@@ -146,7 +126,7 @@ curl -X POST "https://yourdomain.com/wp-json/fluent-boards/v2/projects/{board_id
     "completed_at": "2025-08-08 00:00:00",
     "billable_minutes": 60,
     "working_minutes": 60,
-    "message": "Lorem ipsum",
+    "message": "Design work on homepage",
     "user_id": 1,
     "board_id": "7",
     "is_manual": 1,
@@ -157,54 +137,39 @@ curl -X POST "https://yourdomain.com/wp-json/fluent-boards/v2/projects/{board_id
     "id": 2,
     "user": {
       "ID": 1,
-      "user_login": "saikatcdas55Cancrie",
-      "user_nicename": "saikat-c-das",
-      "user_email": "saikatcdas@gmail.com",
-      "user_url": "http://saikatcdas.com",
-      "user_registered": "2024-08-28 03:33:23",
-      "user_status": "0",
-      "display_name": "Saikat Chandra Das",
-      "photo": "https://secure.gravatar.com/avatar/628af4ad6672a9298e1e76af147689ba889521e9f7a65ac212ea70bdc2e8c6a1?s=128&d=mm&r=g"
+      "display_name": "John Doe",
+      "photo": "https://secure.gravatar.com/avatar/...?s=128&d=mm&r=g"
     }
   },
   "message": "You have successfully submitted your working time"
 }
 ```
 
-## Update Time Estimation
+## Set Time Estimate <Badge type="tip" text="Pro" />
 
-Update the estimated time for a task.
+Set the estimated time for a task. The value is stored in task meta `_estimated_minutes`.
 
-**HTTP Request**
-```
+```http
 POST /wp-json/fluent-boards/v2/projects/{board_id}/tasks/{task_id}/time-tracks/estimated-time
 ```
 
-### Parameters
-
-| Parameter | Type | Description |
-|-----------|------|-------------|
-| `board_id` | integer | The ID of the project |
-| `task_id` | integer | The ID of the task |
-
-### Request Body
+**Parameters**
 
 | Parameter | Type | Required | Description |
-|-----------|------|----------|-------------|
-| `estimated_minutes` | integer | Yes | Estimated time in minutes |
+|---|---|---|---|
+| `estimated_minutes` | integer | Yes | Estimate in minutes. `0` clears it |
 
-### Example Request
+**Example Request**
 
 ```bash
-curl -X POST "https://yourdomain.com/wp-json/fluent-boards/v2/projects/1/tasks/1/time-tracks/estimated-time" \
-  -H "Authorization: Basic API_USERNAME:API_PASSWORD" \
+curl "https://yourdomain.com/wp-json/fluent-boards/v2/projects/7/tasks/272/time-tracks/estimated-time" \
+  -X POST \
+  -u "USERNAME:APPLICATION_PASSWORD" \
   -H "Content-Type: application/json" \
-  -d '{
-    "estimated_minutes": 60
-  }'
+  -d '{"estimated_minutes": 120}'
 ```
 
-### Example Response
+**Example Response**
 
 ```json
 {
@@ -212,79 +177,37 @@ curl -X POST "https://yourdomain.com/wp-json/fluent-boards/v2/projects/1/tasks/1
 }
 ```
 
-## Delete a Time Track
+## Update a Time Track <Badge type="tip" text="Pro" />
 
-Delete a specific time tracking session.
+Edit a time log. Members can edit only their own logs; board managers can edit any log on the board.
 
-**HTTP Request**
-```
-DELETE /wp-json/fluent-boards/v2/projects/{board_id}/tasks/{task_id}/time-tracks/{track_id}
-```
-
-### Parameters
-
-| Parameter | Type | Description |
-|-----------|------|-------------|
-| `board_id` | integer | The ID of the project |
-| `task_id` | integer | The ID of the task |
-| `track_id` | integer | The ID of the time track |
-
-### Example Request
-
-```bash
-curl -X DELETE "https://yourdomain.com/wp-json/fluent-boards/v2/projects/1/tasks/1/time-tracks/1" \
-  -H "Authorization: Basic API_USERNAME:API_PASSWORD"
-```
-
-### Example Response
-
-```json
-{
-  "success": true,
-  "message": "Selected time track has been deleted"
-}
-```
-
-## Update a Time Track
-
-Update an existing time tracking session.
-
-**HTTP Request**
-```
+```http
 PUT /wp-json/fluent-boards/v2/projects/{board_id}/tasks/{task_id}/time-tracks/commit/{track_id}
 ```
 
-### Parameters
-
-| Parameter | Type | Description |
-|-----------|------|-------------|
-| `board_id` | integer | The ID of the project |
-| `task_id` | integer | The ID of the task |
-| `track_id` | integer | The ID of the time track |
-
-### Request Body
+**Parameters**
 
 | Parameter | Type | Required | Description |
-|-----------|------|----------|-------------|
-| `billable_minutes` | integer | Yes | Billable minutes (also used as working minutes) |
-| `message` | string | No | Description/notes of the work done |
-| `completed_at` | string | No | End time |
-| `started_at` | string | No | Start time |
+|---|---|---|---|
+| `billable_minutes` | integer | Yes | Minutes worked, at least `1`. Saved as both billable and working minutes |
+| `message` | string | No | Work notes. Omitting it clears the notes |
+| `completed_at` | string | No | Date of the work. Omitting it sets the date to now |
 
-### Example Request
+**Example Request**
 
 ```bash
-curl -X PUT "https://yourdomain.com/wp-json/fluent-boards/v2/projects/1/tasks/1/time-tracks/commit/1" \
-  -H "Authorization: Basic API_USERNAME:API_PASSWORD" \
+curl "https://yourdomain.com/wp-json/fluent-boards/v2/projects/7/tasks/272/time-tracks/commit/2" \
+  -X PUT \
+  -u "USERNAME:APPLICATION_PASSWORD" \
   -H "Content-Type: application/json" \
   -d '{
     "billable_minutes": 90,
-    "message": "Updated description for design work",
+    "message": "Design work on homepage and header",
     "completed_at": "2025-08-08 12:00:00"
   }'
 ```
 
-### Example Response
+**Example Response**
 
 ```json
 {
@@ -293,115 +216,141 @@ curl -X PUT "https://yourdomain.com/wp-json/fluent-boards/v2/projects/1/tasks/1/
 }
 ```
 
-## Get Timesheet Reports
+## Delete a Time Track <Badge type="tip" text="Pro" />
 
-### By Tasks
+Delete a time log. Members can delete only their own logs; board managers can delete any log on the board.
 
-Get timesheet data organized by tasks.
-
-**HTTP Request**
+```http
+DELETE /wp-json/fluent-boards/v2/projects/{board_id}/tasks/{task_id}/time-tracks/{track_id}
 ```
+
+**Example Request**
+
+```bash
+curl "https://yourdomain.com/wp-json/fluent-boards/v2/projects/7/tasks/272/time-tracks/2" \
+  -X DELETE \
+  -u "USERNAME:APPLICATION_PASSWORD"
+```
+
+**Example Response**
+
+```json
+{
+  "success": true,
+  "message": "Selected time track has been deleted"
+}
+```
+
+Returns `422` with `Time track not found` when the log is not on this task, and `403` when you try to delete someone else's log without being a board manager.
+
+## Timesheet by Tasks <Badge type="tip" text="Pro" />
+
+Return time logs in a date range, grouped by day and task. Requires WordPress admin / FluentBoards admin (the endpoint uses `BoardManagerPolicy`, but there is no `{board_id}` in the path, so only admins pass).
+
+```http
 GET /wp-json/fluent-boards/v2/projects/timesheet/by-tasks
 ```
 
-### Parameters
+**Parameters**
 
-| Parameter | Type | Description |
-|-----------|------|-------------|
-| `board_id` | integer | Filter by project ID |
-| `date_range[]` | string[] | Array with two dates: start and end (YYYY-MM-DD) |
+| Parameter | Type | Required | Description |
+|---|---|---|---|
+| `board_id` | integer | No | Only include logs from this board. Omit for all boards |
+| `date_range` | array | No | Two dates, start and end (`YYYY-MM-DD`). Defaults to the last 7 days |
 
-### Example Request
+**Example Request**
 
 ```bash
-curl "https://yourdomain.com/wp-json/fluent-boards/v2/projects/timesheet/by-tasks?board_id=3&date_range[]=2025-08-01&date_range[]=2025-08-08" \
-  -H "Authorization: Basic API_USERNAME:API_PASSWORD"
+curl -g "https://yourdomain.com/wp-json/fluent-boards/v2/projects/timesheet/by-tasks?board_id=7&date_range[]=2025-08-07&date_range[]=2025-08-08" \
+  -u "USERNAME:APPLICATION_PASSWORD"
 ```
 
-### Example Response
+**Example Response**
+
+- `tasks`: one entry per task, with `task` (`id`, `title`, `slug`) and `board`.
+- `time_sheets`: keyed by date, then by task ID; each item has `id`, `created_at`, `user`, `completed_at`, `billable_minutes`, `message`.
+- `date_labels`: every date in the range.
+- `totalMinutes`: sum of `billable_minutes`.
+- `date_range`: the normalized range used for the query.
 
 ```json
 {
-  "tasks": [],
-  "date_labels": [
-    "2025-08-01",
-    "2025-08-02",
-    "2025-08-03",
-    "2025-08-04",
-    "2025-08-05",
-    "2025-08-06",
-    "2025-08-07",
-    "2025-08-08"
+  "tasks": [
+    {
+      "task": { "id": 272, "title": "Homepage design", "slug": "homepage-design" },
+      "board": { "id": 7, "title": "Website Redesign" }
+    }
   ],
-  "totalMinutes": 0,
-  "time_sheets": [],
-  "date_range": [
-    "2025-08-01 00:00:00",
-    "2025-08-08 23:59:59"
-  ]
+  "date_labels": ["2025-08-07", "2025-08-08"],
+  "totalMinutes": 60,
+  "time_sheets": {
+    "2025-08-08": {
+      "272": [
+        {
+          "id": 2,
+          "created_at": "2025-08-08 08:57:05",
+          "user": { "ID": 1, "display_name": "John Doe" },
+          "completed_at": "2025-08-08 00:00:00",
+          "billable_minutes": 60,
+          "message": "Design work on homepage"
+        }
+      ]
+    }
+  },
+  "date_range": ["2025-08-07 00:00:00", "2025-08-08 23:59:59"]
 }
 ```
 
-### By Users
+## Timesheet by Users <Badge type="tip" text="Pro" />
 
-Get timesheet data organized by users.
+Return time logs in a date range, grouped by day and user. Same access rule and parameters as [Timesheet by Tasks](#timesheet-by-tasks).
 
-**HTTP Request**
-```
+```http
 GET /wp-json/fluent-boards/v2/projects/timesheet/by-users
 ```
 
-### Parameters
+**Parameters**
 
-| Parameter | Type | Description |
-|-----------|------|-------------|
-| `board_id` | integer | Filter by project ID |
-| `date_range[]` | string[] | Array with two dates: start and end (YYYY-MM-DD) |
+| Parameter | Type | Required | Description |
+|---|---|---|---|
+| `board_id` | integer | No | Only include logs from this board. Omit for all boards |
+| `date_range` | array | No | Two dates, start and end (`YYYY-MM-DD`). Defaults to the last 7 days |
 
-### Example Request
+**Example Request**
 
 ```bash
-curl "https://yourdomain.com/wp-json/fluent-boards/v2/projects/timesheet/by-users?board_id=3&date_range[]=2025-08-01&date_range[]=2025-08-08" \
-  -H "Authorization: Basic API_USERNAME:API_PASSWORD"
+curl -g "https://yourdomain.com/wp-json/fluent-boards/v2/projects/timesheet/by-users?board_id=7&date_range[]=2025-08-07&date_range[]=2025-08-08" \
+  -u "USERNAME:APPLICATION_PASSWORD"
 ```
 
-### Example Response
+**Example Response**
+
+`users` lists the users who logged time. `time_sheets` is keyed by date, then by user ID; each item has `id`, `created_at`, `task`, `board`, `completed_at`, `billable_minutes`, `message`.
 
 ```json
 {
-  "users": [],
-  "date_labels": [
-    "2025-08-01",
-    "2025-08-02",
-    "2025-08-03",
-    "2025-08-04",
-    "2025-08-05",
-    "2025-08-06",
-    "2025-08-07",
-    "2025-08-08"
+  "users": [
+    { "ID": 1, "display_name": "John Doe" }
   ],
-  "totalMinutes": 0,
-  "time_sheets": [],
-  "date_range": [
-    "2025-08-01 09:16:56",
-    "2025-08-08 23:59:59"
-  ]
+  "date_labels": ["2025-08-07", "2025-08-08"],
+  "totalMinutes": 60,
+  "time_sheets": {
+    "2025-08-08": {
+      "1": [
+        {
+          "id": 2,
+          "created_at": "2025-08-08 08:57:05",
+          "task": { "id": 272, "title": "Homepage design", "slug": "homepage-design" },
+          "board": { "id": 7, "title": "Website Redesign" },
+          "completed_at": "2025-08-08 00:00:00",
+          "billable_minutes": 60,
+          "message": "Design work on homepage"
+        }
+      ]
+    }
+  },
+  "date_range": ["2025-08-07 00:00:00", "2025-08-08 23:59:59"]
 }
 ```
 
-## Error Responses
-
 See [Common Error Responses](/rest-api/shared/error-responses) for standard error formats.
-
-### Common Time Tracking-Specific Errors
-
-- **404 Not Found** - Time track not found
-- **403 Forbidden** - You don't have permission to access this time track
-- **400 Bad Request** - Invalid time tracking data or missing required fields
-
-## Next Steps
-
-- [Manage Tasks](/rest-api/tasks) - Work with tasks and time tracking
-- [Board Management](/rest-api/boards) - Handle board time tracking
-- [Reports](/rest-api/reports) - Generate comprehensive reports
-- [User Management](/rest-api/users) - Manage user time tracking 

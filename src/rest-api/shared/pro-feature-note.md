@@ -1,23 +1,7 @@
-> **Note:** This is a Pro feature. The [FEATURE_NAME] API allows you to [FEATURE_DESCRIPTION].
+# Pro Feature Note
 
-## Overview
+> **Note:** Endpoints marked <Badge type="tip" text="Pro" /> need Fluent Boards Pro to be installed and active. Without Pro, those routes are not registered (WordPress returns `rest_no_route`) or they respond with an error such as `This is a pro feature`.
 
-The [FEATURE_NAME] API provides endpoints for [FEATURE_OVERVIEW] in Fluent Boards Pro.
+Endpoints marked <Badge type="info" text="Roadmap add-on" /> need the Fluent Roadmap add-on.
 
-## Base Endpoint
-
-```
-/fluent-boards/v2/[RESOURCE_PATH]
-```
-
-## Available Endpoints
-
-[ENDPOINT_LIST]
-
-## Features
-
-[FEATURE_LIST]
-
----
-
-*This documentation will be expanded with detailed examples and complete API reference.* 
+See the [REST API overview](/rest-api/) for which resources are free, Pro or add-on.

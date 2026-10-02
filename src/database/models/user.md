@@ -1,184 +1,140 @@
 # User Model
 
-| DB Table Name | {wp_db_prefix}_users                                            |
-|---------------|-----------------------------------------------------------------|
-| Schema        | <a :href="$withBase('/database/#users-table')">Check Schema</a> |
-| Source File   | fluent-boards/app/Models/User.php                               |
-| Name Space    | FluentBoards\App\Models                                          |
-| Class         | FluentBoards\App\Models\User                                     |
+| DB Table Name | `{wp_db_prefix}users` (WordPress core) |
+|---------------|----------------------------------------|
+| Schema        | [Check Schema](/database/#users-table) |
+| Source File   | fluent-boards/app/Models/User.php |
+| Name Space    | FluentBoards\App\Models |
+| Class         | FluentBoards\App\Models\User |
+
+A read model over the WordPress `users` table. The primary key is `ID` (uppercase). Use WordPress functions such as `wp_insert_user()` to create or change users; this model is for querying and relations.
 
 ## Attributes
-<table class="nowrap">
-   <thead>
-      <tr>
-         <th>Attribute</th>
-         <td>Data Type</td>
-         <td>Comment</td>
-      </tr>
-   </thead>
-   <tbody>
-      <tr>
-         <th>ID</th>
-         <td>Integer</td>
-         <td></td>
-      </tr>
-      <tr>
-         <th>user_login</th>
-         <td>String</td>
-         <td></td>
-      </tr>
-      <tr>
-         <th>user_pass</th>
-         <td>String</td>
-         <td></td>
-      </tr>
-      <tr>
-         <th>user_nicename</th>
-         <td>String</td>
-         <td></td>
-      </tr>
-      <tr>
-         <th>user_email</th>
-         <td>String</td>
-         <td></td>
-      </tr>
-      <tr>
-         <th>user_url</th>
-         <td>String</td>
-         <td></td>
-      </tr>
-      <tr>
-         <th>user_registered</th>
-         <td>Date Time</td>
-         <td></td>
-      </tr>
-      <tr>
-         <th>user_activation_key</th>
-         <td>String</td>
-         <td></td>
-      </tr>
-      <tr>
-         <th>user_status</th>
-         <td>Integer</td>
-         <td></td>
-      </tr>
-      <tr>
-         <th>display_name</th>
-         <td>String</td>
-         <td></td>
-      </tr>
-   </tbody>
-</table>
 
-## Usage
-Please check <a href="/database/models/">Model Basic</a> for Common methods.
+| Attribute | Data Type | Serialized by `toArray()`? |
+|---|---|---|
+| ID | BIGINT UNSIGNED | Yes |
+| user_login | VARCHAR(60) | Yes |
+| user_pass | VARCHAR(255) | Never |
+| user_nicename | VARCHAR(50) | Never |
+| user_email | VARCHAR(100) | Only for privileged contexts (see below) |
+| user_url | VARCHAR(100) | Never |
+| user_registered | DATETIME | Never |
+| user_activation_key | VARCHAR(255) | Never |
+| user_status | INT | Never |
+| display_name | VARCHAR(250) | Yes |
 
-### Accessing Attributes
+Appended attributes:
 
-```php 
+| Attribute | Comment |
+|---|---|
+| photo | Avatar URL from `fluent_boards_user_avatar()` |
 
-$user = FluentBoards\App\Models\User::find(1);
+### Hidden fields
 
-$user->ID; // returns user ID
-$user->user_email; // returns email
-.......
+The model always hides the fields listed in `User::ALWAYS_HIDDEN` (`user_pass`, `user_activation_key`, `user_nicename`, `user_url`, `user_registered`, `user_status`) when it is converted to an array or JSON.
+
+`user_email` is listed in `User::PRIVILEGED_ONLY`. It is included only when the current user has the `list_users` capability, or when privileged serialization is turned on:
+
+```php
+use FluentBoards\App\Models\User;
+
+User::serializePrivilegedFields(true);
+$data = $user->toArray(); // includes user_email
+User::serializePrivilegedFields(false);
 ```
 
+The hidden fields are still readable as properties (`$user->user_email`); hiding only affects serialization.
+
+## Usage
+
+Please check [Model Basic](/database/models/) for common methods.
+
+```php
+$user = FluentBoards\App\Models\User::find(1);
+
+$user->ID;
+$user->display_name;
+$user->photo;
+```
 
 ## Relations
-This model has the following relationships that you can use
 
-### tasks
-Access tasks associated with the user.
+### whichBoards
 
-- return `FluentUsers\App\Models\Task` Model Collection
+Boards the user is a member of (`fbs_relations`, `object_type = 'board_user'`). Pivot: `settings`, `preferences`.
 
-#### Example:
-```php 
-$userTasks = $user->tasks;
+- Returns a collection of `FluentBoards\App\Models\Board`
+
+```php
+// object_id on the board_user pivot row is the board ID
+$boardIds = $user->whichBoards()->pluck('object_id')->toArray();
+```
+
+### boards
+
+::: warning
+This relation joins `fbs_relations.object_id` to the user ID, but for `board_user` rows `object_id` is the board ID. It does not return the user's boards. Use `whichBoards` instead.
+:::
+
+- Returns a collection of `FluentBoards\App\Models\Board`
+
+### assignedTasks
+
+Tasks assigned to the user (`object_type = 'task_assignee'`). Pivot: `settings`.
+
+- Returns a collection of `FluentBoards\App\Models\Task`
+
+```php
+$open = $user->assignedTasks()->where('status', 'open')->whereNull('archived_at')->get();
 ```
 
 ### watchingTasks
-Access tasks that the user is watching.
 
-- return `FluentUsers\App\Models\Task` Model Collections
+Tasks the user watches (`object_type = 'task_user_watch'`). Pivot: `settings`.
 
-#### Example:
-```php 
-$watchingTasks = $user->watchingTasks;
-```
+- Returns a collection of `FluentBoards\App\Models\Task`
 
-### highPriorityTasks
-Access all the associated users of a User model
+### tasks
 
-- return `FluentUsers\App\Models\Task` Model Collections
+Same query as `watchingTasks`.
 
-#### Example:
-```php 
-$highPriorityTasks = $user->highPriorityTasks;
-```
+- Returns a collection of `FluentBoards\App\Models\Task`
 
-### overDueTasks
-Access overdue tasks associated with the user.
+### mentionedTasks()
 
-- return `FluentUsers\App\Models\Task` Model Collections
+Not a relation: a method that returns a `Task` query builder for tasks with a `task_comment_mentioned` notification sent to this user.
 
-#### Example:
-```php 
-$overDueTasks = $user->overDueTasks;
-```
-
-### upcomingTasks
-Access upcoming tasks associated with the user.
-
-- return `FluentUsers\App\Models\Task` Model Collections
-
-#### Example:
-```php 
-$upcomingTasks = $user->upcomingTasks;
-```
-
-
-### upcomingWithoutDuedate
-Access upcoming tasks without a due date.
-
-- return `FluentUsers\App\Models\Task` Model Collections
-
-#### Example:
-```php 
-$upcomingTasksNoDueDate = $user->upcomingWithoutDuedate;
-```
-
-
-### boards
-Access boards associated with the user.
-
-- return `FluentUsers\App\Models\Board` Model Collections
-
-#### Example:
-```php 
-$userBoards = $user->boards;
-```
-
-### whichBoards
-Access boards where the user has a specific relationship.
-
-- return `FluentUsers\App\Models\Board` Model Collections
-
-#### Example:
-```php 
-$userWhichBoards = $user->whichBoards;
+```php
+$mentioned = $user->mentionedTasks()->whereNull('archived_at')->get();
 ```
 
 ### notifications
-Access notifications associated with the user.
 
-- return `FluentUsers\App\Models\Notification` Model Collections
+Notifications the user received (`fbs_notification_users`). Pivot: `marked_read_at`.
 
-#### Example:
-```php 
-$userNotifications = $user->notifications;
+- Returns a collection of `FluentBoards\App\Models\Notification`
+
+```php
+$unread = $user->notifications()->wherePivot('marked_read_at', null)->count();
 ```
 
-<hr />
+### highPriorityTasks / overDueTasks / upcomingTasks / upcomingWithoutDuedate
 
+::: warning
+These relations filter on `is_archived` and `due_date`, which are not columns of `fbs_tasks` (the real columns are `archived_at` and `due_at`). Queries that use them fail. Build the query from `watchingTasks()` or `assignedTasks()` instead.
+:::
+
+### boardUser
+
+Placeholder that returns `null`. Do not use.
+
+## Methods
+
+### User::serializePrivilegedFields($enabled = true) <Badge text="static" />
+
+Turns inclusion of `user_email` in `toArray()` on or off for all User models.
+
+### getHidden()
+
+Returns the hidden field list for the current context (always-hidden fields, plus `user_email` when not privileged).

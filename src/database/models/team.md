@@ -1,104 +1,48 @@
 # Team Model
 
-| DB Table Name | {wp_db_prefix}_fbs_teams                                            |
-|---------------|---------------------------------------------------------------------|
-| Schema        | <a :href="$withBase('/database/#fbs-teams-table')">Check Schema</a> |
-| Source File   | fluent-boards/app/Models/Team.php                                   |
-| Name Space    | FluentBoards\App\Models                                              |
-| Class         | FluentBoards\App\Models\Team                                         |
+| DB Table Name | `{wp_db_prefix}fbs_teams` |
+|---------------|---------------------------|
+| Schema        | [Check Schema](/database/#fbs-teams-table) |
+| Source File   | fluent-boards/app/Models/Team.php |
+| Name Space    | FluentBoards\App\Models |
+| Class         | FluentBoards\App\Models\Team |
 
 ## Attributes
-<table class="nowrap">
-   <thead>
-      <tr>
-         <th>Attribute</th>
-         <td>Data Type</td>
-         <td>Comment</td>
-      </tr>
-   </thead>
-    <tbody>
-      <tr>
-        <th>id</th>
-        <td>INT UNSIGNED <i>Auto Increment</i></td>
-        <td>Primary key of the record</td>
-      </tr>
-      <tr>
-        <th>parent_id</th>
-        <td>INT UNSIGNED <i>NULL</i></td>
-        <td>ID of the parent team if this is a sub-team</td>
-      </tr>
-      <tr>
-        <th>title</th>
-        <td>VARCHAR(100)</td>
-        <td>Name of the team</td>
-      </tr>
-      <tr>
-        <th>description</th>
-        <td>TEXT <i>NULL</i></td>
-        <td>Description of the team</td>
-      </tr>
-      <tr>
-        <th>type</th>
-        <td>VARCHAR(50)</td>
-        <td>Type of the team (e.g., project, department)</td>
-      </tr>
-      <tr>
-        <th>visibility</th>
-        <td>VARCHAR(50) <i>DEFAULT 'VISIBLE'</i></td>
-        <td>Visibility of the team (VISIBLE/SECRET)</td>
-      </tr>
-      <tr>
-        <th>notifications_enabled</th>
-        <td>TINYINT(1) <i>DEFAULT 1</i></td>
-        <td>Whether notifications are enabled for the team</td>
-      </tr>
-      <tr>
-        <th>settings</th>
-        <td>TEXT <i>NULL</i></td>
-        <td>Serialized settings for the team</td>
-      </tr>
-      <tr>
-        <th>created_by</th>
-        <td>BIGINT UNSIGNED</td>
-        <td>ID of the user who created the team</td>
-      </tr>
-      <tr>
-        <th>created_at</th>
-        <td>TIMESTAMP <i>NULL</i></td>
-        <td>Timestamp when the team was created</td>
-      </tr>
-      <tr>
-        <th>updated_at</th>
-        <td>TIMESTAMP <i>NULL</i></td>
-        <td>Timestamp when the team was last updated</td>
-      </tr>
-    </tbody>
-</table>
+
+| Attribute | Data Type | Comment |
+|---|---|---|
+| id | INT UNSIGNED | Primary key |
+| parent_id | INT UNSIGNED NULL | Parent team |
+| title | VARCHAR(100) | Team name |
+| description | TEXT NULL | Description |
+| type | VARCHAR(50) | Team type |
+| visibility | VARCHAR(50) | `VISIBLE` (default) or `SECRET` |
+| notifications_enabled | TINYINT(1) | Default `1` |
+| settings | TEXT NULL | Serialized; returned as an array |
+| created_by | BIGINT UNSIGNED | Creator user ID |
+| created_at | TIMESTAMP NULL | |
+| updated_at | TIMESTAMP NULL | |
 
 ## Usage
-Please check <a href="/database/models/">Model Basic</a> for Common methods.
 
-### Accessing Attributes
+Please check [Model Basic](/database/models/) for common methods.
 
-```php 
-$team = FluentBoards\App\Models\Team::find(1);
-
-$team->id; // returns id
-$team->name; // returns name
-$team->settings; // returns settings (unserialized)
-.......
+```php
+$team = FluentBoards\App\Models\Team::create([
+    'title'      => 'Design',
+    'type'       => 'team',
+    'created_by' => get_current_user_id(),
+]);
 ```
 
 ## Relations
-This model has the following relationships that you can use
 
 ### parent
-Access the parent team, if any
 
-- return `FluentTeams\App\Models\Team` Model Collection
+The parent team (`parent_id`).
 
-#### Example:
-```php 
-$parentTeam = $team->parent;
+- Returns `FluentBoards\App\Models\Team`
+
+```php
+$parentTitle = $team->parent ? $team->parent->title : '';
 ```
-

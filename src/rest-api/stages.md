@@ -1,30 +1,72 @@
 # Stages
 
-The Stages API allows you to manage board stages and workflows in Fluent Boards. You can create, read, update, and delete stages, as well as manage their tasks and positions.
+Stages are the columns of a board. The Stages API lets you create, rename, reorder, archive and restore stages, and run bulk actions on the tasks inside a stage (move, archive, sort). Plugin source: free, except the default assignee/watcher endpoints, which need Pro.
+
+All endpoints use `SingleBoardPolicy`: the user must be a member of the board, and board viewers can only call `GET` endpoints.
+
+## Endpoints
+
+| Method | Endpoint | Description |
+|---|---|---|
+| POST | `/projects/{board_id}/stage-create` | Create a stage |
+| PUT | `/projects/{board_id}/update-stage-property/{stage_id}` | Update one stage property |
+| PUT | `/projects/{board_id}/update-stage/{stage_id}` | Update title and cover (deprecated) |
+| PUT | `/projects/{board_id}/archive-stage/{stage_id}` | Archive a stage |
+| PUT | `/projects/{board_id}/restore-stage/{stage_id}` | Restore an archived stage |
+| GET | `/projects/{board_id}/archived-stages` | List archived stages |
+| PUT | `/projects/{board_id}/re-position-stages` | Reorder all stages |
+| PUT | `/projects/{board_id}/drag-stage` | Move one stage to a new position |
+| PUT | `/projects/{board_id}/stage-view/{stage_id}` | Toggle stage public/private |
+| PUT | `/projects/{board_id}/stage-move-all-task` | Move all tasks to another stage |
+| PUT | `/projects/{board_id}/stage/{stage_id}/archive-all-task` | Archive all tasks in a stage |
+| PUT | `/projects/{board_id}/stage/{stage_id}/sort-task` | Sort tasks in a stage |
+| GET | `/projects/{board_id}/stage-task-available-positions/{stage_id}` | Get drop positions in a stage |
+| PUT | `/projects/{board_id}/stage/{stage_id}/default-assignees` | Set default assignees (Pro) |
+| PUT | `/projects/{board_id}/stage/{stage_id}/default-watchers` | Set default watchers (Pro) |
+
+Stage templates (`update-stage-template`, `template-stages`) are documented on the [Templates](/rest-api/templates) page.
+
+## Stage Object
+
+Stages are stored in the `fbs_board_terms` table with `type = "stage"`.
+
+| Field | Type | Description |
+|---|---|---|
+| `id` | integer | Stage ID |
+| `board_id` | integer | Board the stage belongs to |
+| `title` | string | Stage title |
+| `slug` | string\|null | Slug |
+| `type` | string | Always `stage` |
+| `position` | number | Sort position (decimal, lower comes first). Archived stages have `0` |
+| `color` | string\|null | Text color |
+| `bg_color` | string\|null | Background (cover) color |
+| `settings` | object | `default_task_status` (`open` or `closed`), `default_task_assignees` (user IDs), `default_task_watchers` (user IDs, Pro), `is_template` (bool, Pro), `is_public` (bool), `archived_by_id` (user ID) |
+| `archived_at` | string\|null | Archive timestamp, `null` when active |
+| `created_at` | string | Creation timestamp |
+| `updated_at` | string | Last update timestamp |
 
 ## Create a Stage
 
-Create a new stage. The stage will be positioned at the end of the board by default, or at the specified position if provided.
+Create a new stage. The stage is added at the end of the board, then moved to `position` if you pass one.
 
-**HTTP Request**
-```
+```http
 POST /wp-json/fluent-boards/v2/projects/{board_id}/stage-create
 ```
 
-### Parameters
+**Parameters**
 
 | Parameter | Type | Required | Description |
-|-----------|------|----------|-------------|
+|---|---|---|---|
 | `title` | string | Yes | Stage title |
-| `position` | numeric | No | Position within the board |
-| `status` | string | No | Default task status (defaults to 'open') |
+| `position` | numeric | No | 1-based position among active stages |
+| `status` | string | No | Default status for tasks created in this stage (`open` or `closed`). Defaults to `open` |
 
-### Example Request
+**Example Request**
 
 ```bash
-curl "https://yourdomain.com/wp-json/fluent-boards/v2/projects/{board_id}/stage-create" \
+curl "https://yourdomain.com/wp-json/fluent-boards/v2/projects/10/stage-create" \
   -X POST \
-  -H "Authorization: Basic API_USERNAME:API_PASSWORD" \
+  -u "USERNAME:APPLICATION_PASSWORD" \
   -H "Content-Type: application/json" \
   -d '{
     "title": "Review",
@@ -33,9 +75,9 @@ curl "https://yourdomain.com/wp-json/fluent-boards/v2/projects/{board_id}/stage-
   }'
 ```
 
+**Example Response**
 
-
-### Example Response
+`updatedStages` holds every stage of the board updated in the last minute (the new stage, plus any stage whose position shifted).
 
 ```json
 {
@@ -62,77 +104,139 @@ curl "https://yourdomain.com/wp-json/fluent-boards/v2/projects/{board_id}/stage-
 }
 ```
 
-## Update a Stage
+## Update a Stage Property
 
-Update an existing stage.
+Update a single property of a stage. This is the endpoint the board UI uses for renaming a stage, changing its colors and changing the default task status.
 
-**HTTP Request**
+```http
+PUT /wp-json/fluent-boards/v2/projects/{board_id}/update-stage-property/{stage_id}
 ```
-PUT /wp-json/fluent-boards/v2/projects/{board_id}/update-stage/{stage_id}
-```
 
-### Parameters
-### Example Request
+**Parameters**
+
+| Parameter | Type | Required | Description |
+|---|---|---|---|
+| `property` | string | Yes | One of `title`, `status`, `color`, `bg_color`, `archived_at` |
+| `value` | string | Yes | New value. For `title` and `status` it must not be empty. `status` sets `settings.default_task_status` (`open` or `closed`) |
+
+To archive a stage, prefer [Archive a Stage](#archive-a-stage), which also resets the position and records who archived it.
+
+**Example Request**
 
 ```bash
-curl "https://yourdomain.com/wp-json/fluent-boards/v2/projects/{board_id}/update-stage/{stage_id}" \
+curl "https://yourdomain.com/wp-json/fluent-boards/v2/projects/10/update-stage-property/107" \
   -X PUT \
-  -H "Authorization: Basic API_USERNAME:API_PASSWORD" \
+  -u "USERNAME:APPLICATION_PASSWORD" \
   -H "Content-Type: application/json" \
   -d '{
-    "title": "In Development",
-    "settings": {"default_task_status": "open"}
+    "property": "title",
+    "value": "In Development"
   }'
 ```
 
-| Parameter | Type | Required | Description |
-|-----------|------|----------|-------------|
-| `title` | string | No | Stage title |
-| `settings` | object | No | Stage settings object |
-
-
-
-### Example Response
+**Example Response**
 
 ```json
 {
-  "data": {
-    "id": 2,
+  "message": "Stage has been updated",
+  "stage": {
+    "id": 107,
+    "board_id": "10",
     "title": "In Development",
-    "board_id": 1,
-    "position": 2.0,
+    "slug": null,
     "type": "stage",
+    "position": "2.50",
+    "color": null,
+    "bg_color": null,
     "settings": {
       "default_task_status": "open",
-      "is_template": false
+      "default_task_assignees": []
     },
     "archived_at": null,
-    "created_by": 1,
-    "created_at": "2023-01-15 10:30:00",
-    "updated_at": "2023-02-15 16:00:00"
+    "created_at": "2025-08-06T10:45:32+00:00",
+    "updated_at": "2025-08-06T11:02:10+00:00"
+  }
+}
+```
+
+If the stage does not belong to the board, the endpoint returns `404` with `Stage not found`.
+
+## Update a Stage (Deprecated)
+
+::: warning Deprecated
+This route is marked for removal in the plugin code. Use [Update a Stage Property](#update-a-stage-property) instead.
+:::
+
+Update a stage's title and cover color in one call. Both values are read from a `stage` object, and the title is required.
+
+```http
+PUT /wp-json/fluent-boards/v2/projects/{board_id}/update-stage/{stage_id}
+```
+
+**Parameters**
+
+| Parameter | Type | Required | Description |
+|---|---|---|---|
+| `stage[title]` | string | Yes | Stage title |
+| `stage[cover_bg]` | string | No | Background color, saved to `bg_color`. Omitting it clears the color |
+
+**Example Request**
+
+```bash
+curl "https://yourdomain.com/wp-json/fluent-boards/v2/projects/10/update-stage/107" \
+  -X PUT \
+  -u "USERNAME:APPLICATION_PASSWORD" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "stage": {
+      "title": "In Development",
+      "cover_bg": "#E3F2FD"
+    }
+  }'
+```
+
+**Example Response**
+
+```json
+{
+  "success": true,
+  "stages": [
+    { "id": 104, "title": "Open", "position": "1.00", "...": "..." },
+    { "id": 107, "title": "In Development", "position": "2.50", "...": "..." }
+  ],
+  "updatedStage": {
+    "id": 107,
+    "board_id": "10",
+    "title": "In Development",
+    "bg_color": "#E3F2FD",
+    "settings": {
+      "default_task_status": "open",
+      "default_task_assignees": []
+    },
+    "archived_at": null,
+    "updated_at": "2025-08-06T11:02:10+00:00"
   },
-  "message": "Stage updated successfully"
+  "message": "Stage has been updated"
 }
 ```
 
 ## Archive a Stage
 
-Archive a stage (soft delete).
+Archive a stage (soft delete). The stage position is set to `0` and the current user is saved in `settings.archived_by_id`.
 
-**HTTP Request**
-```
+```http
 PUT /wp-json/fluent-boards/v2/projects/{board_id}/archive-stage/{stage_id}
 ```
 
-### Example Request
+**Example Request**
 
 ```bash
-curl "https://yourdomain.com/wp-json/fluent-boards/v2/projects/{board_id}/archive-stage/{stage_id}" \
+curl "https://yourdomain.com/wp-json/fluent-boards/v2/projects/10/archive-stage/107" \
   -X PUT \
-  -H "Authorization: Basic API_USERNAME:API_PASSWORD"
+  -u "USERNAME:APPLICATION_PASSWORD"
 ```
 
-### Example Response
+**Example Response**
 
 ```json
 {
@@ -147,7 +251,8 @@ curl "https://yourdomain.com/wp-json/fluent-boards/v2/projects/{board_id}/archiv
     "bg_color": null,
     "settings": {
       "default_task_status": "open",
-      "default_task_assignees": []
+      "default_task_assignees": [],
+      "archived_by_id": 1
     },
     "archived_at": "2025-08-06 11:18:56",
     "created_at": "2025-08-06T10:45:32+00:00",
@@ -159,22 +264,21 @@ curl "https://yourdomain.com/wp-json/fluent-boards/v2/projects/{board_id}/archiv
 
 ## Restore a Stage
 
-Restore an archived stage.
+Restore an archived stage. The stage is placed after the last active stage.
 
-**HTTP Request**
-```
+```http
 PUT /wp-json/fluent-boards/v2/projects/{board_id}/restore-stage/{stage_id}
 ```
 
-### Example Request
+**Example Request**
 
 ```bash
-curl "https://yourdomain.com/wp-json/fluent-boards/v2/projects/{board_id}/restore-stage/{stage_id}" \
+curl "https://yourdomain.com/wp-json/fluent-boards/v2/projects/10/restore-stage/107" \
   -X PUT \
-  -H "Authorization: Basic API_USERNAME:API_PASSWORD"
+  -u "USERNAME:APPLICATION_PASSWORD"
 ```
 
-### Example Response
+**Example Response**
 
 ```json
 {
@@ -190,7 +294,8 @@ curl "https://yourdomain.com/wp-json/fluent-boards/v2/projects/{board_id}/restor
     "bg_color": null,
     "settings": {
       "default_task_status": "open",
-      "default_task_assignees": []
+      "default_task_assignees": [],
+      "archived_by_id": null
     },
     "archived_at": null,
     "created_at": "2025-08-06T10:45:32+00:00",
@@ -200,34 +305,103 @@ curl "https://yourdomain.com/wp-json/fluent-boards/v2/projects/{board_id}/restor
 }
 ```
 
+## List Archived Stages
+
+Retrieve the archived stages of a board, newest first. Each stage includes `archived_by_id` and `archived_by` (the user who archived it, or `null`).
+
+```http
+GET /wp-json/fluent-boards/v2/projects/{board_id}/archived-stages
+```
+
+**Parameters**
+
+| Parameter | Type | Required | Description |
+|---|---|---|---|
+| `noPagination` | boolean | No | If true, returns all archived stages as a plain array. Default `false` |
+| `per_page` | integer | No | Stages per page, 1 to 50. Default `30` |
+| `page` | integer | No | Page number. Default `1` |
+
+**Example Request**
+
+```bash
+curl "https://yourdomain.com/wp-json/fluent-boards/v2/projects/1/archived-stages?per_page=30&page=1" \
+  -u "USERNAME:APPLICATION_PASSWORD"
+```
+
+**Example Response**
+
+With pagination, `stages` is a paginator object. With `noPagination=true`, `stages` is an array of stage objects.
+
+```json
+{
+  "stages": {
+    "current_page": 1,
+    "data": [
+      {
+        "id": 5,
+        "board_id": "1",
+        "title": "Old Stage",
+        "slug": "old-stage",
+        "type": "stage",
+        "position": "0.00",
+        "color": null,
+        "bg_color": null,
+        "settings": {
+          "default_task_status": "open",
+          "archived_by_id": 1
+        },
+        "archived_at": "2023-02-10 12:00:00",
+        "created_at": "2023-01-15T10:30:00+00:00",
+        "updated_at": "2023-02-10T12:00:00+00:00",
+        "archived_by_id": 1,
+        "archived_by": {
+          "ID": 1,
+          "display_name": "Jane Doe",
+          "photo": "https://secure.gravatar.com/avatar/..."
+        }
+      }
+    ],
+    "from": 1,
+    "to": 1,
+    "total": 1,
+    "per_page": 30,
+    "last_page": 1,
+    "first_page_url": "https://yourdomain.com/wp-json/fluent-boards/v2/projects/1/archived-stages/?page=1",
+    "last_page_url": "https://yourdomain.com/wp-json/fluent-boards/v2/projects/1/archived-stages/?page=1",
+    "next_page_url": null,
+    "prev_page_url": null,
+    "path": "https://yourdomain.com/wp-json/fluent-boards/v2/projects/1/archived-stages"
+  }
+}
+```
+
 ## Re-position Stages
 
-Update the positions of multiple stages at once. This endpoint can trigger automatic reindexing of stage positions for optimal ordering.
+Reorder all stages of a board in one call. Each stage in `list` is moved to its index (1-based), and stage positions are re-indexed automatically when they get too close.
 
-**HTTP Request**
-```
+```http
 PUT /wp-json/fluent-boards/v2/projects/{board_id}/re-position-stages
 ```
 
-### Parameters
+**Parameters**
 
 | Parameter | Type | Required | Description |
-|-----------|------|----------|-------------|
-| `list` | array | Yes | Array of stage IDs in the desired order |
+|---|---|---|---|
+| `list` | array | Yes | Stage IDs in the desired order. Every ID must belong to the board |
 
-### Example Request
+**Example Request**
 
 ```bash
-curl "https://yourdomain.com/wp-json/fluent-boards/v2/projects/{board_id}/re-position-stages" \
+curl "https://yourdomain.com/wp-json/fluent-boards/v2/projects/10/re-position-stages" \
   -X PUT \
-  -H "Authorization: Basic API_USERNAME:API_PASSWORD" \
+  -u "USERNAME:APPLICATION_PASSWORD" \
   -H "Content-Type: application/json" \
   -d '{
     "list": [107, 106, 105, 104]
   }'
 ```
 
-### Example Response
+**Example Response**
 
 ```json
 {
@@ -264,29 +438,163 @@ curl "https://yourdomain.com/wp-json/fluent-boards/v2/projects/{board_id}/re-pos
       "archived_at": null,
       "created_at": "2025-08-06T06:46:17+00:00",
       "updated_at": "2025-08-06T11:31:45+00:00"
-    },
-    // ... other stages
+    }
   ]
 }
 ```
 
+## Drag a Stage
+
+Move a single stage to a new position. Use this when one stage is dragged; use [Re-position Stages](#re-position-stages) to send the full order.
+
+```http
+PUT /wp-json/fluent-boards/v2/projects/{board_id}/drag-stage
+```
+
+**Parameters**
+
+| Parameter | Type | Required | Description |
+|---|---|---|---|
+| `stageId` | integer | Yes | Stage to move. Must belong to the board |
+| `newPosition` | integer | Yes | New 1-based position among active stages |
+
+**Example Request**
+
+```bash
+curl "https://yourdomain.com/wp-json/fluent-boards/v2/projects/10/drag-stage" \
+  -X PUT \
+  -u "USERNAME:APPLICATION_PASSWORD" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "stageId": 107,
+    "newPosition": 1
+  }'
+```
+
+**Example Response**
+
+```json
+{
+  "message": "Board stage has been updated",
+  "updatedStages": [
+    {
+      "id": 107,
+      "board_id": "10",
+      "title": "Review",
+      "type": "stage",
+      "position": "0.50",
+      "settings": {
+        "default_task_status": "open"
+      },
+      "archived_at": null,
+      "updated_at": "2025-08-06T11:40:02+00:00"
+    }
+  ]
+}
+```
+
+## Toggle Stage Visibility
+
+Toggle `settings.is_public` on a stage. The first call makes the stage public; the next call makes it private again. No body is needed.
+
+```http
+PUT /wp-json/fluent-boards/v2/projects/{board_id}/stage-view/{stage_id}
+```
+
+**Example Request**
+
+```bash
+curl "https://yourdomain.com/wp-json/fluent-boards/v2/projects/10/stage-view/107" \
+  -X PUT \
+  -u "USERNAME:APPLICATION_PASSWORD"
+```
+
+**Example Response**
+
+`message` is `The stage is made public!` or `The stage is made private!`.
+
+```json
+{
+  "message": "The stage is made public!",
+  "stage": {
+    "id": 107,
+    "board_id": "10",
+    "title": "Review",
+    "type": "stage",
+    "settings": {
+      "default_task_status": "open",
+      "is_public": true
+    },
+    "archived_at": null
+  }
+}
+```
+
+## Move All Tasks to Another Stage
+
+Move every active top-level task from one stage to another. Tasks are appended after the last task in the target stage. Both stages must belong to the board.
+
+```http
+PUT /wp-json/fluent-boards/v2/projects/{board_id}/stage-move-all-task
+```
+
+**Parameters**
+
+| Parameter | Type | Required | Description |
+|---|---|---|---|
+| `oldStageId` | integer | Yes | Source stage ID |
+| `newStageId` | integer | Yes | Target stage ID |
+
+**Example Request**
+
+```bash
+curl "https://yourdomain.com/wp-json/fluent-boards/v2/projects/10/stage-move-all-task" \
+  -X PUT \
+  -u "USERNAME:APPLICATION_PASSWORD" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "oldStageId": 104,
+    "newStageId": 105
+  }'
+```
+
+**Example Response**
+
+```json
+{
+  "message": "Tasks have been moved",
+  "updatedTasks": [
+    {
+      "id": 282,
+      "board_id": "10",
+      "stage_id": 105,
+      "title": "New task",
+      "position": 6,
+      "watchers": []
+    }
+  ]
+}
+```
+
+Returns `400` with `Invalid stage IDs provided` when either ID is missing, or `One or both stages do not exist or do not belong to this board`.
+
 ## Archive All Tasks in Stage
 
-Archive all tasks within a specific stage. This will set the position to 0 and mark all tasks as archived with a timestamp.
+Archive every active top-level task in a stage. Each task gets `position = 0` and an `archived_at` timestamp.
 
-**HTTP Request**
-```
+```http
 PUT /wp-json/fluent-boards/v2/projects/{board_id}/stage/{stage_id}/archive-all-task
 ```
 
-### Example Request
+**Example Request**
 
 ```bash
-curl "https://yourdomain.com/wp-json/fluent-boards/v2/projects/{board_id}/stage/{stage_id}/archive-all-task" \
+curl "https://yourdomain.com/wp-json/fluent-boards/v2/projects/9/stage/78/archive-all-task" \
   -X PUT \
-  -H "Authorization: Basic API_USERNAME:API_PASSWORD"
+  -u "USERNAME:APPLICATION_PASSWORD"
 ```
-### Example Response
+
+**Example Response**
 
 ```json
 {
@@ -301,38 +609,33 @@ curl "https://yourdomain.com/wp-json/fluent-boards/v2/projects/{board_id}/stage/
       "slug": "new-task",
       "type": "task",
       "position": 0,
-      "archived_at": "2025-08-06 11:36:48",
-      // ... other task properties
+      "archived_at": "2025-08-06 11:36:48"
     }
-    // ... other updated tasks
   ]
 }
 ```
 
 ## Sort Tasks in Stage
 
-Sort tasks within a specific stage by various criteria. The system will automatically update task positions based on the sort order and return the sorted tasks with additional computed properties.
+Sort the active top-level tasks of a stage. Task positions are rewritten to `1..n` in the new order. When sorting by `due_at` ascending, tasks without a due date go last.
 
-**HTTP Request**
-```
+```http
 PUT /wp-json/fluent-boards/v2/projects/{board_id}/stage/{stage_id}/sort-task
 ```
 
-### Parameters
+**Parameters**
 
 | Parameter | Type | Required | Description |
-|-----------|------|----------|-------------|
-| `order` | string | Yes | Sort field (priority, due_at, position, created_at, title) |
-| `orderBy` | string | Yes | Sort direction (ASC, DESC) |
+|---|---|---|---|
+| `order` | string | Yes | Sort field: `priority`, `due_at`, `position`, `created_at` or `title` |
+| `orderBy` | string | Yes | Sort direction: `ASC` or `DESC` |
 
-
-
-### Example Request
+**Example Request**
 
 ```bash
-curl "https://yourdomain.com/wp-json/fluent-boards/v2/projects/{board_id}/stage/{stage_id}/sort-task" \
+curl "https://yourdomain.com/wp-json/fluent-boards/v2/projects/9/stage/78/sort-task" \
   -X PUT \
-  -H "Authorization: Basic API_USERNAME:API_PASSWORD" \
+  -u "USERNAME:APPLICATION_PASSWORD" \
   -H "Content-Type: application/json" \
   -d '{
     "order": "title",
@@ -340,7 +643,9 @@ curl "https://yourdomain.com/wp-json/fluent-boards/v2/projects/{board_id}/stage/
   }'
 ```
 
-### Example Response
+**Example Response**
+
+Each task includes `assignees`, `labels`, `watchers`, and the computed `isOverdue`, `isUpcoming`, `is_watching` and `contact`.
 
 ```json
 {
@@ -348,131 +653,150 @@ curl "https://yourdomain.com/wp-json/fluent-boards/v2/projects/{board_id}/stage/
   "updatedTasks": [
     {
       "id": 248,
-      "title": "Code REfacotor , Security Validation Checks",
+      "title": "Security validation checks",
       "stage_id": "78",
       "position": 1,
       "isOverdue": false,
       "isUpcoming": false,
-      "is_watching": false
-      // ... other task properties
-    },
-    // ... other tasks
+      "is_watching": false,
+      "contact": null,
+      "assignees": [],
+      "labels": [],
+      "watchers": []
+    }
   ]
-}
-```
-
-## Get Archived Stages
-
-Retrieve archived stages for a board. Supports pagination and can return all archived stages or paginated results.
-
-**HTTP Request**
-```
-GET /wp-json/fluent-boards/v2/projects/{board_id}/archived-stages
-```
-
-### Parameters
-### Example Request
-
-```bash
-curl "https://yourdomain.com/wp-json/fluent-boards/v2/projects/{board_id}/archived-stages?per_page=30&page=1" \
-  -H "Authorization: Basic API_USERNAME:API_PASSWORD"
-```
-
-| Parameter | Type | Default | Description |
-|-----------|------|---------|-------------|
-| `noPagination` | boolean | false | If true, returns all archived stages without pagination |
-| `per_page` | integer | 30 | Number of stages per page (when pagination is enabled) |
-| `page` | integer | 1 | Page number (when pagination is enabled) |
-
-### Example Response
-
-```json
-{
-  "stages": {
-    "current_page": 1,
-    "data": [
-      {
-        "id": 5,
-        "board_id": "1",
-        "title": "Old Stage",
-        "slug": "old-stage",
-        "type": "stage",
-        "position": "0.00",
-        "color": null,
-        "bg_color": null,
-        "settings": {
-          "default_task_status": "open"
-        },
-        "archived_at": "2023-02-10 12:00:00",
-        "created_at": "2023-01-15T10:30:00+00:00",
-        "updated_at": "2023-02-10T12:00:00+00:00"
-      }
-    ],
-    "from": 1,
-    "to": 1,
-    "total": 1,
-    "per_page": 30,
-    "current_page": 1,
-    "last_page": 1,
-    "first_page_url": "https://yourdomain.com/wp-json/fluent-boards/v2/projects/1/archived-stages/?page=1",
-    "last_page_url": "https://yourdomain.com/wp-json/fluent-boards/v2/projects/1/archived-stages/?page=1",
-    "next_page_url": null,
-    "prev_page_url": null,
-    "path": "https://yourdomain.com/wp-json/fluent-boards/v2/projects/1/archived-stages",
-    "links": [
-      {
-        "url": null,
-        "label": "pagination.previous",
-        "active": false
-      },
-      {
-        "url": "https://yourdomain.com/wp-json/fluent-boards/v2/projects/1/archived-stages/?page=1",
-        "label": "1",
-        "active": true
-      },
-      {
-        "url": null,
-        "label": "pagination.next",
-        "active": false
-      }
-    ]
-  }
 }
 ```
 
 ## Get Stage Task Available Positions
 
-Get available positions for tasks within a stage.
+Get the drop slots in a stage, for "move task" dialogs. Each slot is described by the IDs of its neighbouring tasks. Pass `task_id` when the task already lives in this stage, so it is excluded from the list and its current slot is marked.
 
-**HTTP Request**
-```
+```http
 GET /wp-json/fluent-boards/v2/projects/{board_id}/stage-task-available-positions/{stage_id}
 ```
 
-### Example Request
+**Parameters**
+
+| Parameter | Type | Required | Description |
+|---|---|---|---|
+| `task_id` | integer | No | The task being moved |
+
+**Example Request**
 
 ```bash
-curl "https://yourdomain.com/wp-json/fluent-boards/v2/projects/{board_id}/stage-task-available-positions/{stage_id}" \
-  -H "Authorization: Basic API_USERNAME:API_PASSWORD"
+curl "https://yourdomain.com/wp-json/fluent-boards/v2/projects/10/stage-task-available-positions/105?task_id=282" \
+  -u "USERNAME:APPLICATION_PASSWORD"
 ```
-### Example Response
+
+**Example Response**
 
 ```json
 {
-  "data": {
-    "stage_id": 2,
-    "available_positions": [1, 2, 3, 4, 5],
-    "current_task_count": 3
-  }
+  "availablePositions": [1, 2, 3],
+  "moveTargets": [
+    { "key": "slot_1", "label": 1, "prevTaskId": null, "nextTaskId": 280, "isCurrent": false },
+    { "key": "slot_2", "label": 2, "prevTaskId": 280, "nextTaskId": 281, "isCurrent": true },
+    { "key": "slot_3", "label": 3, "prevTaskId": 281, "nextTaskId": null, "isCurrent": false }
+  ],
+  "currentMoveTargetKey": "slot_2",
+  "defaultMoveTargetKey": "slot_3"
+}
+```
+
+## Set Default Assignees <Badge type="tip" text="Pro" />
+
+Set the users who are assigned automatically to tasks in this stage. The list is saved to `settings.default_task_assignees` and applied to the existing tasks of the stage. Requires board manager.
+
+```http
+PUT /wp-json/fluent-boards/v2/projects/{board_id}/stage/{stage_id}/default-assignees
+```
+
+**Parameters**
+
+| Parameter | Type | Required | Description |
+|---|---|---|---|
+| `assigneeIds` | array | Yes | User IDs. Send an empty array to clear |
+
+**Example Request**
+
+```bash
+curl "https://yourdomain.com/wp-json/fluent-boards/v2/projects/10/stage/105/default-assignees" \
+  -X PUT \
+  -u "USERNAME:APPLICATION_PASSWORD" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "assigneeIds": [1, 5]
+  }'
+```
+
+**Example Response**
+
+```json
+{
+  "stage": {
+    "id": 105,
+    "board_id": "10",
+    "title": "In Progress",
+    "type": "stage",
+    "settings": {
+      "default_task_status": "open",
+      "default_task_assignees": [1, 5]
+    },
+    "archived_at": null
+  },
+  "message": "Stage updated successfully"
+}
+```
+
+## Set Default Watchers <Badge type="tip" text="Pro" />
+
+Set the users who watch tasks in this stage automatically. The list is saved to `settings.default_task_watchers` and applied to the existing tasks of the stage. Requires board manager.
+
+```http
+PUT /wp-json/fluent-boards/v2/projects/{board_id}/stage/{stage_id}/default-watchers
+```
+
+**Parameters**
+
+| Parameter | Type | Required | Description |
+|---|---|---|---|
+| `watcherIds` | array | Yes | User IDs. Send an empty array to clear |
+
+**Example Request**
+
+```bash
+curl "https://yourdomain.com/wp-json/fluent-boards/v2/projects/10/stage/105/default-watchers" \
+  -X PUT \
+  -u "USERNAME:APPLICATION_PASSWORD" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "watcherIds": [2]
+  }'
+```
+
+**Example Response**
+
+```json
+{
+  "stage": {
+    "id": 105,
+    "board_id": "10",
+    "title": "In Progress",
+    "type": "stage",
+    "settings": {
+      "default_task_status": "open",
+      "default_task_assignees": [1, 5],
+      "default_task_watchers": [2]
+    },
+    "archived_at": null
+  },
+  "message": "Stage updated successfully"
 }
 ```
 
 ## Error Responses
 
+Most stage endpoints return `400` (or `404` for update-stage-property) with `Stage not found` when the stage does not belong to `{board_id}`.
+
 See [Common Error Responses](/rest-api/shared/error-responses) for standard error formats.
-
-### Common Stage-Specific Errors
-
-- **404 Not Found** - Stage not found
-- **403 Forbidden** - You don't have permission to access this stage
-- **400 Bad Request** - Invalid stage data or missing required fields

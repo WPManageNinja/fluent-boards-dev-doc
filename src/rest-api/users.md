@@ -1,334 +1,152 @@
 # Users & Members
 
-The Users & Members API allows you to manage board members, permissions, and user roles in Fluent Boards. You can add, remove, and manage user permissions across projects.
+Manage who belongs to a board, change board roles, send email invitations, and read member profiles. Plugin source: free (board members, member profile) and Pro (invitations, board role changes).
 
-::: warning Note
-Endpoints labeled "Pro" require Fluent Boards Pro.
+Site-wide user management (FluentBoards admins, bulk board access) lives on [Managers & Roles](/rest-api/permissions).
+
+## Endpoints
+
+| Method | Endpoint | Description |
+|---|---|---|
+| GET | `/projects/{board_id}/users` | List board members |
+| POST | `/projects/{board_id}/add-members` | Add a user to a board |
+| POST | `/projects/{board_id}/user/{user_id}/remove` | Remove a user from a board |
+| GET | `/projects/{board_id}/assignees` | List board members who are task assignees |
+| POST | `/projects/{board_id}/user/{user_id}/make-manager` | Make a member a board manager (Pro) |
+| POST | `/projects/{board_id}/user/{user_id}/remove-manager` | Remove the manager role (Pro) |
+| POST | `/projects/{board_id}/user/{user_id}/make-member` | Set role to member (Pro) |
+| POST | `/projects/{board_id}/user/{user_id}/make-viewer` | Set role to viewer (Pro) |
+| POST | `/projects/{board_id}/send-invitation` | Invite an email address to a board (Pro) |
+| GET | `/projects/{board_id}/all-invitations` | List pending invitations (Pro) |
+| DELETE | `/projects/{board_id}/invitation/{invitation_id}` | Delete an invitation (Pro) |
+| GET | `/member/{id}` | Get a member profile |
+| GET | `/member/{id}/projects` | Boards the member belongs to |
+| GET | `/member/{id}/tasks` | Member's tasks, by tab |
+| GET | `/member/{id}/task-counts` | Task counts per tab |
+| GET | `/member/{id}/activities` | Activities created by the member |
+| GET | `/member/{id}/stats` | Profile stat tiles |
+| POST | `/member/{id}/display-name` | Update your own display name |
+| POST | `/member/{id}/photo` | Upload your own profile photo |
+| GET | `/member-associated-users/{id}` | Users who share boards with a member |
+
+::: tip Email visibility
+User objects only include `user_email` when the requesting user has the WordPress `list_users` capability. In the formatted member lists below (`email` key), board members who are not managers see other users' emails obfuscated.
 :::
 
-## List All Users
+## Board roles
 
-Retrieve all users in the system with their board memberships and roles.
+A board membership is stored in `fbs_relations` (`object_type = board_user`) with a `settings` array:
 
-**HTTP Request**
-```
-GET /wp-json/fluent-boards/v2/fluent-boards-users
-```
+| Role | `settings` | Notes |
+|---|---|---|
+| `manager` | `is_admin: true` | Can manage members, settings and stages of that board |
+| `member` | `is_admin: false`, `is_viewer_only: false` | Can create and edit tasks |
+| `viewer` | `is_viewer_only: true` | Read-only access |
 
-### Example Request
+WordPress administrators and FluentBoards admins (see [Managers & Roles](/rest-api/permissions)) can access every board without a membership row.
 
-```bash
-curl "https://yourdomain.com/wp-json/fluent-boards/v2/fluent-boards-users" \
-  -H "Authorization: Basic API_USERNAME:API_PASSWORD"
-```
+## List Board Members
 
+Returns the members of a board. For FluentBoards admins the response also lists the global admins who are not members of the board (`global_admins`); other users get an empty array.
 
-
-### Example Response
-
-```json
-{
-  "users": [
-    {
-      "ID": 1,
-      "display_name": "John Doe",
-      "photo": "https://secure.gravatar.com/avatar/example1?s=128&d=mm&r=g",
-      "email": "john@example.com",
-      "boards": [
-        {
-          "id": 1,
-          "title": "Project Alpha",
-          "role": "admin"
-        },
-        {
-          "id": 2,
-          "title": "Project Beta",
-          "role": "member"
-        }
-      ],
-      "is_super": false,
-      "is_wpadmin": true
-    },
-    {
-      "ID": 2,
-      "display_name": "Jane Smith",
-      "photo": "https://secure.gravatar.com/avatar/example2?s=128&d=mm&r=g",
-      "email": "jane@example.com",
-      "boards": [
-        {
-          "id": 1,
-          "title": "Project Alpha",
-          "role": "member"
-        }
-      ],
-      "is_super": false,
-      "is_wpadmin": false
-    }
-  ],
-  "boards": [
-    {
-      "id": 1,
-      "title": "Project Alpha",
-      "meta": {
-        "custom_field_positions": "yes"
-      },
-      "isUserOnlyViewer": false
-    },
-    {
-      "id": 2,
-      "title": "Project Beta",
-      "meta": {
-        "custom_field_positions": "yes"
-      },
-      "isUserOnlyViewer": false
-    }
-  ]
-}
-```
-
-## Search Users
-
-Search for users by display name. Returns users who are members of boards and match the search criteria.
-
-**HTTP Request**
-```
-GET /wp-json/fluent-boards/v2/search-fluent-boards-users
-```
-
-### Parameters
-
-| Parameter | Type | Description |
-|-----------|------|-------------|
-| `searchInput` | string | Search term for user display name |
-
-### Example Request
-
-```bash
-curl "https://yourdomain.com/wp-json/fluent-boards/v2/search-fluent-boards-users" \
-  -H "Authorization: Basic API_USERNAME:API_PASSWORD" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "searchInput": "john"
-  }'
-```
-
-
-
-### Example Response
-
-```json
-[
-  {
-    "ID": 1,
-    "user_login": "johndoe",
-    "user_nicename": "john-doe",
-    "user_email": "john@example.com",
-    "user_url": "http://example.com",
-    "user_registered": "2024-01-15 10:30:00",
-    "user_status": "0",
-    "display_name": "John Doe",
-    "photo": "https://secure.gravatar.com/avatar/example1?s=128&d=mm&r=g",
-    "which_boards": [
-      {
-        "id": 1,
-        "parent_id": null,
-        "title": "Project Alpha",
-        "description": "Main project board",
-        "type": "to-do",
-        "currency": "USD",
-        "background": {
-          "id": "solid_1",
-          "is_image": false,
-          "image_url": null,
-          "color": "#2196F3"
-        },
-        "settings": {
-          "tasks_count": 25
-        },
-        "created_by": "1",
-        "archived_at": null,
-        "meta": {
-          "custom_field_positions": "yes"
-        },
-        "isUserOnlyViewer": false,
-        "pivot": {
-          "foreign_id": "1",
-          "object_id": "1",
-          "settings": "a:1:{s:8:\"is_admin\";b:1;}",
-          "preferences": "a:7:{s:19:\"email_after_comment\";b:1;s:23:\"email_after_task_assign\";b:1;s:29:\"email_after_task_stage_change\";b:1;s:32:\"email_after_task_due_date_change\";b:1;s:28:\"email_after_remove_from_task\";b:1;s:24:\"email_after_task_archive\";b:1;s:22:\"dashboard_notification\";b:1;}",
-          "created_at": "2024-01-15T10:30:00+00:00",
-          "updated_at": "2024-01-15T10:30:00+00:00"
-        }
-      }
-    ],
-    "is_wpadmin": true,
-    "is_super": false
-  },
-  {
-    "ID": 2,
-    "user_login": "janesmith",
-    "user_nicename": "jane-smith",
-    "user_email": "jane@example.com",
-    "user_url": "",
-    "user_registered": "2024-02-01 09:15:00",
-    "user_status": "0",
-    "display_name": "Jane Smith",
-    "photo": "https://secure.gravatar.com/avatar/example2?s=128&d=mm&r=g",
-    "which_boards": [
-      {
-        "id": 2,
-        "parent_id": null,
-        "title": "Project Beta",
-        "description": "Secondary project board",
-        "type": "to-do",
-        "currency": "USD",
-        "background": {
-          "id": "solid_2",
-          "is_image": false,
-          "image_url": null,
-          "color": "#4CAF50"
-        },
-        "settings": {
-          "tasks_count": 15
-        },
-        "created_by": "1",
-        "archived_at": null,
-        "meta": {
-          "custom_field_positions": "yes"
-        },
-        "isUserOnlyViewer": false,
-        "pivot": {
-          "foreign_id": "2",
-          "object_id": "2",
-          "settings": "a:1:{s:8:\"is_admin\";b:0;}",
-          "preferences": "a:7:{s:19:\"email_after_comment\";b:1;s:23:\"email_after_task_assign\";b:1;s:29:\"email_after_task_stage_change\";b:1;s:32:\"email_after_task_due_date_change\";b:1;s:28:\"email_after_remove_from_task\";b:1;s:24:\"email_after_task_archive\";b:1;s:22:\"dashboard_notification\";b:1;}",
-          "created_at": "2024-02-01T09:15:00+00:00",
-          "updated_at": "2024-02-01T09:15:00+00:00"
-        }
-      }
-    ],
-    "all_boards": null,
-    "is_super": false,
-    "is_wpadmin": false
-  }
-]
-```
-
-## Get Project Members
-
-Retrieve all members of a specific project.
-
-**HTTP Request**
-```
+```http
 GET /wp-json/fluent-boards/v2/projects/{board_id}/users
 ```
 
-### Example Request
+**Example Request**
 
 ```bash
-curl "https://yourdomain.com/wp-json/fluent-boards/v2/projects/{board_id}/users" \
-  -H "Authorization: Basic API_USERNAME:API_PASSWORD"
+curl "https://yourdomain.com/wp-json/fluent-boards/v2/projects/1/users" \
+  -u "USERNAME:APPLICATION_PASSWORD"
 ```
 
-
-### Example Response
+**Example Response**
 
 ```json
 {
   "users": [
     {
-      "ID": 1,
-      "display_name": "John Doe",
-      "user_login": "johndoe",
-      "email": "john@example.com",
-      "photo": "https://secure.gravatar.com/avatar/example1?s=128&d=mm&r=g",
-      "role": "admin",
-      "is_super": false,
-      "is_wpadmin": true
-    },
-    {
       "ID": 2,
       "display_name": "Jane Smith",
-      "user_login": "janesmith",
       "email": "jane@example.com",
       "photo": "https://secure.gravatar.com/avatar/example2?s=128&d=mm&r=g",
       "role": "member",
       "is_super": false,
       "is_wpadmin": false
+    },
+    {
+      "ID": 1,
+      "display_name": "John Doe",
+      "email": "john@example.com",
+      "photo": "https://secure.gravatar.com/avatar/example1?s=128&d=mm&r=g",
+      "role": "manager",
+      "is_super": false,
+      "is_wpadmin": true
     }
   ],
   "global_admins": []
 }
 ```
 
-## Add Members to Project
+`role` is `manager`, `member` or `viewer`. `is_super` is true for FluentBoards admins, `is_wpadmin` for users with `manage_options`. Users are sorted by `display_name`.
 
-Add a single user to a project. The user can be added as a regular member or as a viewer only.
+## Add Member to Board
 
-**HTTP Request**
-```
+Adds one user to a board as a member, or as a viewer. Requires board manager.
+
+```http
 POST /wp-json/fluent-boards/v2/projects/{board_id}/add-members
 ```
 
-### Request Body
+**Parameters**
 
 | Parameter | Type | Required | Description |
-|-----------|------|----------|-------------|
-| `memberId` | integer | Yes | ID of the user to add |
-| `isViewerOnly` | string | No | Set to 'yes' to add as viewer only |
+|---|---|---|---|
+| `memberId` | integer | Yes | WordPress user ID to add |
+| `isViewerOnly` | string | No | `yes` to add the user as a viewer |
 
-
-
-### Example Request
+**Example Request**
 
 ```bash
-curl "https://yourdomain.com/wp-json/fluent-boards/v2/projects/{board_id}/add-members" \
-  -X POST \
-  -H "Authorization: Basic API_USERNAME:API_PASSWORD" \
+curl -X POST "https://yourdomain.com/wp-json/fluent-boards/v2/projects/1/add-members" \
+  -u "USERNAME:APPLICATION_PASSWORD" \
   -H "Content-Type: application/json" \
-  -d '{
-    "memberId": 5,
-    "isViewerOnly": "yes"
-  }'
+  -d '{"memberId": 5, "isViewerOnly": "yes"}'
 ```
 
-### Example Response
+**Example Response**
 
 ```json
 {
   "message": "Member added successfully",
+  "is_admin": false,
   "member": {
     "ID": 5,
     "user_login": "janesmith",
-    "user_nicename": "jane-smith",
-    "user_email": "jane@example.com",
-    "user_url": "",
-    "user_registered": "2024-02-01 09:15:00",
-    "user_status": "0",
     "display_name": "Jane Smith",
     "photo": "https://secure.gravatar.com/avatar/example5?s=128&d=mm&r=g"
   }
 }
 ```
 
-## Remove User from Project
+`is_admin` tells whether the added user is a FluentBoards/WordPress admin. Returns `404` when the user or board does not exist and `409` (`User already a member`) when the user is already on the board.
 
-Remove a user from a project.
+## Remove Member from Board
 
-**HTTP Request**
-```
+Removes a user from the board, detaches them from the board's tasks (assignee and watcher), and clears their board notification settings. Users can always remove themselves; removing someone else requires board manager, and removing a global admin requires a global admin.
+
+```http
 POST /wp-json/fluent-boards/v2/projects/{board_id}/user/{user_id}/remove
 ```
 
-### Example Request
+**Example Request**
 
 ```bash
-curl "https://yourdomain.com/wp-json/fluent-boards/v2/projects/{board_id}/user/{user_id}/remove" \
-  -X POST \
-  -H "Authorization: Basic API_USERNAME:API_PASSWORD"
+curl -X POST "https://yourdomain.com/wp-json/fluent-boards/v2/projects/1/user/5/remove" \
+  -u "USERNAME:APPLICATION_PASSWORD"
 ```
 
-### Example Response
+**Example Response**
 
 ```json
 {
@@ -336,362 +154,22 @@ curl "https://yourdomain.com/wp-json/fluent-boards/v2/projects/{board_id}/user/{
 }
 ```
 
-## Make User Manager
+## List Board Assignees
 
-Promote a user to manager role in a project. This gives the user administrative privileges for the specific board. **Note:** The user must already be a member of the board before they can be promoted to manager.
+Returns board members who are assigned to at least one task (on any board). Each item is a user object with the board relation in `pivot`.
 
-> Pro
-
-**HTTP Request**
-```
-POST /wp-json/fluent-boards/v2/projects/{board_id}/user/{user_id}/make-manager
-```
-
-### Example Request
-
-```bash
-curl "https://yourdomain.com/wp-json/fluent-boards/v2/projects/{board_id}/user/{user_id}/make-manager" \
-  -X POST \
-  -H "Authorization: Basic API_USERNAME:API_PASSWORD"
-```
-
-
-### Example Response
-
-```json
-{
-  "message": "Role updated successfully",
-  "member": {
-    "ID": 5,
-    "user_login": "janesmith",
-    "user_nicename": "jane-smith",
-    "user_email": "jane@example.com",
-    "user_url": "",
-    "user_registered": "2024-02-01 09:15:00",
-    "user_status": "0",
-    "display_name": "Jane Smith",
-    "is_admin": true,
-    "is_board_admin": true,
-    "photo": "https://secure.gravatar.com/avatar/example5?s=128&d=mm&r=g"
-  }
-}
-```
-
-## Remove Manager Role
-
-Remove manager role from a user.
-
-> Pro
-
-**HTTP Request**
-```
-POST /wp-json/fluent-boards/v2/projects/{board_id}/user/{user_id}/remove-manager
-```
-
-### Example Request
-
-```bash
-curl "https://yourdomain.com/wp-json/fluent-boards/v2/projects/{board_id}/user/{user_id}/remove-manager" \
-  -X POST \
-  -H "Authorization: Basic API_USERNAME:API_PASSWORD"
-```
-
-
-### Example Response
-
-```json
-{
-  "message": "Role updated successfully",
-  "member": {
-    "ID": 5,
-    "user_login": "janesmith",
-    "user_nicename": "jane-smith",
-    "user_email": "jane@example.com",
-    "user_url": "",
-    "user_registered": "2024-02-01 09:15:00",
-    "user_status": "0",
-    "display_name": "Jane Smith",
-    "is_admin": false,
-    "is_board_admin": false,
-    "photo": "https://secure.gravatar.com/avatar/example5?s=128&d=mm&r=g"
-  }
-}
-```
-
-## Make User Member
-
-Set a user's role to member in a project. This endpoint can convert admins to regular members (removing admin privileges) or upgrade viewers to members (increasing permissions). Members have full access to tasks and boards. **Note:** The user must already be a board viewer or manager before they can be converted to a member.
-
-> Pro
-
-**HTTP Request**
-```
-POST /wp-json/fluent-boards/v2/projects/{board_id}/user/{user_id}/make-member
-```
-
-### Example Request
-
-```bash
-curl "https://yourdomain.com/wp-json/fluent-boards/v2/projects/{board_id}/user/{user_id}/make-member" \
-  -X POST \
-  -H "Authorization: Basic API_USERNAME:API_PASSWORD"
-```
-
-
-### Example Response
-
-```json
-{
-  "message": "Role updated successfully",
-  "member": {
-    "ID": 5,
-    "user_login": "janesmith",
-    "user_nicename": "jane-smith",
-    "user_email": "jane@example.com",
-    "user_url": "",
-    "user_registered": "2024-02-01 09:15:00",
-    "user_status": "0",
-    "display_name": "Jane Smith",
-    "is_admin": false,
-    "is_board_admin": false,
-    "photo": "https://secure.gravatar.com/avatar/example5?s=128&d=mm&r=g"
-  }
-}
-```
-
-## Make User Viewer
-
-Set a user's role to viewer in a project. This endpoint can convert admins or members to viewers (reducing permissions). Viewers have read-only access to tasks and boards. **Note:** The user must already be a board member or manager before they can be converted to a viewer.
-
-> Pro
-
-**HTTP Request**
-```
-POST /wp-json/fluent-boards/v2/projects/{board_id}/user/{user_id}/make-viewer
-```
-
-### Example Request
-
-```bash
-curl "https://yourdomain.com/wp-json/fluent-boards/v2/projects/{board_id}/user/{user_id}/make-viewer" \
-  -X POST \
-  -H "Authorization: Basic API_USERNAME:API_PASSWORD"
-```
-
-
-### Example Response
-
-```json
-{
-  "message": "Role updated successfully",
-  "member": {
-    "ID": 5,
-    "user_login": "janesmith",
-    "user_nicename": "jane-smith",
-    "user_email": "jane@example.com",
-    "user_url": "",
-    "user_registered": "2024-02-01 09:15:00",
-    "user_status": "0",
-    "display_name": "Jane Smith",
-    "is_admin": false,
-    "is_board_admin": false,
-    "photo": "https://secure.gravatar.com/avatar/example5?s=128&d=mm&r=g"
-  }
-}
-```
-
-<!-- ## Get User Permissions
-
-Retrieve user permissions for a specific board. Returns the user's role and permissions for the specified board.
-
-**HTTP Request**
-```
-GET /wp-json/fluent-boards/v2/get-user-permissions
-```
-
-### Parameters
-
-| Parameter | Type | Required | Description |
-|-----------|------|----------|-------------|
-| `boardId` | integer | Yes | The ID of the board |
-| `userId` | integer | Yes | The ID of the user |
-
-
-
-### Example Response
-
-```json
-{
-  "success": true,
-  "board_id": 1,
-  "user_id": 2,
-  "is_admin": false,
-  "permissions": {
-    "manage_tasks": true,
-    "view_projects": true,
-    "create_tasks": true,
-    "edit_tasks": true
-  },
-  "status": "ACTIVE"
-}
-```
-
-## Update User Permissions
-
-Update user permissions globally.
-
-**HTTP Request**
-```
-PUT /wp-json/fluent-boards/v2/update-user-permissions
-```
-
-### Request Body
-
-| Parameter | Type | Required | Description |
-|-----------|------|----------|-------------|
-| `user_id` | integer | Yes | The ID of the user |
-| `permissions` | object | Yes | Object with permission keys and boolean values |
-
-
-
-### Example Response
-
-```json
-{
-  "data": {
-    "user_id": 2,
-    "permissions": {
-      "manage_projects": false,
-      "manage_tasks": true,
-      "manage_users": false,
-      "view_reports": true
-    }
-  },
-  "message": "User permissions updated successfully"
-}
-``` -->
-
-<!-- ## Set Permission All Board Admin
-
-Set a user as admin for all boards.
-
-**HTTP Request**
-```
-POST /wp-json/fluent-boards/v2/set-permission-all-board-admin
-```
-
-### Request Body
-
-| Parameter | Type | Required | Description |
-|-----------|------|----------|-------------|
-| `user_id` | integer | Yes | The ID of the user |
-
-
-
-### Example Response
-
-```json
-{
-  "message": "User set as admin for all boards successfully"
-}
-``` -->
-
-## Remove User from Board
-
-Remove a user from a specific board.
-
-**HTTP Request**
-```
-DELETE /wp-json/fluent-boards/v2/remove-user-from-board
-```
-
-### Request Body
-
-| Parameter | Type | Required | Description |
-|-----------|------|----------|-------------|
-| `boardId` | integer | Yes | The ID of the board |
-| `userId` | integer | Yes | The ID of the user |
-
-### Example Request
-
-```bash
-curl "https://yourdomain.com/wp-json/fluent-boards/v2/remove-user-from-board" \
-  -X DELETE \
-  -H "Authorization: Basic API_USERNAME:API_PASSWORD" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "boardId": 3,
-    "userId": 5
-  }'
-```
-
-### Example Response
-
-```json
-{
-  "message": "User Removed from Board successfully!"
-}
-```
-
-## Sync Board Roles
-
-Synchronize user roles across multiple boards. This endpoint allows you to update or remove user roles from multiple boards in a single request. **Note:** Super admin users cannot have their roles synced.
-
-> Pro
-
-**HTTP Request**
-```
-POST /wp-json/fluent-boards/v2/managers/roles/{user_id}
-```
-
-### Request Body
-
-| Parameter | Type | Required | Description |
-|-----------|------|----------|-------------|
-| `roles` | object | Yes | Object with board_id as key and role as value. Valid roles: `admin`, `member`, `viewer`. Empty values will remove the user from that board. |
-
-### Example Request
-
-```bash
-curl "https://yourdomain.com/wp-json/fluent-boards/v2/managers/roles/{user_id}" \
-  -X POST \
-  -H "Authorization: Basic API_USERNAME:API_PASSWORD" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "roles": {
-      "1": "admin",
-      "2": "member",
-      "3": "viewer"
-    }
-  }'
-```
-
-### Example Response
-
-```json
-{
-  "message": "User roles has been synced successfully."
-}
-```
-
-## Get Project Assignees
-
-Get all users who can be assigned to tasks in a project.
-
-**HTTP Request**
-```
+```http
 GET /wp-json/fluent-boards/v2/projects/{board_id}/assignees
 ```
 
-### Example Request
+**Example Request**
 
 ```bash
-curl "https://yourdomain.com/wp-json/fluent-boards/v2/projects/{board_id}/assignees" \
-  -H "Authorization: Basic API_USERNAME:API_PASSWORD"
+curl "https://yourdomain.com/wp-json/fluent-boards/v2/projects/1/assignees" \
+  -u "USERNAME:APPLICATION_PASSWORD"
 ```
 
-
-### Example Response
+**Example Response**
 
 ```json
 {
@@ -699,51 +177,559 @@ curl "https://yourdomain.com/wp-json/fluent-boards/v2/projects/{board_id}/assign
     {
       "ID": 1,
       "user_login": "john_doe",
-      "user_nicename": "john-doe",
-      "user_email": "john.doe@example.com",
-      "user_url": "https://example.com",
-      "user_registered": "2024-01-15 10:30:00",
-      "user_status": "0",
       "display_name": "John Doe",
       "photo": "https://secure.gravatar.com/avatar/example123?s=128&d=mm&r=g",
       "pivot": {
-        "object_id": "3",
-        "foreign_id": "1",
+        "object_id": 1,
+        "foreign_id": 1,
         "settings": "a:1:{s:8:\"is_admin\";b:0;}",
-        "preferences": "a:6:{s:19:\"email_after_comment\";b:0;s:29:\"email_after_task_stage_change\";b:0;s:23:\"email_after_task_assign\";b:0;s:32:\"email_after_task_due_date_change\";b:0;s:28:\"email_after_remove_from_task\";b:0;s:24:\"email_after_task_archive\";b:0;}",
+        "preferences": "a:6:{...}",
         "created_at": "2025-01-15T10:30:00+00:00",
         "updated_at": "2025-01-20T14:45:00+00:00"
-      }
-    },
-    {
-      "ID": 2,
-      "user_login": "jane_smith",
-      "user_nicename": "jane-smith",
-      "user_email": "jane.smith@example.com",
-      "user_url": "https://janesmith.com",
-      "user_registered": "2024-02-20 09:15:00",
-      "user_status": "0",
-      "display_name": "Jane Smith",
-      "photo": "https://secure.gravatar.com/avatar/example456?s=128&d=mm&r=g",
-      "pivot": {
-        "object_id": "3",
-        "foreign_id": "2",
-        "settings": "a:1:{s:8:\"is_admin\";b:1;}",
-        "preferences": "a:6:{s:19:\"email_after_comment\";b:1;s:29:\"email_after_task_stage_change\";b:1;s:23:\"email_after_task_assign\";b:1;s:32:\"email_after_task_due_date_change\";b:1;s:28:\"email_after_remove_from_task\";b:0;s:24:\"email_after_task_archive\";b:0;}",
-        "created_at": "2025-01-10T08:00:00+00:00",
-        "updated_at": "2025-01-18T16:30:00+00:00"
       }
     }
   ]
 }
 ```
 
-## Error Responses
+## Make Board Manager <Badge type="tip" text="Pro" />
+
+Promotes an existing board member to manager. Requires board manager; when the target user is a global admin, requires a global admin.
+
+```http
+POST /wp-json/fluent-boards/v2/projects/{board_id}/user/{user_id}/make-manager
+```
+
+**Example Request**
+
+```bash
+curl -X POST "https://yourdomain.com/wp-json/fluent-boards/v2/projects/1/user/5/make-manager" \
+  -u "USERNAME:APPLICATION_PASSWORD"
+```
+
+**Example Response**
+
+```json
+{
+  "message": "Role updated successfully",
+  "member": {
+    "ID": 5,
+    "user_login": "janesmith",
+    "display_name": "Jane Smith",
+    "photo": "https://secure.gravatar.com/avatar/example5?s=128&d=mm&r=g",
+    "is_admin": true,
+    "is_board_admin": true
+  }
+}
+```
+
+The user must already be a board member.
+
+## Remove Board Manager <Badge type="tip" text="Pro" />
+
+Demotes a manager to member. Same permission rules as [Make Board Manager](#make-board-manager).
+
+```http
+POST /wp-json/fluent-boards/v2/projects/{board_id}/user/{user_id}/remove-manager
+```
+
+**Example Request**
+
+```bash
+curl -X POST "https://yourdomain.com/wp-json/fluent-boards/v2/projects/1/user/5/remove-manager" \
+  -u "USERNAME:APPLICATION_PASSWORD"
+```
+
+**Example Response**
+
+```json
+{
+  "message": "Role updated successfully",
+  "member": {
+    "ID": 5,
+    "user_login": "janesmith",
+    "display_name": "Jane Smith",
+    "photo": "https://secure.gravatar.com/avatar/example5?s=128&d=mm&r=g",
+    "is_admin": false,
+    "is_board_admin": false
+  }
+}
+```
+
+## Make Member <Badge type="tip" text="Pro" />
+
+Sets an existing manager or viewer to the member role. Same permission rules as [Make Board Manager](#make-board-manager).
+
+```http
+POST /wp-json/fluent-boards/v2/projects/{board_id}/user/{user_id}/make-member
+```
+
+**Example Request**
+
+```bash
+curl -X POST "https://yourdomain.com/wp-json/fluent-boards/v2/projects/1/user/5/make-member" \
+  -u "USERNAME:APPLICATION_PASSWORD"
+```
+
+**Example Response**
+
+Same shape as [Remove Board Manager](#remove-board-manager): `message` and `member` with `is_admin: false`, `is_board_admin: false`.
+
+## Make Viewer <Badge type="tip" text="Pro" />
+
+Sets an existing manager or member to the read-only viewer role. Same permission rules as [Make Board Manager](#make-board-manager).
+
+```http
+POST /wp-json/fluent-boards/v2/projects/{board_id}/user/{user_id}/make-viewer
+```
+
+**Example Request**
+
+```bash
+curl -X POST "https://yourdomain.com/wp-json/fluent-boards/v2/projects/1/user/5/make-viewer" \
+  -u "USERNAME:APPLICATION_PASSWORD"
+```
+
+**Example Response**
+
+Same shape as [Remove Board Manager](#remove-board-manager).
+
+## Send Board Invitation <Badge type="tip" text="Pro" />
+
+Emails an invitation link to an address that does not belong to a WordPress user yet. The invitation expires after 48 hours (filter `fluent_boards/invite_expiry_seconds`). Requires board manager.
+
+```http
+POST /wp-json/fluent-boards/v2/projects/{board_id}/send-invitation
+```
+
+**Parameters**
+
+| Parameter | Type | Required | Description |
+|---|---|---|---|
+| `email` | string | Yes | Email address to invite |
+
+**Example Request**
+
+```bash
+curl -X POST "https://yourdomain.com/wp-json/fluent-boards/v2/projects/1/send-invitation" \
+  -u "USERNAME:APPLICATION_PASSWORD" \
+  -H "Content-Type: application/json" \
+  -d '{"email": "new.person@example.com"}'
+```
+
+**Example Response**
+
+```json
+{
+  "message": "Invitation sent successfully!"
+}
+```
+
+If the email already belongs to a WordPress user, no invitation is sent and the endpoint returns `422` with `"message": "Already a wordpress member"` (the controller asks for `304`, which the framework turns into `422`). Add that user with [Add Member to Board](#add-member-to-board) instead.
+
+## List Invitations <Badge type="tip" text="Pro" />
+
+Returns the board's invitation records (stored in `fbs_metas`). Requires board manager.
+
+```http
+GET /wp-json/fluent-boards/v2/projects/{board_id}/all-invitations
+```
+
+**Example Request**
+
+```bash
+curl "https://yourdomain.com/wp-json/fluent-boards/v2/projects/1/all-invitations" \
+  -u "USERNAME:APPLICATION_PASSWORD"
+```
+
+**Example Response**
+
+```json
+{
+  "invitations": [
+    {
+      "id": 31,
+      "object_id": 1,
+      "object_type": "board",
+      "key": "board_email_invitation",
+      "value": {
+        "email": "new.person@example.com",
+        "hash": "3f9c1b7e2d...",
+        "issued_at": 1759400000,
+        "expires_at": 1759572800,
+        "used": false
+      },
+      "created_at": "2025-10-02T10:13:20+00:00",
+      "updated_at": "2025-10-02T10:13:20+00:00"
+    }
+  ]
+}
+```
+
+## Delete Invitation <Badge type="tip" text="Pro" />
+
+Deletes one invitation of the board. Requires board manager.
+
+```http
+DELETE /wp-json/fluent-boards/v2/projects/{board_id}/invitation/{invitation_id}
+```
+
+**Example Request**
+
+```bash
+curl -X DELETE "https://yourdomain.com/wp-json/fluent-boards/v2/projects/1/invitation/31" \
+  -u "USERNAME:APPLICATION_PASSWORD"
+```
+
+**Example Response**
+
+```json
+{
+  "message": "Invitation deleted successfully!"
+}
+```
+
+Returns `404` (`Invitation not found.`) when the invitation does not belong to the board.
+
+## Get Member Profile
+
+Returns a member's profile. The caller must be logged in and either be the member, a FluentBoards admin, or share a board with the member. Returns `403` when the target user is not a FluentBoards user.
+
+```http
+GET /wp-json/fluent-boards/v2/member/{id}
+```
+
+**Example Request**
+
+```bash
+curl "https://yourdomain.com/wp-json/fluent-boards/v2/member/5" \
+  -u "USERNAME:APPLICATION_PASSWORD"
+```
+
+**Example Response**
+
+```json
+{
+  "user": {
+    "ID": 5,
+    "user_login": "janesmith",
+    "display_name": "Jane Smith",
+    "photo": "https://secure.gravatar.com/avatar/example5?s=128&d=mm&r=g",
+    "fbs_role": "member",
+    "is_wp_admin": "no"
+  }
+}
+```
+
+`fbs_role` is `fbs_admin` for FluentBoards admins, otherwise `member`. When FluentCRM is active, the user also has `fluentcrm_subscriber` (the linked contact or `null`).
+
+## Get Member Boards
+
+Boards the member belongs to. Unless you are the member or an admin, the list is limited to boards you share with them.
+
+```http
+GET /wp-json/fluent-boards/v2/member/{id}/projects
+```
+
+**Example Request**
+
+```bash
+curl "https://yourdomain.com/wp-json/fluent-boards/v2/member/5/projects" \
+  -u "USERNAME:APPLICATION_PASSWORD"
+```
+
+**Example Response**
+
+```json
+{
+  "boards": [
+    {
+      "id": 1,
+      "title": "Website Redesign",
+      "type": "to-do",
+      "background": { "color": "#2196F3" },
+      "archived_at": null,
+      "pivot": { "foreign_id": 5, "object_id": 1 }
+    }
+  ]
+}
+```
+
+## Get Member Tasks
+
+Paginated tasks for one tab of the member profile. Results are limited to boards the caller can access.
+
+```http
+GET /wp-json/fluent-boards/v2/member/{id}/tasks
+```
+
+**Parameters**
+
+| Parameter | Type | Required | Description |
+|---|---|---|---|
+| `taskType` | string | No | `assigned`, `mentioned`, `upcoming`, `due_today`, `overdue`, `completed`. Any other value (default) returns watched tasks with no due date. |
+| `boardIds` | array | No | Limit to these board IDs |
+| `per_page` | integer | No | 1–50, default `15` |
+| `page` | integer | No | Default `1` |
+| `orderBy` | string | No | `priority`, `due_at`, `position`, `created_at` (default) or `title` |
+| `order` | string | No | `ASC` (default) or `DESC` |
+
+**Example Request**
+
+```bash
+curl "https://yourdomain.com/wp-json/fluent-boards/v2/member/5/tasks?taskType=assigned&orderBy=due_at&order=ASC" \
+  -u "USERNAME:APPLICATION_PASSWORD"
+```
+
+**Example Response**
+
+```json
+{
+  "tasks": [
+    {
+      "id": 42,
+      "title": "Write release notes",
+      "board_id": 1,
+      "stage_id": 3,
+      "priority": "high",
+      "status": "open",
+      "due_at": "2025-10-05 17:00:00",
+      "stage": { "id": 3, "title": "In Progress" },
+      "board": { "id": 1, "title": "Website Redesign" },
+      "labels": []
+    }
+  ],
+  "paginationInfo": {
+    "current_page": 1,
+    "last_page": 1,
+    "per_page": 15,
+    "total": 1
+  }
+}
+```
+
+An invalid `orderBy` or `order` returns `404` with `Invalid sort or orderBy parameter`.
+
+## Get Member Task Counts
+
+Counts for each profile task tab, limited the same way as [Get Member Tasks](#get-member-tasks).
+
+```http
+GET /wp-json/fluent-boards/v2/member/{id}/task-counts
+```
+
+**Parameters**
+
+| Parameter | Type | Required | Description |
+|---|---|---|---|
+| `boardIds` | array | No | Limit to these board IDs |
+
+**Example Request**
+
+```bash
+curl "https://yourdomain.com/wp-json/fluent-boards/v2/member/5/task-counts" \
+  -u "USERNAME:APPLICATION_PASSWORD"
+```
+
+**Example Response**
+
+```json
+{
+  "counts": {
+    "due_today": 1,
+    "assigned": 6,
+    "upcoming": 3,
+    "overdue": 2,
+    "mentioned": 1,
+    "completed": 14,
+    "others": 4
+  }
+}
+```
+
+## Get Member Activities
+
+Activities created by the member on boards and tasks the caller can access, 40 per page, newest first.
+
+```http
+GET /wp-json/fluent-boards/v2/member/{id}/activities
+```
+
+**Parameters**
+
+| Parameter | Type | Required | Description |
+|---|---|---|---|
+| `page` | integer | No | Default `1` |
+
+**Example Request**
+
+```bash
+curl "https://yourdomain.com/wp-json/fluent-boards/v2/member/5/activities?page=1" \
+  -u "USERNAME:APPLICATION_PASSWORD"
+```
+
+**Example Response**
+
+```json
+{
+  "activities": [
+    {
+      "id": 812,
+      "object_type": "task",
+      "object_id": 42,
+      "action": "changed",
+      "column": "stage",
+      "old_value": "Open",
+      "new_value": "In Progress",
+      "created_by": 5,
+      "created_at": "2025-10-01T09:12:00+00:00",
+      "user": { "ID": 5, "display_name": "Jane Smith" },
+      "task": { "id": 42, "title": "Write release notes" }
+    }
+  ],
+  "pagination": {
+    "current_page": 1,
+    "last_page": 1,
+    "per_page": 40,
+    "total": 1
+  }
+}
+```
+
+Board activities carry a `board` object instead of `task`.
+
+## Get Member Stats
+
+Four counts for the profile header. `unread_notifications` is only filled for yourself or for admins; otherwise it is `0`.
+
+```http
+GET /wp-json/fluent-boards/v2/member/{id}/stats
+```
+
+**Example Request**
+
+```bash
+curl "https://yourdomain.com/wp-json/fluent-boards/v2/member/5/stats" \
+  -u "USERNAME:APPLICATION_PASSWORD"
+```
+
+**Example Response**
+
+```json
+{
+  "assigned_tasks": 6,
+  "completed_tasks": 14,
+  "total_boards": 3,
+  "unread_notifications": 2
+}
+```
+
+## Update Display Name
+
+Changes the WordPress display name. You can only change your own (`{id}` must be the current user).
+
+```http
+POST /wp-json/fluent-boards/v2/member/{id}/display-name
+```
+
+**Parameters**
+
+| Parameter | Type | Required | Description |
+|---|---|---|---|
+| `display_name` | string | Yes | New name, up to 250 characters |
+
+**Example Request**
+
+```bash
+curl -X POST "https://yourdomain.com/wp-json/fluent-boards/v2/member/5/display-name" \
+  -u "USERNAME:APPLICATION_PASSWORD" \
+  -H "Content-Type: application/json" \
+  -d '{"display_name": "Jane S."}'
+```
+
+**Example Response**
+
+```json
+{
+  "message": "Display name has been updated",
+  "user": {
+    "display_name": "Jane S."
+  }
+}
+```
+
+Validation failures return `400` with a `message`.
+
+## Upload Profile Photo
+
+Uploads a new avatar for yourself (`{id}` must be the current user). JPG, PNG, GIF or WebP, up to 2 MB and 4096 px per side. Send it as multipart form field `photo`.
+
+```http
+POST /wp-json/fluent-boards/v2/member/{id}/photo
+```
+
+**Example Request**
+
+```bash
+curl -X POST "https://yourdomain.com/wp-json/fluent-boards/v2/member/5/photo" \
+  -u "USERNAME:APPLICATION_PASSWORD" \
+  -F "photo=@/path/to/avatar.png"
+```
+
+**Example Response**
+
+```json
+{
+  "message": "Profile photo has been updated",
+  "user": {
+    "photo": "https://yourdomain.com/wp-content/uploads/2025/10/avatar-128x128.png"
+  }
+}
+```
+
+## Get Associated Users
+
+Users who share boards with member `{id}`, limited to boards the caller can also see, plus each user's board relation rows. Requires a FluentBoards user.
+
+```http
+GET /wp-json/fluent-boards/v2/member-associated-users/{id}
+```
+
+**Example Request**
+
+```bash
+curl "https://yourdomain.com/wp-json/fluent-boards/v2/member-associated-users/5" \
+  -u "USERNAME:APPLICATION_PASSWORD"
+```
+
+**Example Response**
+
+```json
+{
+  "users": [
+    {
+      "ID": 7,
+      "user_login": "mike",
+      "display_name": "Mike Lee",
+      "photo": "https://secure.gravatar.com/avatar/example7?s=128&d=mm&r=g",
+      "which_boards": [ { "id": 1, "title": "Website Redesign" } ],
+      "all_boards": [ { "id": 1, "title": "Website Redesign" } ],
+      "is_super": false,
+      "is_wpadmin": false
+    }
+  ],
+  "userWiseBoardDesignation": [
+    {
+      "id": 90,
+      "object_id": 1,
+      "object_type": "board_user",
+      "foreign_id": 7,
+      "settings": { "is_admin": false }
+    }
+  ]
+}
+```
+
+`all_boards` is only set for users who are neither WordPress admins nor FluentBoards admins.
 
 See [Common Error Responses](/rest-api/shared/error-responses) for standard error formats.
-
-### Common User-Specific Errors
-
-- **404 Not Found** - User not found
-- **403 Forbidden** - You don't have permission to manage users
-- **400 Bad Request** - Invalid user data or missing required fields

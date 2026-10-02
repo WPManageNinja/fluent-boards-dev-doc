@@ -2,326 +2,100 @@
 
 <Badge type="tip" vertical="top" text="FluentBoards Core" /> <Badge type="warning" vertical="top" text="Intermediate" />
 
-FluentBoards has many interesting filer hooks that let developers change default settings and even extend FluentBoards with new functionality.
+FluentBoards has many filter hooks. Use them to change default settings and data, and to extend FluentBoards with new functionality.
 
 ## What are Filter Hooks
 
-A hook is a feature that allows developers to manipulate functionality without modifying core files. A hook can help developers inject some functions or edit default settings.
-  
-Filter hooks are used to return modified values for certain parameters, based on different factors.
+A hook lets developers change functionality without editing core files. Filter hooks pass a value through your callback. Your callback returns the value, modified or unchanged, and FluentBoards uses whatever you return.
 
-## Available Filter Hooks <hr/>
-
-<explain-block title="fluent_boards/board_find">
-When you find a board it returns a board object. But if you want to manipulate that board data and return
-modified board object then you can use this filter.
-
-**Parameters**
-- `$board` Object
-
-**Usage:**
-```php 
-/*
-* Manipulate board object
-*/
-add_filter('fluent_boards/board_find', function($board) {
-   return $board;
-});
-```
-</explain-block>
-
-<explain-block title="fluent_boards/before_create_board">
-But if you want to modify board data before create that board then you can use this filter.
-
-**Parameters**
-- `$boardData` Object
-
-**Usage:**
-```php 
-/*
-* Manipulate board data before task create
-*/
-add_filter('fluent_boards/before_create_board', function($boardData) {
-   return $boardData;
-});
-```
-</explain-block>
-
-<explain-block title="fluent_boards/before_task_create">
-But if you want to modify task data before create that task then you can use this filter.
-
-**Parameters**
-- `$data` Object
-
-**Usage:**
-```php 
-/*
-* Manipulate task data before task create
-*/
-add_filter('fluent_boards/before_task_create', function($data) {
-   return $data;
-});
-```
-</explain-block>
-
-<explain-block title="fluent_boards/uploaded_file_name_prefix">
-But if you want to modify uploaded file name prefix then you can use this filter.
-
-**Parameters**
-- `$prefix` String
-
-**Usage:**
-```php 
-/*
-* Modify uploaded file name prefix
-*/
-add_filter('fluent_boards/uploaded_file_name_prefix', function($prefix) {
-   return $prefix;
-});
-```
-</explain-block>
-
-<explain-block title="fluent_boards/incoming_webhook_data">
-But if you want to modify incoming webhook data then you can use this filter.
-
-**Parameters**
-- `$postData` Array
-- `$webhook` String
-
-**Usage:**
-```php 
-/*
-* Modify incoming webhook data
-*/
-add_filter('fluent_boards/incoming_webhook_data', function($postData, $webhook) {
-   return $postData;
-});
-```
-</explain-block>
-
-<explain-block title="fluent_boards/webhook_task_data">
-But if you want to modify webhook task data then you can use this filter.
-
-**Parameters**
-- `$postData` Array
-- `$webhook` String
-
-**Usage:**
-```php 
-/*
-* Modify webhook task data
-*/
-add_filter('fluent_boards/webhook_task_data', function($postData, $webhook) {
-   return $postData;
-});
-```
-</explain-block>
-
-<explain-block title="fluent_boards/site_logo">
-But if you want to change site logo then you can use this filter.
-
-**Parameters**
-- `$logo_url` String
-
-**Usage:**
-```php 
-/*
-* Change site logo
-*/
-add_filter('fluent_boards/site_logo', function($logo_url) {
-   return $logo_url;
-});
-```
-</explain-block>
-
-<explain-block title="fluent_boards/addons_settings">
-But if you want to modify addon data in features and module settings then you can use this filter.
-
-**Parameters**
-- `$addOns` Array
-
-**Usage:**
-```php 
-/*
-* Modify addon data in features and module settings
-*/
-add_filter('fluent_boards/addons_settings', function($addOns) {
-   return $addOns;
-});
-```
-</explain-block>
-
-<explain-block title="fluent_boards/accepted_plugins">
-But if you want to modify accepted free plugins then you can use this filter.
-
-**Parameters**
-- `$acceptedFreePlugins` Array
-
-**Usage:**
-```php 
-/*
-* Modify accepted free plugins
-*/
-add_filter('fluent_boards/accepted_plugins', function($acceptedFreePlugins) {
-   return $acceptedFreePlugins;
-});
-```
-</explain-block>
-
-<explain-block title="fluent_boards/save_general_settings">
-But if you want to modify general settings before save then you can use this filter.
-
-**Parameters**
-- `$settings` Array
-
-**Usage:**
-```php 
-/*
-* Modify general settings before save
-*/
-add_filter('fluent_boards/save_general_settings', function($settings) {
-   return $settings;
-});
-```
-</explain-block>
-
-<explain-block title="fluent_boards/email_footer">
-But if you want to modify email footer then you can use this filter.
-
-**Parameters**
-- `$footer_text` String
-
-**Usage:**
-```php 
-/*
-* Modify email footer
-*/
-add_filter('fluent_boards/email_footer', function($footer_text) {
-   return $footer_text;
-});
-```
-</explain-block>
-
-<explain-block title="fluent_boards/email_header">
-But if you want to modify email header then you can use this filter.
-
-**Parameters**
-- `$email_header` String
-
-**Usage:**
-```php 
-/*
-* Modify email header
-*/
-add_filter('fluent_boards/email_header', function($email_header) {
-   return $email_header;
-});
-```
-</explain-block>
-
-<explain-block title="fluent_boards/task_priorities">
-If you want to modify task priorities then you can use this filter.
-
-**Parameters**
-- `$priorities` Array - 'high', 'medium', 'low'
-
-**Usage:**
 ```php
-/*
-* Modify task priorities
-*/
-add_filter('fluent_boards/task_priorities', function($priorities) {
-    $priorities['urgent'] = __('Urgent', 'fluent-boards');
-    return $priorities;
-});
-```
-</explain-block>
-
-<explain-block title="fluent_boards/task_tabs">
-If you want to modify the order of activity, comment log in task modal then you can use this filter.
-
-**Parameters**
-- `$tabs` Array - 'all', 'comment', 'activity'
-
-**Usage:**
-```php
-/*
-* Modify task tabs
-*/
-add_filter('fluent_boards/task_tabs', function($tabs) {
-    $reorderedTabs = [
-        'activity' => $tabs['activity'], //1st 
-        'comment' => $tabs['comment'], //2nd
-        'all' => $tabs['all'], //3rd  
-    ];
-    
-    return $reorderedTabs;
-});
-```
-</explain-block>
-
-
-<explain-block title="fluent_boards/board_menu_items">
-Modify board menu items. This filter runs when the board menu is loaded and allows you to customize the sidebar menu that appears on the right side of the board.
-
-**Parameters**
-- `$menuItems` Array - Array of existing menu items with their properties (key, label, type, position, etc.)
-- `$board_id` Integer - The current board ID
-
-**Menu Item Structure:**
-```php
-[
-    'key' => 'unique_identifier',        // Required: Unique key for the menu item
-    'label' => 'Menu Label',             // Required: Display text
-    'type' => 'default|custom',          // Required: Item type
-    'position' => 13,                    // Optional: Position in menu (lower = higher)
-    'icon' => '<svg>...</svg>',          // Required for custom items: SVG icon HTML
-    'html' => '<div>Content</div>',      // Required for custom items: HTML content
-    'width' => '500px',                  // Optional: Modal/drawer width
-    'render_in' => 'drawer|modal',       // Optional: 'drawer' (default) or 'modal' to open as popup modal
-    'role' => 'manager|admin'            // Optional: Required user role
-]
+add_filter('fluent_boards/task_priorities', function ($priorities) {
+    $priorities['critical'] = __('Critical', 'my-plugin');
+    return $priorities; // always return the value
+}, 10, 1);
 ```
 
-**Usage:**
-```php
-/*
-* Modify board menu items
-*/
-add_filter('fluent_boards/board_menu_items', function($menuItems, $board_id) {
-   // Add custom menu item (will open in drawer by default)
-   $menuItems['my_custom_item'] = [
-       'key' => 'my_custom_item',
-       'label' => 'My Custom Item',
-       'type' => 'custom',
-       'position' => 13,
-       'icon' => '<svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M8 1a7 7 0 100 14A7 7 0 008 1zM3.5 8a4.5 4.5 0 119 0 4.5 4.5 0 01-9 0z"/></svg>',
-       'html' => '<div>Custom content</div>', // Required for custom items
-       'width' => '500px',
-       'render_in' => 'drawer' // or 'modal' for popup modal
-   ];
-   
-   return $menuItems;
-}, 10, 2);
-```
+Conventions used on these pages:
 
-</explain-block>
+- Pass the correct number of accepted arguments (the 4th parameter of `add_filter()`). If a filter passes extra arguments and you need them, register with that count, for example `10, 2`.
+- Almost every hook name starts with `fluent_boards/`. The legacy exception `fluent_boards_csv_mimes` is noted on the hook.
+- <Badge type="tip" text="Pro" /> means the filter runs only when FluentBoards Pro is active. Filters without the badge are applied by the free plugin. Pro may apply some of them too.
+- **Default** shows the value the filter receives when nothing else has changed it.
+- **Source** paths are relative to the plugin root. Paths that start with `fluent-boards-pro/` are in the Pro plugin.
 
-<explain-block title="fluent_boards/menu_items">
-If you want to modify the menu items ( add new menu or remove/replace existing ones) in FluentBoards, you can use this filter.
+## Available Filter Hooks
 
-**Parameters**
-- `$menuItems` Array
+### Data & Uploads
 
-**Usage:**
-```php
-/*
-* Modify menu items
-*/
-add_filter('fluent_boards/menu_items', function($menuItems) {
-   // your modification logic here
+See [Data & Upload Filter Hooks](./data.md).
 
-   return $menuItems;
-});
-```
-</explain-block>
+| Hook | Filters |
+|---|---|
+| [`fluent_boards/board_find`](./data.md#fluent_boards_board_find) | The board returned by the board endpoint |
+| [`fluent_boards/before_create_board`](./data.md#fluent_boards_before_create_board) | Board attributes before insert |
+| [`fluent_boards/before_task_create`](./data.md#fluent_boards_before_task_create) | Task attributes before insert |
+| [`fluent_boards/can_create_board`](./data.md#fluent_boards_can_create_board) | Whether a user may create boards |
+| [`fluent_boards/task_priorities`](./data.md#fluent_boards_task_priorities) | The task priority list |
+| [`fluent_boards/task_reminder_types`](./data.md#fluent_boards_task_reminder_types) | Allowed reminder types |
+| [`fluent_boards/true_false_convert`](./data.md#fluent_boards_true_false_convert) | The string-to-boolean map |
+| [`fluent_boards/incoming_webhook_data`](./data.md#fluent_boards_incoming_webhook_data) <Badge type="tip" text="Pro" /> | Raw incoming webhook data |
+| [`fluent_boards/webhook_task_data`](./data.md#fluent_boards_webhook_task_data) <Badge type="tip" text="Pro" /> | Task data mapped from a webhook |
+| [`fluent_boards/upload_file_size_limit`](./data.md#fluent_boards_upload_file_size_limit) | Maximum upload size |
+| [`fluent_boards/upload_allowed_mimes`](./data.md#fluent_boards_upload_allowed_mimes) | Allowed upload types |
+| [`fluent_boards/upload_folder_name`](./data.md#fluent_boards_upload_folder_name) | Upload folder name |
+| [`fluent_boards/uploaded_file_name_prefix`](./data.md#fluent_boards_uploaded_file_name_prefix) | Stored file name prefix |
+| [`fluent_boards/upload_media_data`](./data.md#fluent_boards_upload_media_data) <Badge type="tip" text="Pro" /> | Attachment storage data |
+| [`fluent_boards/import_max_file_size`](./data.md#fluent_boards_import_max_file_size) | Maximum import file size |
+| [`fluent_boards_csv_mimes`](./data.md#fluent_boards_csv_mimes) | Accepted CSV MIME types |
+| [`fluent_boards/task_table_columns`](./data.md#fluent_boards_task_table_columns) <Badge type="tip" text="Pro" /> | CSV import target columns |
+| [`fluent_boards/default_templates_remote_url`](./data.md#fluent_boards_default_templates_remote_url) <Badge type="tip" text="Pro" /> | Remote templates endpoint |
+| [`fluent_boards/ajax_options_{option_key}`](./data.md#fluent_boards_ajax_options__option_key_) | Options for remote select fields |
+
+### UI & Branding
+
+See [UI & Branding Filter Hooks](./ui.md).
+
+| Hook | Filters |
+|---|---|
+| [`fluent_boards/app_url`](./ui.md#fluent_boards_app_url) | The app base URL |
+| [`fluent_boards/app_vars`](./ui.md#fluent_boards_app_vars) | `window.fluentAddonVars` |
+| [`fluent_boards/app_logo`](./ui.md#fluent_boards_app_logo) | Top-bar logo URL |
+| [`fluent_boards/app_icon`](./ui.md#fluent_boards_app_icon) | Top-bar icon URL |
+| [`fluent_boards/dashboard_notices`](./ui.md#fluent_boards_dashboard_notices) | Dashboard notices |
+| [`fluent_boards/skip_no_conflict`](./ui.md#fluent_boards_skip_no_conflict) | Whether to skip script no-conflict mode |
+| [`fluent_boards/asset_listed_slugs`](./ui.md#fluent_boards_asset_listed_slugs) | Scripts kept in no-conflict mode |
+| [`fluent_boards/portal_asset_listed_slugs`](./ui.md#fluent_boards_portal_asset_listed_slugs) <Badge type="tip" text="Pro" /> | Scripts kept on the frontend portal |
+| [`fluent_boards/core_menu_items`](./ui.md#fluent_boards_core_menu_items) | First top-bar menu items |
+| [`fluent_boards/menu_items`](./ui.md#fluent_boards_menu_items) | The full top-bar menu |
+| [`fluent_boards/board_menu_items`](./ui.md#fluent_boards_board_menu_items) | The board sidebar menu |
+| [`fluent_boards/get_avatar`](./ui.md#fluent_boards_get_avatar) | User avatar URLs |
+| [`fluent_boards/site_logo`](./ui.md#fluent_boards_site_logo) | Email logo URL |
+| [`fluent_boards/email_header`](./ui.md#fluent_boards_email_header) | Email header HTML |
+| [`fluent_boards/email_footer`](./ui.md#fluent_boards_email_footer) | Email footer HTML |
+| [`fluent_boards/no_permission_message`](./ui.md#fluent_boards_no_permission_message) <Badge type="tip" text="Pro" /> | Portal "no access" message |
+| [`fluent_boards/login_header`](./ui.md#fluent_boards_login_header) <Badge type="tip" text="Pro" /> | Portal login heading |
+| [`fluent_boards/invitation_form_title`](./ui.md#fluent_boards_invitation_form_title) <Badge type="tip" text="Pro" /> | Invitation form title |
+| [`fluent_boards/invitation_form_registration_text`](./ui.md#fluent_boards_invitation_form_registration_text) <Badge type="tip" text="Pro" /> | Invitation form subtitle |
+| [`fluent_boards/invite_expiry_seconds`](./ui.md#fluent_boards_invite_expiry_seconds) <Badge type="tip" text="Pro" /> | Invitation link lifetime |
+
+### Settings & Integrations
+
+See [Settings & Integration Filter Hooks](./integrations.md).
+
+| Hook | Filters |
+|---|---|
+| [`fluent_boards/save_general_settings`](./integrations.md#fluent_boards_save_general_settings) | General settings before save |
+| [`fluent_boards/addons_settings`](./integrations.md#fluent_boards_addons_settings) | Add-ons screen entries |
+| [`fluent_boards/accepted_plugins`](./integrations.md#fluent_boards_accepted_plugins) | Installable plugins |
+| [`fluent_boards/wordpress_ai_generate`](./integrations.md#fluent_boards_wordpress_ai_generate) | WordPress AI provider output (short-circuit) |
+| [`fluent_boards/mcp_ability_names`](./integrations.md#fluent_boards_mcp_ability_names) | MCP tools exposed |
+| [`fluent_boards/mcp_server_namespace`](./integrations.md#fluent_boards_mcp_server_namespace) | MCP REST namespace |
+| [`fluent_boards/mcp_server_route`](./integrations.md#fluent_boards_mcp_server_route) | MCP REST route |
+| [`fluent_boards/mcp_is_local_dev`](./integrations.md#fluent_boards_mcp_is_local_dev) | Local-dev detection |
+| [`fluent_boards/docs_url`](./integrations.md#fluent_boards_docs_url) <Badge type="tip" text="Pro" /> | Plugins screen Docs link |
+| [`fluent_boards/community_support_url`](./integrations.md#fluent_boards_community_support_url) <Badge type="tip" text="Pro" /> | Plugins screen Support link |
+| [`fluent_boards/license_grace_period_days`](./integrations.md#fluent_boards_license_grace_period_days) <Badge type="tip" text="Pro" /> | License grace period fallback |
+
+## Removed or non-existent filters
+
+- `fluent_boards/task_tabs` does not exist in FluentBoards or FluentBoards Pro. Each user's task tab order is saved as user meta from the task modal. No filter controls it.

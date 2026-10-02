@@ -1,78 +1,50 @@
 # NotificationUser Model
 
-| DB Table Name | {wp_db_prefix}_fbs_NotificationUsers                                             |
-|---------------|----------------------------------------------------------------------------------|
-| Schema        | <a :href="$withBase('/database/#fbs-notification-users-table')">Check Schema</a> |
-| Source File   | fluent-boards/app/Models/NotificationUser.php                                    |
-| Name Space    | FluentBoards\App\Models                                               |
-| Class         | FluentBoards\App\Models\NotificationUser                              |
+| DB Table Name | `{wp_db_prefix}fbs_notification_users` |
+|---------------|----------------------------------------|
+| Schema        | [Check Schema](/database/#fbs-notification-users-table) |
+| Source File   | fluent-boards/app/Models/NotificationUser.php |
+| Name Space    | FluentBoards\App\Models |
+| Class         | FluentBoards\App\Models\NotificationUser |
+
+Links a [Notification](/database/models/notification) to a recipient and stores whether they read it. On create, the model sets `created_at` / `updated_at` with `current_time('mysql')`.
 
 ## Attributes
-<table class="nowrap">
-   <thead>
-      <tr>
-         <th>Attribute</th>
-         <td>Data Type</td>
-         <td>Comment</td>
-      </tr>
-   </thead>
-    <tbody>
-      <tr>
-        <th>id</th>
-        <td>INT UNSIGNED <i>Auto Increment</i></td>
-        <td>Primary key of the record</td>
-      </tr>
-      <tr>
-        <th>notification_id</th>
-        <td>INT UNSIGNED <i>NULL</i></td>
-        <td>ID of the related notification</td>
-      </tr>
-      <tr>
-        <th>user_id</th>
-        <td>BIGINT UNSIGNED</td>
-        <td>ID of the user who received the notification</td>
-      </tr>
-      <tr>
-        <th>marked_read_at</th>
-        <td>TIMESTAMP <i>NULL</i></td>
-        <td>Timestamp when the notification was marked as read</td>
-      </tr>
-      <tr>
-        <th>created_at</th>
-        <td>TIMESTAMP <i>NULL</i></td>
-        <td>Timestamp when the record was created</td>
-      </tr>
-      <tr>
-        <th>updated_at</th>
-        <td>TIMESTAMP <i>NULL</i></td>
-        <td>Timestamp when the record was last updated</td>
-      </tr>
-    </tbody>
-</table>
+
+| Attribute | Data Type | Comment |
+|---|---|---|
+| id | INT UNSIGNED | Primary key |
+| notification_id | INT UNSIGNED NULL | Notification ID |
+| user_id | BIGINT UNSIGNED | Recipient user ID |
+| marked_read_at | TIMESTAMP NULL | Read time. NULL means unread |
+| created_at | TIMESTAMP NULL | |
+| updated_at | TIMESTAMP NULL | |
 
 ## Usage
-Please check <a href="/database/models/">Model Basic</a> for Common methods.
 
-### Accessing Attributes
+Please check [Model Basic](/database/models/) for common methods.
 
-```php 
-$notificationUser = FluentBoards\App\Models\NotificationUser::find(1);
+```php
+use FluentBoards\App\Models\NotificationUser;
 
-$notificationUser->id; // returns id
-$notificationUser->user_id; // returns user_id
-.......
+// Mark all notifications of the current user as read
+NotificationUser::where('user_id', get_current_user_id())
+    ->whereNull('marked_read_at')
+    ->update(['marked_read_at' => current_time('mysql')]);
+
+// Unread count
+$unread = NotificationUser::where('user_id', get_current_user_id())
+    ->whereNull('marked_read_at')
+    ->count();
 ```
 
 ## Relations
-This model has the following relationships that you can use
 
 ### notification
-Access the associated notification
 
-- return `FluentNotificationUsers\App\Models\Notification` Model Collection
+- Returns `FluentBoards\App\Models\Notification`
 
-#### Example:
-```php 
-$notification = $notificationUser->notification;
+```php
+$row = NotificationUser::with('notification')->find(1);
+$text = $row->notification->description;
 ```
-

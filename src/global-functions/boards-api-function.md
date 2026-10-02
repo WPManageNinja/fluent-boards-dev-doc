@@ -1,120 +1,171 @@
 # Boards API Function
 
-The Boards API provides various methods to interact with board-related data. You can use these methods to retrieve, create, and manage boards, stages, and labels in your custom PHP snippets or plugins.
+<Badge type="tip" vertical="top" text="FluentBoards Core" />
 
-## Initialization
-To initialize the Boards API, use the following code:
-```php 
+The Boards API reads boards, stages and labels, and creates boards and labels. All methods run as the current WordPress user. See [PHP API classes](/global-functions/#php-api-classes) for the rules on permissions and error handling that apply to every method.
+
+## Getting the API object
+
+```php
 $boardsApi = FluentBoardsApi('boards');
 ```
-`FluentBoardsApi('boards')` returns an instance of the `FluentBoards\App\Api\Classes\Boards` class.
+
+`FluentBoardsApi('boards')` returns a `FluentBoards\App\Api\FBSApi` proxy around `FluentBoards\App\Api\Classes\Boards`. Call the methods below on it. The class has no `getInstance()` method. For custom queries, use the `FluentBoards\App\Models\Board` model directly (see [Models](/database/models/)).
 
 ## Methods
 
+| Method | Permission | Returns |
+|---|---|---|
+| [`getBoards()`](#getboards) | Boards the user can access | Collection of `Board` |
+| [`getStagesByBoard()`](#getstagesbyboard) | Read | Collection of `Board` (with `stages` loaded) |
+| [`getStages()`](#getstages) | Read | Collection of `Stage` |
+| [`create()`](#create) | Board creation | `Board` |
+| [`getLabels()`](#getlabels) | Read | Collection of `Label` |
+| [`createLabel()`](#createlabel) | Write | `Label` |
+
 ### getBoards()
-The `getBoards` method retrieves a list of boards accessible by the current user. You can optionally include related data and specify sorting options.
+
+Returns the boards the current user can access (`Board::byAccessUser()`). Only regular boards are included. The `Board` global scope limits results to the `to-do` and `roadmap` types, so folders are excluded.
+
+```php
+getBoards($with = [], $sortBy = 'title', $sortOrder = 'asc')
+```
 
 **Parameters**
-- `$with` (array): An array of relationships to include (optional).
-- `$sortBy` (string): The column to sort by (default: title).
-- `$sortOrder` (string): The sorting order (asc or desc, default: asc).
+- `$with` (array): Relations to eager-load, for example `['stages', 'users']`.
+- `$sortBy` (string): Column to sort by. Default `'title'`. Pass an empty value to skip sorting.
+- `$sortOrder` (string): `'asc'` or `'desc'`. Default `'asc'`.
 
-**Return** 
-- An array of `Board` models.
+**Return**
+- A collection of `Board` models.
 
 **Example**
 ```php
-$boards = $boardsApi->getBoards(['stages'], 'created_at', 'desc');
+$boards = FluentBoardsApi('boards')->getBoards(['stages'], 'created_at', 'desc');
+
+foreach ($boards as $board) {
+    echo $board->title . ' (' . count($board->stages) . " stages)\n";
+}
 ```
 
 ### getStagesByBoard()
-The `getStagesByBoard` method retrieves stages associated with a specific board.
 
-**Parameters**
-- `$board_id` (int|string): The ID of the board.
+Returns the board with its `stages` relation loaded. Note that the result is a **collection of `Board` models** (zero or one item), not a list of stages. Use [`getStages()`](#getstages) or the [Stages API](/global-functions/stages-api-function#getstagesbyboard) if you only need the stages.
 
-
-**Return**
-- An array of `Stage` models.
-
-**Example**
 ```php
-$stages = $boardsApi->getStagesByBoard(1);
+getStagesByBoard($board_id)
 ```
 
-### create()
-The `create` method creates a new board with the provided data. It also creates default labels and stages for the board.
-
 **Parameters**
-- `$data` (array): The board data, including `title` (required).
+- `$board_id` (int|string): The board ID.
 
 **Return**
-- The created `Board` model or `false` if creation fails.
+- A collection containing the board with `stages` loaded. Returns `[]` for an empty ID and `false` without read access.
 
 **Example**
 ```php
-$newBoard = $boardsApi->create([
-    'title' => 'New Project Board',
-    'description' => 'A board for managing new projects'
-]);
+$result = FluentBoardsApi('boards')->getStagesByBoard(12);
+$stages = $result ? $result->first()->stages : [];
 ```
 
 ### getStages()
-The `getStages` method retrieves stages associated with a specific board, excluding archived stages.
 
-**Parameters**
-- `$board_id` (int|string): The ID of the board.
+Returns the non-archived stages of a board, ordered by `position`.
 
-**Return**
-- An array of `Stage` models.
-
-**Example**
 ```php
-$stages = $boardsApi->getStages(1);
+getStages($board_id)
 ```
 
-### getInstance()
-The `getInstance` method returns the raw `Board` model instance, allowing you to use all the methods of the query builder or ORM.
+**Parameters**
+- `$board_id` (int|string): The board ID.
 
 **Return**
-- The `Board` model instance.
+- A collection of `Stage` models. Returns `[]` for an empty ID and `false` without read access.
 
 **Example**
 ```php
-$boardInstance = $boardsApi->getInstance();
-$board = $boardInstance->where('title', 'like', '%Project%')->first();
+$stages = FluentBoardsApi('boards')->getStages(12);
+```
+
+### create()
+
+Creates a board, then adds the default labels and the default stages (Open, In Progress, Completed). It fires the `fluent_boards/board_created` action. The current user is attached as a board admin.
+
+```php
+create($data)
+```
+
+**Parameters**
+- `$data` (array): Board data. Values are sanitized with `Helper::sanitizeBoard()`.
+  - `title` (string, **required**)
+  - `type` (string): `'to-do'` (default) or `'roadmap'`. Pass it explicitly. Omitting it currently raises an "undefined array key" warning on PHP 8.
+  - `description` (string): Markdown or HTML.
+  - `currency` (string): Default `'USD'`.
+  - `background` (array|string): Board background settings.
+  - `created_by` (int): Defaults to the current user.
+  - `crm_contact_id` (int): Associate a FluentCRM contact with the board.
+
+The data passes through the `fluent_boards/before_create_board` filter before it is saved.
+
+**Return**
+- The created `Board` model. Returns `false` when `title` is empty, when the current user cannot create boards (`PermissionManager::userHasBoardCreationPermission()`), or when saving fails.
+
+**Example**
+```php
+$board = FluentBoardsApi('boards')->create([
+    'title'       => 'Website Redesign',
+    'type'        => 'to-do',
+    'description' => 'Tasks for the Q4 website redesign',
+]);
+
+if ($board) {
+    $stages = FluentBoardsApi('boards')->getStages($board->id);
+}
 ```
 
 ### getLabels()
-The `getLabels` method retrieves labels associated with a specific board.
+
+Returns all labels of a board, oldest first.
+
+```php
+getLabels($boardId)
+```
 
 **Parameters**
-- `$boardId` (int): The ID of the board.
+- `$boardId` (int): The board ID.
 
 **Return**
-- An array of `Label` models or `false` if the board is not found or the user lacks access.
+- A collection of `Label` models. Returns `false` without read access, and `null` when the board does not exist (the `findOrFail()` exception is swallowed by the proxy).
 
 **Example**
 ```php
-$labels = $boardsApi->getLabels(1);
+$labels = FluentBoardsApi('boards')->getLabels(12);
 ```
 
 ### createLabel()
-The `createLabel` method creates a new label for a specific board.
+
+Creates a label on a board.
+
+```php
+createLabel($boardId, $data)
+```
 
 **Parameters**
-- `$boardId` (int): The ID of the board.
-- `$data` (array): The label data, including `bg_color` (required) and `color` (optional).
+- `$boardId` (int): The board ID.
+- `$data` (array):
+  - `bg_color` (string, **required**): Background color, for example `'#4bce97'`.
+  - `color` (string): Text color. Default `'#1B2533'`.
+  - `label` (string): The label title. The method reads the title from the `label` key. A `title` key is ignored.
+  - `color_preset` (string): Optional preset ID from the built-in label palette. An unknown preset throws an exception, so the method returns `null`.
 
 **Return**
-- The created `Label` model or `false` if creation fails.
+- The created `Label` model. Returns `false` when `bg_color` is missing or the user cannot write to the board.
 
 **Example**
 ```php
-$newLabel = $boardsApi->createLabel(1, [
+$label = FluentBoardsApi('boards')->createLabel(12, [
+    'label'    => 'High Priority',
     'bg_color' => '#ff5733',
-    'color' => '#ffffff',
-    'title' => 'High Priority'
+    'color'    => '#ffffff',
 ]);
 ```
-

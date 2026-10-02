@@ -1,10 +1,11 @@
 ---
 title: Developer Docs
-tagline: Resources and tutorials for FluentBoards developer
+description: Resources and tutorials for FluentBoards developers
+layout: page
 sidebar: false
 prev: false
 next: false
-editLink: true
+editLink: false
 pageClass: docs-home
 ---
 
@@ -25,7 +26,7 @@ pageClass: docs-home
     <h3>What You Can Do</h3>
     <p class="capabilities-intro">FluentBoards is fully extensible. A few high‑impact things you can implement quickly:</p>
     <ul class="capabilities-list">
-      <li><strong>Push custom menus</strong> – inject board or global menu items (<a href="/hooks/filters/#fluent_boardsboard_menu_items">board_menu_items</a>, <a href="/hooks/filters/#fluent_boardsmenu_items">menu_items</a>).</li>
+      <li><strong>Push custom menus</strong> – inject board or global menu items (<a href="/hooks/filters/ui#fluent_boards_board_menu_items">board_menu_items</a>, <a href="/hooks/filters/ui#fluent_boards_menu_items">menu_items</a>).</li>
       <li><strong>Alter data with filter hooks</strong> – validate / transform before create or update (<a href="/hooks/filters/">filter hooks</a>).</li>
       <li><strong>Process events via actions</strong> – react to task, stage, label, comment lifecycle (<a href="/hooks/actions/">action hooks</a>).</li>
       <li><strong>Build external apps</strong> – use REST API + webhooks to power dashboards, automations, or mobile apps (<a href="/rest-api/">REST API</a>).</li>
@@ -57,10 +58,10 @@ pageClass: docs-home
   </div>
   <div>
     <ul>
-      <li><a href="./database/">Database Schema</a></li>
-      <li><a href="./database/models/">Database Model Basics</a></li>
-      <li><a href="./database/models/task">Task Model</a></li>
-      <li><a href="./database/models/board">Board Model</a></li>
+      <li><a href="/database/">Database Schema</a></li>
+      <li><a href="/database/models/">Database Model Basics</a></li>
+      <li><a href="/database/models/task">Task Model</a></li>
+      <li><a href="/database/models/board">Board Model</a></li>
     </ul>
   </div>
 </section>
@@ -72,10 +73,11 @@ pageClass: docs-home
   </div>
   <div>
     <ul>
-      <li><a href="./hooks/actions/">Action Hooks</a></li>
-      <li><a href="./hooks/filters/">Filter Hooks</a></li>
-      <li><a href="./global-functions/">Global Functions</a></li>
-      <li><a href="./helpers/">Helper Classes</a></li>
+      <li><a href="/hooks/actions/">Action Hooks</a></li>
+      <li><a href="/hooks/filters/">Filter Hooks</a></li>
+      <li><a href="/global-functions/">Global Functions</a></li>
+      <li><a href="/helpers/">Helper Classes</a></li>
+      <li><a href="/cli/">WP-CLI Commands</a></li>
     </ul>
   </div>
 </section>
@@ -88,10 +90,10 @@ pageClass: docs-home
 </div>
   <div>
     <ul>
-      <li><a href="./modules/">Boards</a></li>
-      <li><a href="./modules/boards/">Boards</a></li>
-      <li><a href="./modules/stages/">Stages</a></li>
-      <li><a href="./modules/tasks/">Tasks</a></li>
+      <li><a href="/modules/">Overview</a></li>
+      <li><a href="/modules/boards">Boards</a></li>
+      <li><a href="/modules/stages">Stages</a></li>
+      <li><a href="/modules/tasks">Tasks</a></li>
     </ul>
   </div>
 </section>
@@ -103,10 +105,14 @@ pageClass: docs-home
   </div>
   <div>
     <ul>
-      <li><a href="./rest-api/">Overview</a></li>
-      <li><a href="./rest-api/boards">Boards</a></li>
-      <li><a href="./rest-api/tasks">Tasks</a></li>
-      <li><a href="./rest-api/users">Users</a></li>
+      <li><a href="/rest-api/">Overview</a></li>
+      <li><a href="/rest-api/boards">Boards</a></li>
+      <li><a href="/rest-api/tasks">Tasks</a></li>
+      <li><a href="/rest-api/subtasks">Subtasks</a></li>
+      <li><a href="/rest-api/comments">Comments</a></li>
+      <li><a href="/rest-api/attachments">Attachments</a></li>
+      <li><a href="/rest-api/users">Users &amp; Members</a></li>
+      <li><a href="/rest-api/webhooks">Webhooks</a></li>
     </ul>
   </div>
 </section>

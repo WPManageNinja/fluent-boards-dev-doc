@@ -1,52 +1,66 @@
 # Folders
 
-The Folders API allows you to group and organize boards in Fluent Boards. These endpoints are Pro-only and live under the admin prefix.
+Folders group boards in the board list. A board can be in only one folder at a time. Plugin source: free.
 
-## Base Endpoint
+All folder endpoints live under the `/admin` prefix and use `AdminPolicy`: they require a WordPress administrator or a FluentBoards admin.
 
-```
-/wp-json/fluent-boards/v2/admin/folders
-```
+## Endpoints
+
+| Method | Endpoint | Description |
+|---|---|---|
+| GET | `/admin/folders` | List folders |
+| POST | `/admin/folders` | Create a folder |
+| GET | `/admin/folders/{folder_id}` | Get a folder |
+| PUT | `/admin/folders/{folder_id}` | Rename a folder |
+| DELETE | `/admin/folders/{folder_id}` | Delete a folder |
+| POST | `/admin/folders/{folder_id}/add-board` | Move boards into a folder |
+| POST | `/admin/folders/{folder_id}/remove-board` | Remove a board from a folder |
+
+## Folder Object
+
+Folders are stored in the `fbs_boards` table with `type = "folder"`. The API returns this compact shape:
 
 ```json
 {
   "id": 11,
-  "title": "Lorem Ipsum",
+  "title": "Client Projects",
   "created_by": "1",
-  "boards_ids": [
-    3
-  ]
+  "boards_ids": [3, 7]
 }
 ```
 
+| Field | Type | Description |
+|---|---|---|
+| `id` | integer | Folder ID |
+| `title` | string | Folder title |
+| `created_by` | integer | User who created the folder |
+| `boards_ids` | array | IDs of boards in the folder that the current user can access |
+
 ## List Folders
 
-Retrieve all folders in the system.
+Retrieve the top-level folders that are visible to the current user: folders they created, plus folders that contain a board they can access. Newest first.
 
-**HTTP Request**
-```
+```http
 GET /wp-json/fluent-boards/v2/admin/folders
 ```
 
-### Example Request
+**Example Request**
 
 ```bash
 curl "https://yourdomain.com/wp-json/fluent-boards/v2/admin/folders" \
-  -H "Authorization: Basic API_USERNAME:API_PASSWORD"
+  -u "USERNAME:APPLICATION_PASSWORD"
 ```
 
-### Example Response
+**Example Response**
 
 ```json
 {
   "folders": [
     {
       "id": 11,
-      "title": "Lorem Ipsum",
+      "title": "Client Projects",
       "created_by": "1",
-      "boards_ids": [
-        3
-      ]
+      "boards_ids": [3, 7]
     }
   ]
 }
@@ -54,29 +68,31 @@ curl "https://yourdomain.com/wp-json/fluent-boards/v2/admin/folders" \
 
 ## Create a Folder
 
-Create a new folder to organize boards.
+Create a new folder.
 
-**HTTP Request**
-```
+```http
 POST /wp-json/fluent-boards/v2/admin/folders
 ```
 
-### Example Request
+**Parameters**
+
+| Parameter | Type | Required | Description |
+|---|---|---|---|
+| `title` | string | Yes | Folder title, max 50 characters |
+| `color` | string | No | Hex color, saved in the folder background |
+| `parent_id` | integer | No | Parent folder ID, to create a sub-folder |
+
+**Example Request**
 
 ```bash
-curl -X POST "https://yourdomain.com/wp-json/fluent-boards/v2/admin/folders" \
-  -H "Authorization: Basic API_USERNAME:API_PASSWORD" \
-  -H "Content-Type: application/x-www-form-urlencoded" \
-  -d "title=Development"
+curl "https://yourdomain.com/wp-json/fluent-boards/v2/admin/folders" \
+  -X POST \
+  -u "USERNAME:APPLICATION_PASSWORD" \
+  -H "Content-Type: application/json" \
+  -d '{"title": "Development"}'
 ```
 
-### Request Body
-
-| Field | Type | Required | Description |
-|------|------|----------|-------------|
-| `title` | string | Yes | Folder title (max 50 chars) |
-
-### Example Response
+**Example Response**
 
 ```json
 {
@@ -90,31 +106,68 @@ curl -X POST "https://yourdomain.com/wp-json/fluent-boards/v2/admin/folders" \
 }
 ```
 
-## Update a Folder
+## Get a Folder
 
-Update an existing folder's title.
+Retrieve one folder. The query parameters filter and order the boards whose IDs are returned in `boards_ids`. If the folder does not exist, `folder` is `null`.
 
-**HTTP Request**
+```http
+GET /wp-json/fluent-boards/v2/admin/folders/{folder_id}
 ```
+
+**Parameters**
+
+| Parameter | Type | Required | Description |
+|---|---|---|---|
+| `order` | string | No | Board sort column: `created_at`, `title` or `id`. Default `created_at` |
+| `orderBy` | string | No | `ASC` or `DESC`. Default `DESC` |
+| `searchInput` | string | No | Only include boards whose title contains this text |
+| `option` | string | No | `archived` for archived boards only; any other value for active boards only. Omit to include both |
+
+**Example Request**
+
+```bash
+curl "https://yourdomain.com/wp-json/fluent-boards/v2/admin/folders/11?order=title&orderBy=ASC" \
+  -u "USERNAME:APPLICATION_PASSWORD"
+```
+
+**Example Response**
+
+```json
+{
+  "folder": {
+    "id": 11,
+    "title": "Client Projects",
+    "created_by": "1",
+    "boards_ids": [7, 3]
+  }
+}
+```
+
+## Rename a Folder
+
+Update a folder's title.
+
+```http
 PUT /wp-json/fluent-boards/v2/admin/folders/{folder_id}
 ```
 
-### Example Request
+**Parameters**
 
-```bash
-curl -X PUT "https://yourdomain.com/wp-json/fluent-boards/v2/admin/folders/{folder_id}" \
-  -H "Authorization: Basic API_USERNAME:API_PASSWORD" \
-  -H "Content-Type: application/x-www-form-urlencoded" \
-  -d "title=Marketing"
-```
-
-### Request Body
-
-| Field | Type | Required | Description |
-|------|------|----------|-------------|
+| Parameter | Type | Required | Description |
+|---|---|---|---|
 | `title` | string | Yes | New folder title |
 
-### Example Response
+**Example Request**
+
+```bash
+curl "https://yourdomain.com/wp-json/fluent-boards/v2/admin/folders/11" \
+  -X PUT \
+  -u "USERNAME:APPLICATION_PASSWORD" \
+  -H "Content-Type: application/json" \
+  -d '{"title": "Marketing"}'
+```
+
+**Example Response**
 
 ```json
 {
@@ -123,28 +176,28 @@ curl -X PUT "https://yourdomain.com/wp-json/fluent-boards/v2/admin/folders/{fold
     "id": 11,
     "title": "Marketing",
     "created_by": "1",
-    "boards_ids": []
+    "boards_ids": [3, 7]
   }
 }
 ```
 
 ## Delete a Folder
 
-Remove a folder from the system.
+Delete a folder. Its boards are not deleted; they simply leave the folder.
 
-**HTTP Request**
-```
+```http
 DELETE /wp-json/fluent-boards/v2/admin/folders/{folder_id}
 ```
 
-### Example Request
+**Example Request**
 
 ```bash
-curl -X DELETE "https://yourdomain.com/wp-json/fluent-boards/v2/admin/folders/{folder_id}" \
-  -H "Authorization: Basic API_USERNAME:API_PASSWORD"
+curl "https://yourdomain.com/wp-json/fluent-boards/v2/admin/folders/11" \
+  -X DELETE \
+  -u "USERNAME:APPLICATION_PASSWORD"
 ```
 
-### Example Response
+**Example Response**
 
 ```json
 {
@@ -152,33 +205,31 @@ curl -X DELETE "https://yourdomain.com/wp-json/fluent-boards/v2/admin/folders/{f
 }
 ```
 
-## Add Boards to Folder
+## Add Boards to a Folder
 
-Add one or more boards to a folder. This replaces any existing folder assignments.
+Move one or more boards into a folder. Each board is first removed from any folder it was in. Unknown board IDs are ignored. Only the folder's creator or an admin can do this.
 
-**HTTP Request**
-```
+```http
 POST /wp-json/fluent-boards/v2/admin/folders/{folder_id}/add-board
 ```
 
-### Example Request
+**Parameters**
+
+| Parameter | Type | Required | Description |
+|---|---|---|---|
+| `board_ids` | array | Yes | Board IDs to move into the folder. A single ID is also accepted |
+
+**Example Request**
 
 ```bash
-curl -X POST "https://yourdomain.com/wp-json/fluent-boards/v2/admin/folders/{folder_id}/add-board" \
-  -H "Authorization: Basic API_USERNAME:API_PASSWORD" \
+curl "https://yourdomain.com/wp-json/fluent-boards/v2/admin/folders/11/add-board" \
+  -X POST \
+  -u "USERNAME:APPLICATION_PASSWORD" \
   -H "Content-Type: application/json" \
-  -d '{
-    "board_ids": [2,7]
-  }'
+  -d '{"board_ids": [2, 7]}'
 ```
 
-### Request Body
-
-| Field | Type | Required | Description |
-|------|------|----------|-------------|
-| `board_ids` | array[integer] | Yes | Board IDs to add; replaces existing folder assignment |
-
-### Example Response
+**Example Response**
 
 ```json
 {
@@ -186,31 +237,31 @@ curl -X POST "https://yourdomain.com/wp-json/fluent-boards/v2/admin/folders/{fol
 }
 ```
 
-## Remove Board from Folder
+## Remove a Board from a Folder
 
-Remove a specific board from a folder.
+Take a board out of a folder.
 
-**HTTP Request**
-```
+```http
 POST /wp-json/fluent-boards/v2/admin/folders/{folder_id}/remove-board
 ```
 
-### Example Request
+**Parameters**
+
+| Parameter | Type | Required | Description |
+|---|---|---|---|
+| `board_id` | integer | Yes | Board ID to remove |
+
+**Example Request**
 
 ```bash
-curl -X POST "https://yourdomain.com/wp-json/fluent-boards/v2/admin/folders/{folder_id}/remove-board" \
-  -H "Authorization: Basic API_USERNAME:API_PASSWORD" \
-  -H "Content-Type: application/x-www-form-urlencoded" \
-  -d "board_id=7"
+curl "https://yourdomain.com/wp-json/fluent-boards/v2/admin/folders/11/remove-board" \
+  -X POST \
+  -u "USERNAME:APPLICATION_PASSWORD" \
+  -H "Content-Type: application/json" \
+  -d '{"board_id": 7}'
 ```
 
-### Request Body
-
-| Field | Type | Required | Description |
-|------|------|----------|-------------|
-| `board_id` | integer | Yes | Board ID to remove from folder |
-
-### Example Response
+**Example Response**
 
 ```json
 {
@@ -218,12 +269,4 @@ curl -X POST "https://yourdomain.com/wp-json/fluent-boards/v2/admin/folders/{fol
 }
 ```
 
-## Error Responses
-
 See [Common Error Responses](/rest-api/shared/error-responses) for standard error formats.
-
-### Common Folder-Specific Errors
-
-- **404 Not Found** - Folder not found
-- **403 Forbidden** - You don't have permission to manage folders
-- **400 Bad Request** - Invalid folder data or missing required fields

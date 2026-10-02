@@ -1,29 +1,41 @@
 # Custom Fields
 
-The Custom Fields API allows you to define additional data fields for tasks on a board. These endpoints are available in Fluent Boards Pro.
+Custom fields add structured data to tasks. A field is defined once per board and each task stores its own value. Plugin source: Pro.
 
-## Base Endpoint
+::: tip Pro
+All endpoints on this page need Fluent Boards Pro.
+:::
 
-```
-/fluent-boards/v2/projects/{board_id}/custom-fields
-```
+All endpoints use `SingleBoardPolicy`: the user must be a member of the board, and board viewers can only call `GET` endpoints. Creating, updating, reordering and deleting field definitions requires board manager.
+
+## Endpoints
+
+| Method | Endpoint | Description |
+|---|---|---|
+| GET | `/projects/{board_id}/custom-fields` | List board custom fields |
+| POST | `/projects/{board_id}/custom-field` | Create a custom field |
+| PUT | `/projects/{board_id}/custom-field/{custom_field_id}` | Update a custom field |
+| PUT | `/projects/{board_id}/custom-field/{custom_field_id}/update-position` | Move a custom field |
+| DELETE | `/projects/{board_id}/custom-field/{custom_field_id}` | Delete a custom field |
+| GET | `/projects/{board_id}/tasks/{task_id}/custom-fields` | Get a task's custom field values |
+| POST | `/projects/{board_id}/tasks/{task_id}/custom-fields` | Save a task's custom field value |
 
 ## Custom Field Object
 
-Custom fields extend task data with additional structured information:
+Custom fields are stored in the `fbs_board_terms` table with `type = "custom-field"`.
 
 ```json
 {
   "id": 110,
   "board_id": "3",
-  "title": "Loerm ipsum",
-  "slug": "loerm-ipsum",
+  "title": "Story points",
+  "slug": "story-points",
   "type": "custom-field",
   "position": "1.00",
   "color": null,
   "bg_color": null,
   "settings": {
-    "custom_field_type": "text"
+    "custom_field_type": "number"
   },
   "archived_at": null,
   "created_at": "2025-08-08T10:56:47+00:00",
@@ -31,36 +43,34 @@ Custom fields extend task data with additional structured information:
 }
 ```
 
-### Key Properties
-
 | Property | Type | Description |
-|----------|------|-------------|
-| `id` | integer | Unique identifier for the custom field |
-| `board_id` | string | ID of the board this field belongs to |
-| `title` | string | Display label for the custom field |
-| `slug` | string | URL-friendly identifier |
-| `type` | string | Always "custom-field" |
-| `position` | string | Position for ordering fields |
-| `settings.custom_field_type` | string | Field type (text, select, checkbox, date, etc.) |
-| `archived_at` | string or null | Archive timestamp (null if active) |
+|---|---|---|
+| `id` | integer | Custom field ID |
+| `board_id` | integer | Board the field belongs to |
+| `title` | string | Field label |
+| `slug` | string | Lowercased title with spaces replaced by `-` |
+| `type` | string | Always `custom-field` |
+| `position` | number | Sort position |
+| `settings.custom_field_type` | string | `text`, `number`, `select`, `multi-select`, `date` or `checkbox` |
+| `settings.select_options` | array | Options for `select` and `multi-select` fields |
+| `archived_at` | string\|null | Archive timestamp |
 
 ## List Board Custom Fields
 
-Retrieve all custom fields defined for a specific board.
+Retrieve all custom fields defined on a board.
 
-**HTTP Request**
-```
+```http
 GET /wp-json/fluent-boards/v2/projects/{board_id}/custom-fields
 ```
 
-### Example Request
+**Example Request**
 
 ```bash
-curl "https://yourdomain.com/wp-json/fluent-boards/v2/projects/{board_id}/custom-fields" \
-  -H "Authorization: Basic API_USERNAME:API_PASSWORD"
+curl "https://yourdomain.com/wp-json/fluent-boards/v2/projects/3/custom-fields" \
+  -u "USERNAME:APPLICATION_PASSWORD"
 ```
 
-### Example Response
+**Example Response**
 
 ```json
 {
@@ -68,14 +78,14 @@ curl "https://yourdomain.com/wp-json/fluent-boards/v2/projects/{board_id}/custom
     {
       "id": 110,
       "board_id": "3",
-      "title": "Loerm ipsum",
-      "slug": "loerm-ipsum",
+      "title": "Story points",
+      "slug": "story-points",
       "type": "custom-field",
       "position": "1.00",
       "color": null,
       "bg_color": null,
       "settings": {
-        "custom_field_type": "text"
+        "custom_field_type": "number"
       },
       "archived_at": null,
       "created_at": "2025-08-08T10:56:47+00:00",
@@ -87,40 +97,49 @@ curl "https://yourdomain.com/wp-json/fluent-boards/v2/projects/{board_id}/custom
 
 ## Create a Custom Field
 
-Create a new custom field for a board.
+Create a custom field on a board. The field is added after the last field. Requires board manager.
 
-**HTTP Request**
-```
+```http
 POST /wp-json/fluent-boards/v2/projects/{board_id}/custom-field
 ```
 
-### Example Request
+**Parameters**
+
+All fields are sent inside a `customField` object.
+
+| Parameter | Type | Required | Description |
+|---|---|---|---|
+| `customField[title]` | string | Yes | Field label |
+| `customField[type]` | string | Yes | `text`, `number`, `select`, `multi-select`, `date` or `checkbox`. Stored as `settings.custom_field_type` |
+| `customField[options]` | array | No | Options for `select` and `multi-select`. Stored as `settings.select_options` |
+
+**Example Request**
 
 ```bash
-curl -X POST "https://yourdomain.com/wp-json/fluent-boards/v2/projects/{board_id}/custom-field" \
-  -H "Authorization: Basic API_USERNAME:API_PASSWORD" \
-  -H "Content-Type: application/x-www-form-urlencoded" \
-  -d "customField[title]=My custom filed&customField[type]=text"
+curl "https://yourdomain.com/wp-json/fluent-boards/v2/projects/3/custom-field" \
+  -X POST \
+  -u "USERNAME:APPLICATION_PASSWORD" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "customField": {
+      "title": "Environment",
+      "type": "select",
+      "options": ["Staging", "Production"]
+    }
+  }'
 ```
 
-### Request Body
-
-| Field | Type | Required | Description |
-|------|------|----------|-------------|
-| `customField.title` | string | Yes | Field label |
-| `customField.type` | string | Yes | One of supported types (stored as `settings.custom_field_type`) |
-| `customField.options` | array[string] | No | Options for `select` type |
-
-### Example Response
+**Example Response**
 
 ```json
 {
   "customField": {
     "board_id": "3",
-    "title": "My custom filed",
-    "slug": "my-custom-filed",
+    "title": "Environment",
+    "slug": "environment",
     "settings": {
-      "custom_field_type": "text"
+      "custom_field_type": "select",
+      "select_options": ["Staging", "Production"]
     },
     "position": 2,
     "type": "custom-field",
@@ -132,47 +151,56 @@ curl -X POST "https://yourdomain.com/wp-json/fluent-boards/v2/projects/{board_id
 }
 ```
 
+If the board already has a field with the same title and type, the endpoint returns `400` with `Custom Field with that title and type already exists`.
+
 ## Update a Custom Field
 
-Update an existing custom field.
+Rename a custom field or change its options. The field type cannot be changed; `customField[type]` is still required and is used for the duplicate check. Requires board manager.
 
-**HTTP Request**
-```
+```http
 PUT /wp-json/fluent-boards/v2/projects/{board_id}/custom-field/{custom_field_id}
 ```
 
-### Example Request
+**Parameters**
+
+| Parameter | Type | Required | Description |
+|---|---|---|---|
+| `customField[title]` | string | Yes | Field label |
+| `customField[type]` | string | Yes | The field's current type |
+| `customField[options]` | array | No | New options for `select` and `multi-select` |
+
+**Example Request**
 
 ```bash
-curl -X PUT "https://yourdomain.com/wp-json/fluent-boards/v2/projects/{board_id}/custom-field/{custom_field_id}" \
-  -H "Authorization: Basic API_USERNAME:API_PASSWORD" \
-  -H "Content-Type: application/x-www-form-urlencoded" \
-  -d "customField[title]=Custom text field&customField[type]=text"
+curl "https://yourdomain.com/wp-json/fluent-boards/v2/projects/3/custom-field/111" \
+  -X PUT \
+  -u "USERNAME:APPLICATION_PASSWORD" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "customField": {
+      "title": "Deploy target",
+      "type": "select",
+      "options": ["Staging", "Production", "Preview"]
+    }
+  }'
 ```
 
-### Request Body
-
-| Field | Type | Required | Description |
-|------|------|----------|-------------|
-| `customField.title` | string | Yes | Field label |
-| `customField.type` | string | Yes | One of supported types (stored as `settings.custom_field_type`) |
-| `customField.options` | array[string] | No | Options for `select` type |
-
-### Example Response
+**Example Response**
 
 ```json
 {
   "customField": {
     "id": 111,
     "board_id": "3",
-    "title": "Custom text field",
-    "slug": "my-custom-filed",
+    "title": "Deploy target",
+    "slug": "environment",
     "type": "custom-field",
     "position": "2.00",
     "color": null,
     "bg_color": null,
     "settings": {
-      "custom_field_type": "text"
+      "custom_field_type": "select",
+      "select_options": ["Staging", "Production", "Preview"]
     },
     "archived_at": null,
     "created_at": "2025-08-08T10:59:17+00:00",
@@ -182,31 +210,33 @@ curl -X PUT "https://yourdomain.com/wp-json/fluent-boards/v2/projects/{board_id}
 }
 ```
 
+When the new title and type clash with another field, nothing is saved and `customField` is `false`.
+
 ## Update Custom Field Position
 
-Change the position/order of a custom field within the board.
+Move a custom field to a new position on the board. Requires board manager.
 
-**HTTP Request**
-```
+```http
 PUT /wp-json/fluent-boards/v2/projects/{board_id}/custom-field/{custom_field_id}/update-position
 ```
 
-### Example Request
+**Parameters**
+
+| Parameter | Type | Required | Description |
+|---|---|---|---|
+| `newIndex` | integer | Yes | New 1-based position |
+
+**Example Request**
 
 ```bash
-curl -X PUT "https://yourdomain.com/wp-json/fluent-boards/v2/projects/{board_id}/custom-field/{custom_field_id}/update-position" \
-  -H "Authorization: Basic API_USERNAME:API_PASSWORD" \
-  -H "Content-Type: application/x-www-form-urlencoded" \
-  -d "newIndex=1"
+curl "https://yourdomain.com/wp-json/fluent-boards/v2/projects/3/custom-field/111/update-position" \
+  -X PUT \
+  -u "USERNAME:APPLICATION_PASSWORD" \
+  -H "Content-Type: application/json" \
+  -d '{"newIndex": 1}'
 ```
 
-### Request Body
-
-| Field | Type | Required | Description |
-|------|------|----------|-------------|
-| `newIndex` | integer | Yes | 1-based new position index |
-
-### Example Response
+**Example Response**
 
 ```json
 {
@@ -216,21 +246,21 @@ curl -X PUT "https://yourdomain.com/wp-json/fluent-boards/v2/projects/{board_id}
 
 ## Delete a Custom Field
 
-Remove a custom field from a board.
+Delete a custom field and remove its values from every task. Requires board manager.
 
-**HTTP Request**
-```
+```http
 DELETE /wp-json/fluent-boards/v2/projects/{board_id}/custom-field/{custom_field_id}
 ```
 
-### Example Request
+**Example Request**
 
 ```bash
-curl -X DELETE "https://yourdomain.com/wp-json/fluent-boards/v2/projects/{board_id}/custom-field/{custom_field_id}" \
-  -H "Authorization: Basic API_USERNAME:API_PASSWORD"
+curl "https://yourdomain.com/wp-json/fluent-boards/v2/projects/3/custom-field/111" \
+  -X DELETE \
+  -u "USERNAME:APPLICATION_PASSWORD"
 ```
 
-### Example Response
+**Example Response**
 
 ```json
 {
@@ -238,23 +268,22 @@ curl -X DELETE "https://yourdomain.com/wp-json/fluent-boards/v2/projects/{board_
 }
 ```
 
-## Get Custom Fields for a Task
+## Get Custom Field Values for a Task
 
-Retrieve custom field values for a specific task.
+Retrieve the custom field values saved on a task. Each item is a relation row: `foreign_id` is the custom field ID and `settings.value` is the value. Fields without a saved value are not included.
 
-**HTTP Request**
-```
+```http
 GET /wp-json/fluent-boards/v2/projects/{board_id}/tasks/{task_id}/custom-fields
 ```
 
-### Example Request
+**Example Request**
 
 ```bash
-curl "https://yourdomain.com/wp-json/fluent-boards/v2/projects/{board_id}/tasks/{task_id}/custom-fields" \
-  -H "Authorization: Basic API_USERNAME:API_PASSWORD"
+curl "https://yourdomain.com/wp-json/fluent-boards/v2/projects/3/tasks/85/custom-fields" \
+  -u "USERNAME:APPLICATION_PASSWORD"
 ```
 
-### Example Response
+**Example Response**
 
 ```json
 {
@@ -265,57 +294,69 @@ curl "https://yourdomain.com/wp-json/fluent-boards/v2/projects/{board_id}/tasks/
       "object_type": "task_custom_field",
       "foreign_id": "111",
       "settings": {
-        "value": "Hello world"
+        "value": "Production"
       },
-      "preferences": null
+      "preferences": null,
+      "created_at": "2025-08-08T11:06:58+00:00",
+      "updated_at": "2025-08-08T11:06:58+00:00"
     }
   ]
 }
 ```
 
-## Save Custom Field Value for a Task
+## Save a Custom Field Value for a Task
 
-Set or update a custom field value for a specific task.
+Set or replace a task's value for one custom field. The task and the field must both belong to the board.
 
-**HTTP Request**
-```
+```http
 POST /wp-json/fluent-boards/v2/projects/{board_id}/tasks/{task_id}/custom-fields
 ```
 
-### Example Request
+**Parameters**
+
+| Parameter | Type | Required | Description |
+|---|---|---|---|
+| `custom_field_id` | integer | Yes | Custom field ID |
+| `value` | mixed | Yes | The value. See the format notes below |
+
+Value formats by field type:
+
+- `checkbox`: the string `"true"` saves `true`; anything else saves `false`.
+- `date`: a JavaScript `Date.toString()` string, for example `Fri Aug 08 2025 10:00:00 GMT+0600 (Bangladesh Standard Time)`. It is stored as `Y-m-d H:i:s`. An empty value clears the date.
+- `multi-select`: an array of option values.
+- Other types: saved as sent.
+
+**Example Request**
 
 ```bash
-curl -X POST "https://yourdomain.com/wp-json/fluent-boards/v2/projects/{board_id}/tasks/{task_id}/custom-fields" \
-  -H "Authorization: Basic API_USERNAME:API_PASSWORD" \
+curl "https://yourdomain.com/wp-json/fluent-boards/v2/projects/3/tasks/85/custom-fields" \
+  -X POST \
+  -u "USERNAME:APPLICATION_PASSWORD" \
   -H "Content-Type: application/json" \
   -d '{
     "custom_field_id": 111,
-    "value": "Lorem ipsum"
+    "value": "Production"
   }'
 ```
 
-### Request Body
+**Example Response**
 
-| Field | Type | Required | Description |
-|------|------|----------|-------------|
-| `custom_field_id` | integer | Yes | The custom field ID |
-| `value` | string | Yes | Value to save; for `checkbox` send `true`/`false`; for `date` send a parseable date |
-
-### Example Response
+The response returns the custom field definition, not the saved value.
 
 ```json
 {
   "customField": {
     "id": 111,
     "board_id": "3",
-    "title": "Custom text field",
-    "slug": "my-custom-filed",
+    "title": "Deploy target",
+    "slug": "environment",
     "type": "custom-field",
-    "position": "0.50",
+    "position": "2.00",
     "color": null,
     "bg_color": null,
     "settings": {
-      "custom_field_type": "text"
+      "custom_field_type": "select",
+      "select_options": ["Staging", "Production", "Preview"]
     },
     "archived_at": null,
     "created_at": "2025-08-08T10:59:17+00:00",
@@ -326,10 +367,6 @@ curl -X POST "https://yourdomain.com/wp-json/fluent-boards/v2/projects/{board_id
 
 ## Error Responses
 
+Endpoints that take a `{custom_field_id}` or `custom_field_id` fail with `Custom field not found` when the field does not belong to `{board_id}`.
+
 See [Common Error Responses](/rest-api/shared/error-responses) for standard error formats.
-
-### Common Custom Field-Specific Errors
-
-- **404 Not Found** - Custom field or board not found
-- **403 Forbidden** - You don't have permission to manage custom fields
-- **400 Bad Request** - Invalid custom field data or missing required fields
