@@ -70,3 +70,9 @@ Newest entries at the bottom. Original plan: `vitepress-migration-and-sync.md` (
 - Branch `vitepress-migration` in `WPManageNinja/fluent-boards-dev-doc` (not pushed; parent plugin submodule pointer not bumped).
 - Coverage: 265/265 live REST routes; 140/140 public hooks; 13/13 tables; 22/22 models; all global functions + PHP API methods.
 - Open for owners: deployment notes (Iteration 1), `plugin-code-findings.md` (~90 code issues, several security-relevant).
+
+## Iteration 6 — 2026-10-02 — Cloudflare build failure, findings moved
+
+- PR #24 merged; Cloudflare Pages build failed. Logs are behind SSO. Reproduced: Node 16 → `crypto$2.getRandomValues is not a function`; Node 18/20 build fine.
+  PR #25 pins Node 22 (`.nvmrc`, `engines`) and documents the dashboard changes in `cloudflare-pages-build.md`.
+- `plugin-code-findings.md` moved to the core repo: `fluent-boards/docs/reports/docs-sync-code-findings.md`.
