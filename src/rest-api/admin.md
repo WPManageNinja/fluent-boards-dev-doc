@@ -69,7 +69,7 @@ curl "https://yourdomain.com/wp-json/fluent-boards/v2/admin/feature-modules" \
 
 ## Save Feature Modules <Badge type="tip" text="Pro" />
 
-Merges the given modules into the stored preferences. Only the known top-level keys (`timeTracking`, `frontend`, `menu_settings`, `recurring_task`) are kept. `frontend.slug` is sanitized and falls back to `projects` (or the `FLUENT_BOARDS_SLUG` constant).
+Merges the given modules into the stored preferences. Only the known top-level keys (`timeTracking`, `frontend`, `menu_settings`, `recurring_task`) are kept. `frontend.slug` is sanitized and falls back to `projects`; when the `FLUENT_BOARDS_SLUG` constant is defined, it always overrides the sent slug.
 
 ```http
 POST /wp-json/fluent-boards/v2/admin/feature-modules

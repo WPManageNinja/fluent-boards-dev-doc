@@ -118,7 +118,7 @@ Switch back to local storage with `{"config": {"driver": "local"}}`.
 **Errors**
 
 - `422` with field errors when a required field for the driver is missing.
-- `422` `Could not connect to the remote storage service...` when the connection test fails.
+- `422` when the connection test fails. The `message` is the storage service's error text (because of an operator-precedence bug in the controller, the `Could not connect to the remote storage service. Error:` prefix is dropped); `Could not connect to the remote storage service. Please check your credentials` is returned when no driver can be built.
 - `422` `You can not update the storage settings as it is defined in the config file` when storage is set in `wp-config.php`.
 
 See [Common Error Responses](/rest-api/shared/error-responses) for standard error formats.

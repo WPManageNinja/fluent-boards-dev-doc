@@ -307,7 +307,7 @@ Fluent Boards Pro queues deliveries through Action Scheduler. A `POST` webhook r
 ```json
 {
   "event": "task_created",
-  "message": "Jane Smith created a task",
+  "message": "'Jane Smith' has created task 'Write release notes'",
   "data": {
     "id": 42,
     "title": "Write release notes",

@@ -180,6 +180,8 @@ You can also reuse the FluentBoards policies (`FluentBoards\App\Http\Policies\..
 | `SingleBoardPolicy` | Users with access to the route's `{board_id}` (write methods need a non-viewer role) |
 | `AdminPolicy` | WordPress administrators and FluentBoards admins |
 
+The method-name override applies to these policies too. Some of them define methods named after FluentBoards controller methods, for example `AuthPolicy::create()` (board-creation permission) and `SingleBoardPolicy::delete()` (global admins only). If your controller method has one of those names, that stricter check runs instead of `verifyRequest()`. Pick different method names or write your own policy.
+
 Useful `PermissionManager` checks: `isAdmin()`, `isFluentBoardsUser()`, `isBoardManager($boardId)`, `userHasBoardPermission($boardId, $method)`.
 
 ## Directory Structure Example

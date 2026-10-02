@@ -30,7 +30,7 @@ Invalid dates fall back to the defaults. Overview, tasks and activity cover `to-
 
 A task is counted in a range when it was created, completed or updated inside it. `overdue` is always "overdue right now".
 
-Every report response has one top-level key, `report`.
+These four reports return one top-level key, `report`. The timesheet report has its own shape (see below).
 
 ## Overview Report
 
@@ -253,12 +253,16 @@ curl "https://yourdomain.com/wp-json/fluent-boards/v2/reports/roadmap?start_date
         "popularity": 60
       }
     ],
-    "bySource": []
+    "bySource": [
+      { "key": "page", "label": "Public Page", "value": 9, "colorKey": "primary" },
+      { "key": "web", "label": "Admin / Web", "value": 5, "colorKey": "success" },
+      { "key": "other", "label": "Other", "value": 0, "colorKey": "neutral" }
+    ]
   }
 }
 ```
 
-`submissions` has one entry per day in the range, including days with no ideas.
+`submissions` has one entry per day in the range, including days with no ideas. `bySource` always has the three buckets `page`, `web` and `other`.
 
 ## Timesheet Report <Badge type="tip" text="Pro" />
 

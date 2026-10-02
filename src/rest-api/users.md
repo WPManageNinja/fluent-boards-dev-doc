@@ -325,7 +325,7 @@ curl -X POST "https://yourdomain.com/wp-json/fluent-boards/v2/projects/1/send-in
 }
 ```
 
-If the email already belongs to a WordPress user, no invitation is sent and the endpoint returns an error with `"message": "Already a wordpress member"`. Add that user with [Add Member to Board](#add-member-to-board) instead.
+If the email already belongs to a WordPress user, no invitation is sent and the endpoint returns `422` with `"message": "Already a wordpress member"` (the controller asks for `304`, which the framework turns into `422`). Add that user with [Add Member to Board](#add-member-to-board) instead.
 
 ## List Invitations <Badge type="tip" text="Pro" />
 

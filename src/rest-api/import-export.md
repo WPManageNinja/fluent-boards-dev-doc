@@ -116,7 +116,7 @@ curl -X POST "https://yourdomain.com/wp-json/fluent-boards/v2/fluent-boards-impo
 
 ## Process JSON Import
 
-On page 1, reads the uploaded file, creates the board (stages, labels, members, custom fields) and stages the tasks in batches of 200. Each later page imports one batch. Call it with `importing_page` = 1, 2, 3… until `has_more` is `false`.
+On page 1, reads the uploaded file, creates the board (stages, labels, members, custom fields), stages the tasks in batches of 200 and imports the first batch. Each later page imports one more batch. Call it with `importing_page` = 1, 2, 3… until `has_more` is `false`.
 
 ```http
 POST /wp-json/fluent-boards/v2/fluent-boards-import/process-json-import
@@ -237,7 +237,7 @@ curl -X POST "https://yourdomain.com/wp-json/fluent-boards/v2/import-trello-boar
 
 ## Get Trello Import Status <Badge type="tip" text="Pro" />
 
-Returns the current state of an import started by the same user. Poll until `status` is `completed` (or the import reports an error).
+Returns the current state of an import started by the same user. Poll until `status` is `completed` or `failed`.
 
 ```http
 POST /wp-json/fluent-boards/v2/trello-import-status
@@ -436,7 +436,7 @@ Headers that match a column key (case-insensitive, spaces as underscores) are pr
 
 ## Import CSV <Badge type="tip" text="Pro" />
 
-Imports 100 rows per call. Page 1 creates a new board (named from the first row's `board_title`) unless `board_id` is given; send the returned `board_id` with each later page until `has_more` is `false`.
+Imports 100 rows per call. Page 1 creates a new board (named `{board_title} (imported)` from the first row's `board_title`) unless `board_id` is given; send the returned `board_id` with each later page until `has_more` is `false`.
 
 ```http
 POST /wp-json/fluent-boards/v2/import-csv

@@ -123,3 +123,4 @@ Severity is a first guess: **S** = security/data-loss, **B** = bug, **C** = clea
 - B — `CsvController@importBoard` runs `createDefaultStages` per page when no stage column → duplicate stages.
 - B — `UserService::memberAssociatedTaskUsers` `->whichBoards` on possibly-null user → `Error` not caught.
 - C — `CsvController`, `ProAdminController` use wrong text domains (`fluent-crm`, `fluent-community`).
+- C — `CsvController` sets `staus` (typo) instead of `status` for rows without status.
