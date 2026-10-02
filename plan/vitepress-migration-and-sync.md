@@ -1,7 +1,7 @@
 # Dev Docs: VitePress Migration + Code Sync — Original Plan
 
 **Date:** 2026-10-02
-**Author:** Masiur (masiur1993@gmail.com)
+**Author:** Masiur (masiur1993@gmail.com) + Claude Opus 5.5
 **Status:** Original plan (frozen — progress lives in `TODO.md` and `progress.md`)
 
 ## Summary
