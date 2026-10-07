@@ -34,15 +34,14 @@ All table names get the WordPress table prefix. With the default prefix, `fbs_bo
 | [fbs_time_tracks](#fbs-time-tracks-table) | [TimeTrack](/database/models/time-track) | Time tracking entries | Pro |
 | [users](#users-table) | [User](/database/models/user) | WordPress core users table (not created by FluentBoards) | WordPress |
 
-## Entity Relationship Diagram
+## Entity Relationship Diagrams
 
-Solid lines are real ID columns. Dashed lines go through `object_id` + `object_type` (polymorphic) or through `fbs_relations` rows, so the database does not enforce them. `fbs_metas` is left out because what it points to depends on `object_type`.
+The schema is split into three diagrams. Solid lines are real ID columns. Dashed lines go through `object_id` + `object_type` (polymorphic) or through `fbs_relations` rows, so the database does not enforce them. `fbs_metas` is left out because what it points to depends on `object_type`.
+
+### Boards, Stages and Tasks
 
 ```mermaid
 erDiagram
-    users {
-        bigint ID PK
-    }
     fbs_boards {
         int id PK
         int parent_id FK "folder / parent board"
@@ -70,6 +69,35 @@ erDiagram
         int board_id FK
         bigint parent_id FK "reply parent"
     }
+    fbs_time_tracks {
+        int id PK
+        bigint user_id FK
+        int board_id FK
+        int task_id FK
+    }
+    users {
+        bigint ID PK
+    }
+
+    fbs_boards ||--o{ fbs_boards : "folder contains"
+    fbs_boards ||--o{ fbs_board_terms : "stages, labels, fields"
+    fbs_boards ||--o{ fbs_tasks : has
+    fbs_board_terms ||--o{ fbs_tasks : "stage of"
+    fbs_tasks ||--o{ fbs_tasks : subtasks
+    users ||--o{ fbs_tasks : created_by
+    fbs_tasks ||--o{ fbs_task_metas : has
+    fbs_tasks ||--o{ fbs_comments : has
+    fbs_boards ||--o{ fbs_comments : has
+    fbs_comments ||--o{ fbs_comments : replies
+    fbs_tasks ||--o{ fbs_time_tracks : "Pro"
+    fbs_boards ||--o{ fbs_time_tracks : "Pro"
+    users ||--o{ fbs_time_tracks : "Pro"
+```
+
+### Attachments, Activities and Notifications
+
+```mermaid
+erDiagram
     fbs_attachments {
         int id PK
         int object_id "task, comment or board"
@@ -92,6 +120,26 @@ erDiagram
         int notification_id FK
         bigint user_id FK
     }
+
+    fbs_tasks ||..o{ fbs_attachments : "TASK, task_description"
+    fbs_comments ||..o{ fbs_attachments : comment_image
+    fbs_boards ||..o{ fbs_attachments : BOARD
+    fbs_tasks ||..o{ fbs_activities : task_activity
+    fbs_boards ||..o{ fbs_activities : board_activity
+    users ||--o{ fbs_activities : created_by
+    fbs_boards ||--o{ fbs_notifications : board_notification
+    fbs_tasks ||--o{ fbs_notifications : has
+    users ||--o{ fbs_notifications : activity_by
+    fbs_notifications ||--o{ fbs_notification_users : "sent to"
+    users ||--o{ fbs_notification_users : receives
+```
+
+### Relations (`fbs_relations`) and Teams
+
+Each line is one `object_type` value. See [fbs_relations](#fbs-relations-table) for the full list.
+
+```mermaid
+erDiagram
     fbs_relations {
         int id PK
         int object_id "left side"
@@ -102,42 +150,12 @@ erDiagram
         int id PK
         int parent_id FK
     }
-    fbs_time_tracks {
-        int id PK
-        bigint user_id FK
-        int board_id FK
-        int task_id FK
-    }
 
-    fbs_boards ||--o{ fbs_boards : "folder contains"
-    fbs_boards ||--o{ fbs_board_terms : "has stages/labels/fields"
-    fbs_boards ||--o{ fbs_tasks : has
-    fbs_board_terms ||--o{ fbs_tasks : "stage of"
-    fbs_tasks ||--o{ fbs_tasks : "subtasks"
-    users ||--o{ fbs_tasks : "created_by"
-    fbs_tasks ||--o{ fbs_task_metas : has
-    fbs_tasks ||--o{ fbs_comments : has
-    fbs_boards ||--o{ fbs_comments : has
-    fbs_comments ||--o{ fbs_comments : replies
-    fbs_tasks ||..o{ fbs_attachments : "TASK, task_description"
-    fbs_comments ||..o{ fbs_attachments : "comment_image"
-    fbs_boards ||..o{ fbs_attachments : "BOARD"
-    fbs_tasks ||..o{ fbs_activities : "task_activity"
-    fbs_boards ||..o{ fbs_activities : "board_activity"
-    users ||--o{ fbs_activities : "created_by"
-    fbs_boards ||--o{ fbs_notifications : "board_notification"
-    fbs_tasks ||--o{ fbs_notifications : has
-    users ||--o{ fbs_notifications : "activity_by"
-    fbs_notifications ||--o{ fbs_notification_users : "sent to"
-    users ||--o{ fbs_notification_users : receives
-    fbs_teams ||--o{ fbs_teams : "sub-teams"
     fbs_boards ||..o{ fbs_relations : "board_user, folder board"
-    users ||..o{ fbs_relations : "member, assignee, watcher"
     fbs_tasks ||..o{ fbs_relations : "assignee, watcher, label, field, dependency"
+    users ||..o{ fbs_relations : "member, assignee, watcher"
     fbs_board_terms ||..o{ fbs_relations : "task_label, task_custom_field"
-    users ||--o{ fbs_time_tracks : "Pro"
-    fbs_boards ||--o{ fbs_time_tracks : "Pro"
-    fbs_tasks ||--o{ fbs_time_tracks : "Pro"
+    fbs_teams ||--o{ fbs_teams : "sub-teams"
 ```
 
 ## Relationships Summary
