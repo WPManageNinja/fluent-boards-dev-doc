@@ -1,4 +1,5 @@
 import { defineConfig } from 'vitepress'
+import { withMermaid } from 'vitepress-plugin-mermaid'
 import dbSchemaSidebar from './sidebars/db-schema.js'
 import globalFunctionsSidebar from './sidebars/global-functions.js'
 import hooksSidebar from './sidebars/hooks.js'
@@ -6,7 +7,7 @@ import helpersSidebar from './sidebars/helpers.js'
 import modulesSidebar from './sidebars/modules.js'
 import restApiSidebar from './sidebars/rest-api.js'
 
-export default defineConfig({
+export default withMermaid(defineConfig({
     title: 'FluentBoards Developers',
     description: 'Resources and tutorials for FluentBoards developers',
     lang: 'en-US',
@@ -20,6 +21,13 @@ export default defineConfig({
 
     sitemap: {
         hostname: 'https://developers.fluentboards.com'
+    },
+
+    // mermaid pulls in CommonJS deps (fastdom); pre-bundle it so the dev server can load it
+    vite: {
+        optimizeDeps: {
+            include: ['mermaid']
+        }
     },
 
     markdown: {
@@ -113,4 +121,4 @@ export default defineConfig({
             '/rest-api/': restApiSidebar
         }
     }
-})
+}))
