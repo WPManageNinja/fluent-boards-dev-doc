@@ -1,0 +1,10 @@
+{
+  "name": "fluent-boards-dev-docs",
+  "compatibility_date": "2026-10-01",
+  "assets": {
+    "directory": "./src/.vitepress/dist"
+  },
+  "vars": {
+    "ASSETS_BASE_URL": "https://assets.fluentboards.com"
+  }
+}
