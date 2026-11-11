@@ -121,6 +121,15 @@ See [Comment & User Action Hooks](./comments.md).
 | [`fluent_boards/profile_name_updated`](./comments.md#fluent_boards_profile_name_updated) | A user changes their display name |
 | [`fluent_boards/profile_photo_updated`](./comments.md#fluent_boards_profile_photo_updated) | A user uploads a profile photo |
 
+### Automations
+
+See [Automations](/modules/automations#related-hooks).
+
+| Hook | Fires when |
+|---|---|
+| [`fluent_boards/automation_register`](/modules/automations#registering-triggers-and-actions) | Once on `init`, to register automation triggers and actions |
+| [`fluent_boards/task_created_from_template`](/modules/automations#related-hooks) | The Create task from template automation action created a task |
+
 ### App, Admin UI, Settings & MCP
 
 See [App & Admin Action Hooks](./app.md).

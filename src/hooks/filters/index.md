@@ -96,6 +96,16 @@ See [Settings & Integration Filter Hooks](./integrations.md).
 | [`fluent_boards/community_support_url`](./integrations.md#fluent_boards_community_support_url) <Badge type="tip" text="Pro" /> | Plugins screen Support link |
 | [`fluent_boards/license_grace_period_days`](./integrations.md#fluent_boards_license_grace_period_days) <Badge type="tip" text="Pro" /> | License grace period fallback |
 
+### Automations
+
+See [Automations](/modules/automations#related-hooks).
+
+| Filter | Changes |
+|---|---|
+| [`fluent_boards/automation_field_options_{option_key}`](/modules/automations#your-own-option-lists) | Choices for a custom `option_key` in automation settings |
+| [`fluent_boards/automation_smart_codes`](/modules/automations#smart-codes) | Smart code values filled in by automation steps |
+| [`fluent_boards/automation_run_retention_days`](/modules/automations#related-hooks) | How many days finished automation runs are kept (default `30`) |
+
 ## Removed or non-existent filters
 
 - `fluent_boards/task_tabs` does not exist in FluentBoards or FluentBoards Pro. Each user's task tab order is saved as user meta from the task modal. No filter controls it.

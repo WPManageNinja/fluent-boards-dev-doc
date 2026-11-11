@@ -6,6 +6,7 @@ export default [
             { text: 'Boards', link: '/modules/boards' },
             { text: 'Stages', link: '/modules/stages' },
             { text: 'Tasks', link: '/modules/tasks' },
+            { text: 'Automations', link: '/modules/automations' },
             { text: 'Navigation', link: '/modules/navigation-modules' },
         ]
     }
