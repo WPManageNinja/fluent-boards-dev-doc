@@ -9,6 +9,7 @@ FluentBoards organizes work as **boards** that contain **stages** (columns), whi
 | [Boards](/modules/boards) | Listing boards, creating a board (with default stages and labels), reading stages and labels, creating labels |
 | [Stages](/modules/stages) | Listing and reading stages, adding a stage, renaming or recoloring it, setting its default task status, archiving and restoring |
 | [Tasks](/modules/tasks) | Creating tasks, assigning users and labels, moving tasks between stages, updating fields, subtasks and attachments (Pro) |
+| [Automations](/modules/automations) | Adding your own automation triggers and actions, their settings fields and smart codes, and activating automations that use them |
 | [Navigation](/modules/navigation-modules) | Adding items to the top navigation and to the board menu, and customizing the app URL, logo and icon |
 
 For the full method signatures and return values, see the API reference pages: [Boards API](/global-functions/boards-api-function), [Stages API](/global-functions/stages-api-function) and [Tasks API](/global-functions/tasks-api-function).
